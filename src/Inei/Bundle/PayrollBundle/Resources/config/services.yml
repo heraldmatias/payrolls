@@ -1,0 +1,7 @@
+parameters:
+#    inei_payroll.example.class: Inei\Bundle\PayrollBundle\Example
+
+services:
+#    inei_payroll.example:
+#        class: %inei_payroll.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,4 @@
+inei_payroll:
+    resource: "@IneiPayrollBundle/Resources/config/routing.yml"
+    prefix:   /
+

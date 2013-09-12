@@ -1,0 +1,122 @@
+Inei\Bundle\PayrollBundle\Entity\Conceptos:
+    type: entity
+    table: CONCEPTOS
+    fields:
+        codiConcTco:
+            id: true
+            type: string
+            length: 5
+            fixed: false
+            nullable: false
+            column: CODI_CONC_TCO
+            generator:
+                strategy: SEQUENCE
+        codiOperOpe:
+            type: string
+            length: 13
+            fixed: false
+            nullable: false
+            column: CODI_OPER_OPE
+        codiCiclCic:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: CODI_CICL_CIC
+        descConcTco:
+            type: string
+            length: 50
+            fixed: false
+            nullable: false
+            column: DESC_CONC_TCO
+        descCortTco:
+            type: string
+            length: 25
+            fixed: false
+            nullable: false
+            column: DESC_CORT_TCO
+        tipoConcTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: TIPO_CONC_TCO
+        tipoCalcTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: TIPO_CALC_TCO
+        secuCalcTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: SECU_CALC_TCO
+        flagAsocTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: FLAG_ASOC_TCO
+        flagRecuTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: FLAG_RECU_TCO
+        rntaQntaTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: RNTA_QNTA_TCO
+        ctsCtsTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: CTS_CTS_TCO
+        codiConcOnc:
+            type: string
+            length: 5
+            fixed: false
+            nullable: false
+            column: CODI_CONC_ONC
+        codiEntiEnt:
+            type: string
+            length: 8
+            fixed: false
+            nullable: false
+            column: CODI_ENTI_ENT
+        cntaDebeTco:
+            type: string
+            length: 15
+            fixed: false
+            nullable: false
+            column: CNTA_DEBE_TCO
+        cntaHabeTco:
+            type: string
+            length: 15
+            fixed: false
+            nullable: false
+            column: CNTA_HABE_TCO
+        clasConcTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: CLAS_CONC_TCO
+        flagPagoTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: FLAG_PAGO_TCO
+        sedeConcTco:
+            type: string
+            length: 1
+            fixed: false
+            nullable: false
+            column: SEDE_CONC_TCO
+    lifecycleCallbacks: {  }

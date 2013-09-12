@@ -1,0 +1,50 @@
+Inei\Bundle\PayrollBundle\Entity\Tplanilla:
+    type: entity
+    table: TPLANILLA
+    fields:
+        tipoPlanTpl:
+            id: true
+            type: string
+            length: 2
+            fixed: false
+            nullable: false
+            column: TIPO_PLAN_TPL
+            generator:
+                strategy: SEQUENCE
+        descTipoTpl:
+            type: string
+            length: 30
+            fixed: false
+            nullable: false
+            column: DESC_TIPO_TPL
+        tarjInicTpl:
+            type: string
+            length: 4
+            fixed: false
+            nullable: false
+            column: TARJ_INIC_TPL
+        tarjFinaTpl:
+            type: string
+            length: 4
+            fixed: false
+            nullable: false
+            column: TARJ_FINA_TPL
+        cantPeriTpl:
+            type: string
+            length: 3
+            fixed: false
+            nullable: false
+            column: CANT_PERI_TPL
+        codiOperOpe:
+            type: string
+            length: 9
+            fixed: false
+            nullable: false
+            column: CODI_OPER_OPE
+        abrevTipoTpl:
+            type: string
+            length: 10
+            fixed: false
+            nullable: false
+            column: ABREV_TIPO_TPL
+    lifecycleCallbacks: {  }
