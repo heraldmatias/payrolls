@@ -6,36 +6,42 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Subtplanilla
+ *
+ * @ORM\Table(name="SUBTPLANILLA")
+ * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\SubtplanillaRepository")
  */
 class Subtplanilla
 {
     /**
      * @var string
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\Column(name="SUBT_PLAN_TPL", type="string", length=2)
      */
-    private $subtPlanStp;
+    private $subtPlanStp;    
 
     /**
      * @var string
-     */
-    private $tipoPlanTplId;
-
-    /**
-     * @var string
+     * @ORM\Column(name="DESC_SUBT_STP", type="string", length=40)
      */
     private $descSubtStp;
 
     /**
      * @var string
+     * @ORM\Column(name="TITU_SUBT_STP", type="string", length=40)
      */
     private $tituSubtStp;
 
     /**
      * @var string
+     * @ORM\Column(name="OBSERV", type="text")
      */
     private $observ;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
+     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="planillas")
+     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
      */
     private $tipoPlanTpl;
 
@@ -49,29 +55,7 @@ class Subtplanilla
     {
         return $this->subtPlanStp;
     }
-
-    /**
-     * Set tipoPlanTplId
-     *
-     * @param string $tipoPlanTplId
-     * @return Subtplanilla
-     */
-    public function setTipoPlanTplId($tipoPlanTplId)
-    {
-        $this->tipoPlanTplId = $tipoPlanTplId;
-    
-        return $this;
-    }
-
-    /**
-     * Get tipoPlanTplId
-     *
-     * @return string 
-     */
-    public function getTipoPlanTplId()
-    {
-        return $this->tipoPlanTplId;
-    }
+   
 
     /**
      * Set descSubtStp

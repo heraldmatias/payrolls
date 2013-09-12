@@ -4,7 +4,7 @@ namespace Acme\DemoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 /**
- * @ORM\Entity(repositoryClass="Acme\DemoBundle\Repository\CategoryRepository")
+ * 
  * @ORM\Table(name="category")
  */
 class Category {

@@ -1,0 +1,16 @@
+{% block head %}
+    <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/payrolls/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/payrolls/bootstrap/css/bootstrap-responsive.min.css') }}" />
+{% endblock %}
+
+{% block title 'Sitio Administrativo' %}
+
+{% block body %}
+    {% block content_header %}
+    {% endblock %}
+
+    <div class="block">
+        {% block content %}{% endblock %}
+    </div>
+{% endblock %}

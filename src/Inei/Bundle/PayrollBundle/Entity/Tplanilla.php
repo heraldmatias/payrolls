@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Tplanilla
  *
  * @ORM\Table(name="TPLANILLA")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\TplanillaRepository")
  */
 class Tplanilla
 {

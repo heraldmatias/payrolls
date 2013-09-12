@@ -6,11 +6,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * PlanillaHistoricas
+ *
+ * @ORM\Table(name="PLANILLA_HISTORICAS")
+ * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\PlanillaHistoricasRepository")
  */
 class PlanillaHistoricas
 {
     /**
      * @var integer
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -51,21 +57,29 @@ class PlanillaHistoricas
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
+     * @ORM\ManyToOne(targetEntity="TPlanilla", inversedBy="planillas")
+     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
      */
     private $tipoPlanTpl;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla
+     * @ORM\ManyToOne(targetEntity="Subtplanilla", inversedBy="subplanillas")
+     * @ORM\JoinColumn(name="SUBT_PLAN_TPL", referencedColumnName="SUBT_PLAN_TPL")     
      */
     private $subtPlanTpl;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\maestroPersonal
+     * @ORM\ManyToOne(targetEntity="MaestroPersonal", inversedBy="empleados")
+     * @ORM\JoinColumn(name="CODI_EMPL_PER", referencedColumnName="CODI_EMPL_PER")
      */
     private $codiEmplPer;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\conceptos
+     * @ORM\ManyToOne(targetEntity="Conceptos", inversedBy="conceptos")
+     * @ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")
      */
     private $codiConcTco;
 
