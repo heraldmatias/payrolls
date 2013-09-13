@@ -1,8 +1,13 @@
 inei_payroll_homepage:
     pattern:  /hello/{name}
     defaults: { _controller: IneiPayrollBundle:Default:index }
-
-_admin:
-    resource: "@IneiPayrollBundle/Controller/SecuredController.php"
+    
+_inei_payroll_inventory:
+    resource: "@IneiPayrollBundle/Controller/InventarioController.php"
     type:     annotation
-    prefix:   /admin
+    prefix:   /admin/inventory
+    
+_inei_payroll_concept:
+    resource: "@IneiPayrollBundle/Controller/ConceptoController.php"
+    type:     annotation
+    prefix:   /admin/concept

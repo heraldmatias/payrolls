@@ -1,15 +1,15 @@
 <?php
 // src/Acme/UserBundle/Entity/User.php
-namespace Inei\Bundle\PayrollBundle\Entity;
+namespace Inei\Bundle\AuthBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- * Inei\Bundle\PayrollBundle\Entity\User
+ * Inei\Bundle\AuthBundle\Entity\User
  *
  * @ORM\Table(name="USUARIOS")
- * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\UsuariosRepository")
+ * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\UsuariosRepository")
  */
 class Usuarios implements AdvancedUserInterface, \Serializable
 {

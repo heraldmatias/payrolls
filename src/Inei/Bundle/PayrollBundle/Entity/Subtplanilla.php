@@ -13,38 +13,43 @@ use Doctrine\ORM\Mapping as ORM;
 class Subtplanilla
 {
     /**
-     * @var string
+     * @var integer
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\Column(name="SUBT_PLAN_TPL", type="string", length=2)
+     * @ORM\Column(name="SUBT_PLAN_STP", type="integer", nullable=false)
+     */
+    private $codiSubPlan;
+    
+    /**
+     * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
+     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="planillas")
+     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL", nullable=true)
+     */
+    private $tipoPlanTpl;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="CODI_PLAN_STP", type="string", length=2, nullable=true)
      */
     private $subtPlanStp;    
 
     /**
      * @var string
-     * @ORM\Column(name="DESC_SUBT_STP", type="string", length=40)
+     * @ORM\Column(name="DESC_SUBT_STP", type="string", length=40, nullable=true)
      */
     private $descSubtStp;
 
     /**
      * @var string
-     * @ORM\Column(name="TITU_SUBT_STP", type="string", length=40)
+     * @ORM\Column(name="TITU_SUBT_STP", type="string", length=40, nullable=true)
      */
     private $tituSubtStp;
 
     /**
      * @var string
-     * @ORM\Column(name="OBSERV", type="text")
+     * @ORM\Column(name="OBSERV", type="text", nullable=true)
      */
     private $observ;
-
-    /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
-     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="planillas")
-     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
-     */
-    private $tipoPlanTpl;
-
 
     /**
      * Get subtPlanStp

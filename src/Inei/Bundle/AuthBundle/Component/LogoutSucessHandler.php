@@ -1,6 +1,6 @@
 <?php
 
-namespace Inei\Bundle\PayrollBundle\Component;
+namespace Inei\Bundle\AuthBundle\Component;
  
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;

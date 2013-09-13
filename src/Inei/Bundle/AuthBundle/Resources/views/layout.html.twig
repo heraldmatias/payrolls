@@ -1,0 +1,20 @@
+<head>
+{% block head %}
+    <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/inei/bootstrap/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/inei/bootstrap/css/bootstrap-responsive.min.css') }}" />
+    {% block css %} {% endblock %}
+{% endblock %}
+
+<title>{% block title 'Sitio Administrativo' %}</title>
+</head>
+<body>
+{% block body %}
+    {% block content_header %}
+    {% endblock %}    
+    {% block content %}{% endblock %}
+{% endblock %}
+<script src="{{ asset('bundles/inei/bootstrap/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('bundles/inei/bootstrap/js/jquery.min.js') }}"></script>
+{% block js %} {% endblock %}
+</body>

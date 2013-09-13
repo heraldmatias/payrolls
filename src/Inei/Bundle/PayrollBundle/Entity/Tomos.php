@@ -3,7 +3,7 @@
 namespace Inei\Bundle\PayrollBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Tplanilla
  *
@@ -16,7 +16,7 @@ class Tomos
      * @var integer
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\Column(name="CODI_TOMO", type="string", length=5, nullable=false)
+     * @ORM\Column(name="CODI_TOMO", type="integer", nullable=false)
      */
     private $codiTomo;
 
@@ -48,7 +48,27 @@ class Tomos
      */
     private $descTomo;
 
+    /**
+     * @var \Inei\Bundle\PayrollBundle\Entity\Folios
+     * @ORM\OneToMany(targetEntity="Folios", mappedBy="tomo", cascade={"persist"})
+     */
+    private $folios;
 
+    public function __construct()
+    {
+        $this->folios = new ArrayCollection();
+    }
+
+    /*public function addFolio(Folios $folio)
+    {
+        $this->folios->add($folio);
+    }
+
+    public function removeFolio(Folios $folio)
+    {
+        
+    }*/
+    
     /**
      * Get id
      *
@@ -172,5 +192,40 @@ class Tomos
     public function getDescTomo()
     {
         return $this->descTomo;
+    }
+
+    /**
+     * Add folios
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
+     * @return Tomos
+     */
+    public function addFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folio)
+    {
+        /*$this->folios[] = $folios;
+    
+        return $this;*/
+        $folio->setTomo($this);
+        $this->folios->add($folio);
+    }
+
+    /**
+     * Remove folios
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
+     */
+    public function removeFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
+    {
+        $this->folios->removeElement($folios);
+    }
+
+    /**
+     * Get folios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFolios()
+    {
+        return $this->folios;
     }
 }

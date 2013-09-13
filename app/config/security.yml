@@ -1,6 +1,6 @@
 security:
     encoders:
-        Inei\Bundle\PayrollBundle\Entity\Usuarios:
+        Inei\Bundle\AuthBundle\Entity\Usuarios:
             algorithm:        pbkdf2
             encode_as_base64: true
             iterations:       100
@@ -11,7 +11,7 @@ security:
 
     providers:
         administrators:
-            entity: { class: IneiPayrollBundle:Usuarios, property: username }
+            entity: { class: IneiAuthBundle:Usuarios, property: username }
 
     firewalls:                  
         login:

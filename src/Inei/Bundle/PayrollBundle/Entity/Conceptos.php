@@ -25,126 +25,126 @@ class Conceptos
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_OPER_OPE", type="string", length=13, nullable=false)
+     * @ORM\Column(name="CODI_OPER_OPE", type="string", length=13, nullable=true)
      */
     private $codiOperOpe;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_CICL_CIC", type="string", length=1, nullable=false)
+     * @ORM\Column(name="CODI_CICL_CIC", type="string", length=1, nullable=true)
      */
     private $codiCiclCic;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=50, nullable=false)
+     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=50, nullable=true)
      */
     private $descConcTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_CORT_TCO", type="string", length=25, nullable=false)
+     * @ORM\Column(name="DESC_CORT_TCO", type="string", length=25, nullable=true)
      */
     private $descCortTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_CONC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="TIPO_CONC_TCO", type="string", length=1, nullable=true)
      */
     private $tipoConcTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_CALC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="TIPO_CALC_TCO", type="string", length=1, nullable=true)
      */
     private $tipoCalcTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SECU_CALC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="SECU_CALC_TCO", type="string", length=2, nullable=true)
      */
     private $secuCalcTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_ASOC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_ASOC_TCO", type="string", length=1, nullable=true)
      */
     private $flagAsocTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_RECU_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_RECU_TCO", type="string", length=1, nullable=true)
      */
     private $flagRecuTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="RNTA_QNTA_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="RNTA_QNTA_TCO", type="string", length=1, nullable=true)
      */
     private $rntaQntaTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CTS_CTS_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="CTS_CTS_TCO", type="string", length=1, nullable=true)
      */
     private $ctsCtsTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_CONC_ONC", type="string", length=5, nullable=false)
+     * @ORM\Column(name="CODI_CONC_ONC", type="string", length=5, nullable=true)
      */
     private $codiConcOnc;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_ENTI_ENT", type="string", length=8, nullable=false)
+     * @ORM\Column(name="CODI_ENTI_ENT", type="string", length=8, nullable=true)
      */
     private $codiEntiEnt;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CNTA_DEBE_TCO", type="string", length=15, nullable=false)
+     * @ORM\Column(name="CNTA_DEBE_TCO", type="string", length=15, nullable=true)
      */
     private $cntaDebeTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CNTA_HABE_TCO", type="string", length=15, nullable=false)
+     * @ORM\Column(name="CNTA_HABE_TCO", type="string", length=15, nullable=true)
      */
     private $cntaHabeTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CLAS_CONC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="CLAS_CONC_TCO", type="string", length=1, nullable=true)
      */
     private $clasConcTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_PAGO_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_PAGO_TCO", type="string", length=1, nullable=true)
      */
     private $flagPagoTco;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SEDE_CONC_TCO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="SEDE_CONC_TCO", type="string", length=1, nullable=true)
      */
     private $sedeConcTco;
 

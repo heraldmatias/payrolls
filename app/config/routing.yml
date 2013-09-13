@@ -1,3 +1,7 @@
+inei_auth:
+    resource: "@IneiAuthBundle/Resources/config/routing.yml"
+    prefix:   /
+
 inei_payroll:
     resource: "@IneiPayrollBundle/Resources/config/routing.yml"
     prefix:   /

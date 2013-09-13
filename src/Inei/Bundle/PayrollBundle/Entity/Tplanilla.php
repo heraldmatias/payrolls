@@ -25,42 +25,42 @@ class Tplanilla
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=30, nullable=false)
+     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=30, nullable=true)
      */
     private $descTipoTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TARJ_INIC_TPL", type="string", length=4, nullable=false)
+     * @ORM\Column(name="TARJ_INIC_TPL", type="string", length=4, nullable=true)
      */
     private $tarjInicTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TARJ_FINA_TPL", type="string", length=4, nullable=false)
+     * @ORM\Column(name="TARJ_FINA_TPL", type="string", length=4, nullable=true)
      */
     private $tarjFinaTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CANT_PERI_TPL", type="string", length=3, nullable=false)
+     * @ORM\Column(name="CANT_PERI_TPL", type="string", length=3, nullable=true)
      */
     private $cantPeriTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_OPER_OPE", type="string", length=9, nullable=false)
+     * @ORM\Column(name="CODI_OPER_OPE", type="string", length=9, nullable=true)
      */
     private $codiOperOpe;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ABREV_TIPO_TPL", type="string", length=10, nullable=false)
+     * @ORM\Column(name="ABREV_TIPO_TPL", type="string", length=10, nullable=true)
      */
     private $abrevTipoTpl;
 

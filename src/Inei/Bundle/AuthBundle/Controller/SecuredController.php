@@ -1,13 +1,13 @@
 <?php
 
-namespace Inei\Bundle\PayrollBundle\Controller;
+namespace Inei\Bundle\AuthBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Inei\Bundle\PayrollBundle\Entity\Usuarios;
+use Inei\Bundle\AuthBundle\Entity\Usuarios;
 use Symfony\Component\HttpFoundation\Response;
 
 

@@ -5,3 +5,15 @@ services:
 #    inei_payroll.example:
 #        class: %inei_payroll.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    inei_payroll.form.type.tomo:
+        class: Inei\Bundle\PayrollBundle\Form\Type\TomoType
+        tags:
+            - { name: form.type, alias: tomo }
+    inei_payroll.form.type.concepto:
+        class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoType
+        tags:
+            - { name: form.type, alias: concepto }
+    inei_payroll.form.type.folio:
+        class: Inei\Bundle\PayrollBundle\Form\Type\FolioType
+        tags:
+            - { name: form.type, alias: folio }

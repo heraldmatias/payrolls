@@ -65,7 +65,7 @@ class PlanillaHistoricas
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla
      * @ORM\ManyToOne(targetEntity="Subtplanilla", inversedBy="subplanillas")
-     * @ORM\JoinColumn(name="SUBT_PLAN_TPL", referencedColumnName="SUBT_PLAN_TPL")     
+     * @ORM\JoinColumn(name="SUBT_PLAN_STP", referencedColumnName="SUBT_PLAN_STP")     
      */
     private $subtPlanTpl;
 

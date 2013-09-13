@@ -1,0 +1,45 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block form %}
+<div class="span10">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Listar Tomos</h3>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Descripción</th>
+                        <th>Tipo</th>
+                        <th>Calculo</th>
+                        <th>Cta. Debe</th>
+                        <th>Cta. Haber</th>
+                        <th>Clase</th>
+                        <th>Pago</th>
+                        <th>Sede</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tomo in pagination %}
+                    <tr {% if loop.index is odd %}class="info"{% endif %}>
+                        <td><a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}">{{ tomo.codiConcTco }}</a></td>
+                        <td>{{ tomo.descCortTco }}</td>
+                        <td>{{ tomo.tipoConcTco }}</td>
+                        <td>{{ tomo.tipoCalcTco }}</td>
+                        <td>{{ tomo.cntaDebeTco }}</td>
+                        <td>{{ tomo.cntaHabeTco }}</td>
+                        <td>{{ tomo.clasConcTco }}</td>
+                        <td>{{ tomo.flagPagoTco }}</td>
+                        <td>{{ tomo.sedeConcTco }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
