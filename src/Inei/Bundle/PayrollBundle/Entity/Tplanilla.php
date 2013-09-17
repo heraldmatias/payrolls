@@ -64,7 +64,9 @@ class Tplanilla
      */
     private $abrevTipoTpl;
 
-
+    public function __toString() {
+        return $this->descTipoTpl;
+    }
 
     /**
      * Get tipoPlanTpl

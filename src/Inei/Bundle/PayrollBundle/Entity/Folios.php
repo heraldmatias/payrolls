@@ -3,7 +3,7 @@
 namespace Inei\Bundle\PayrollBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Folios
  *
@@ -43,25 +43,40 @@ class Folios
     
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\Tomos
-     * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="folios")
+     * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="setfolios")
      * @ORM\JoinColumn(name="CODI_TOMO", referencedColumnName="CODI_TOMO", nullable=false)
      */
     private $tomo;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
-     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="folios")
+     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="plafolios")
      * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
      */
     private $tipoPlanTpl;
 
     /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla
-     * @ORM\ManyToOne(targetEntity="Subtplanilla", inversedBy="folios")
-     * @ORM\JoinColumn(name="SUBT_PLAN_STP", referencedColumnName="SUBT_PLAN_STP")     
+     * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla     
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=false)     
      */
-    private $subtPlanTpl;
+    private $subtPlanStp;
 
+    /**
+     * Bidirectional - muchas planillas tienen muchos conceptos (OWNING SIDE)
+     *
+     * @ORM\ManyToMany(targetEntity="Conceptos", inversedBy="folios", cascade={"persist"})
+     * @ORM\JoinTable(name="folios_conceptos",
+     *   joinColumns={@ORM\JoinColumn(name="CODI_FOLIO", referencedColumnName="CODI_FOLIO")},
+     *   inverseJoinColumns={@ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")}
+     * )
+     */
+    private $conceptos;
+
+    public function __construct()
+    {
+        $this->conceptos = new ArrayCollection();
+    }
+    
     /**
      * Get codiFolio
      *
@@ -162,30 +177,7 @@ class Folios
     public function getTipoPlanTpl()
     {
         return $this->tipoPlanTpl;
-    }
-
-    /**
-     * Set subtPlanTpl
-     *
-     * @param \Inei\Bundle\PayrollBundle\Entity\Subtplanilla $subtPlanTpl
-     * @return Folios
-     */
-    public function setSubtPlanTpl(\Inei\Bundle\PayrollBundle\Entity\Subtplanilla $subtPlanTpl = null)
-    {
-        $this->subtPlanTpl = $subtPlanTpl;
-    
-        return $this;
-    }
-
-    /**
-     * Get subtPlanTpl
-     *
-     * @return \Inei\Bundle\PayrollBundle\Entity\Subtplanilla 
-     */
-    public function getSubtPlanTpl()
-    {
-        return $this->subtPlanTpl;
-    }
+    }    
 
     /**
      * Set tomo
@@ -208,5 +200,64 @@ class Folios
     public function getTomo()
     {
         return $this->tomo;
+    }
+
+    
+
+    /**
+     * Set subtPlanStp
+     *
+     * @param string $subtPlanStp
+     * @return Folios
+     */
+    public function setSubtPlanStp($subtPlanStp)
+    {
+        $this->subtPlanStp = $subtPlanStp;
+    
+        return $this;
+    }
+
+    /**
+     * Get subtPlanStp
+     *
+     * @return string 
+     */
+    public function getSubtPlanStp()
+    {
+        return $this->subtPlanStp;
+    }
+
+
+    /**
+     * Add conceptos
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
+     * @return Folios
+     */
+    public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos)
+    {
+        $this->conceptos[] = $conceptos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove conceptos
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
+     */
+    public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos)
+    {
+        $this->conceptos->removeElement($conceptos);
+    }
+
+    /**
+     * Get conceptos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getConceptos()
+    {
+        return $this->conceptos;
     }
 }

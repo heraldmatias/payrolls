@@ -3,7 +3,7 @@
 namespace Inei\Bundle\PayrollBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Conceptos
  *
@@ -11,15 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\ConceptosRepository")
  */
 class Conceptos
-{
+{    
     /**
-     * @var string
-     *
-     * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="CONCEPTOS_CODI_CONC_TCO_seq", allocationSize=1, initialValue=1)
-     */
+    * @var string
+    *
+    * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
+    * @ORM\Id
+    * @ORM\GeneratedValue(strategy="SEQUENCE")
+    * @ORM\SequenceGenerator(sequenceName="CONCEPTOS_CODI_CONC_TCO_seq", allocationSize=1, initialValue=1)
+    */
     private $codiConcTco;
 
     /**
@@ -39,7 +39,7 @@ class Conceptos
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=50, nullable=true)
+     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=50, nullable=false)
      */
     private $descConcTco;
 
@@ -148,7 +148,10 @@ class Conceptos
      */
     private $sedeConcTco;
 
-
+    /**
+     * @ORM\ManyToMany(targetEntity="Folios", mappedBy="conceptos")
+     */
+    private $folios; 
 
     /**
      * Get codiConcTco
@@ -572,5 +575,58 @@ class Conceptos
     public function getSedeConcTco()
     {
         return $this->sedeConcTco;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->folios = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add folios
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
+     * @return Conceptos
+     */
+    public function addFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
+    {
+        $this->folios[] = $folios;
+    
+        return $this;
+    }
+
+    /**
+     * Remove folios
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
+     */
+    public function removeFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
+    {
+        $this->folios->removeElement($folios);
+    }
+
+    /**
+     * Get folios
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFolios()
+    {
+        return $this->folios;
+    }
+
+    /**
+     * Set codiConcTco
+     *
+     * @param string $codiConcTco
+     * @return Conceptos
+     */
+    public function setCodiConcTco($codiConcTco)
+    {
+        $this->codiConcTco = $codiConcTco;
+    
+        return $this;
     }
 }

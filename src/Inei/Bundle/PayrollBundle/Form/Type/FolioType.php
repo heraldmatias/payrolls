@@ -21,17 +21,25 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class FolioType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('folio', null, array())
-                ->add('periodoFolio', null, array())
-                ->add('registrosFolio', null, array())
-                ->add('tipoPlanTpl', null, array())
-                ->add('subtPlanTpl', null, array());               
-                /*->add('save', 'submit', array(
-                    'label' => 'Guardar',
-                    'attr' => array('class' => 'btn btn-primary'),))
-                ->add('saveAndAdd', 'submit', array(
-                    'label' => 'Guardar y Añadir Otro',
-                    'attr' => array('class' => 'btn btn-primary')))*/
+        $builder->add('folio', null, array(
+                    'attr' => array('class' => 'folio')
+                ))
+                ->add('periodoFolio', null, array(
+                    'attr' => array('class' => 'periodo')
+                ))
+                ->add('registrosFolio', null, array(
+                    'attr' => array('class' => 'registros')
+                ))
+                ->add('tipoPlanTpl', null, array(
+                    'attr' => array('class' => 'planilla')
+                ))
+                ->add('subtPlanStp', null, array())
+                ->add('conceptos', 'collection', array(
+                    'type'         => new ConceptoFolioType(),
+                    'allow_add'    => true,
+                    'by_reference' => false,
+                    'prototype_name' => '__conceptform__'
+                ));
     }
 
     public function getName() {

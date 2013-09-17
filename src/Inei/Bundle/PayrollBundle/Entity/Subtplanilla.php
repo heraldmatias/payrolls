@@ -11,16 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\SubtplanillaRepository")
  */
 class Subtplanilla
-{
-    /**
-     * @var integer
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\Column(name="SUBT_PLAN_STP", type="integer", nullable=false)
-     */
-    private $codiSubPlan;
+{   
     
     /**
+     * @ORM\Id
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
      * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="planillas")
      * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL", nullable=true)
@@ -28,8 +22,9 @@ class Subtplanilla
     private $tipoPlanTpl;
     
     /**
+     * @ORM\Id
      * @var string
-     * @ORM\Column(name="CODI_PLAN_STP", type="string", length=2, nullable=true)
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=true)
      */
     private $subtPlanStp;    
 
@@ -51,6 +46,10 @@ class Subtplanilla
      */
     private $observ;
 
+    public function __toString() {
+        return $this->descSubtStp;
+    }
+    
     /**
      * Get subtPlanStp
      *
@@ -152,5 +151,19 @@ class Subtplanilla
     public function getTipoPlanTpl()
     {
         return $this->tipoPlanTpl;
+    }
+    
+
+    /**
+     * Set subtPlanStp
+     *
+     * @param string $subtPlanStp
+     * @return Subtplanilla
+     */
+    public function setSubtPlanStp($subtPlanStp)
+    {
+        $this->subtPlanStp = $subtPlanStp;
+    
+        return $this;
     }
 }

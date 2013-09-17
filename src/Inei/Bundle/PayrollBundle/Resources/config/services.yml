@@ -17,3 +17,7 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\FolioType
         tags:
             - { name: form.type, alias: folio }
+    inei_payroll.form.type.conceptofolio:
+        class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoFolioType
+        tags:
+            - { name: form.type, alias: conceptofolio }

@@ -29,6 +29,7 @@ class TomoType extends AbstractType
                     'type'         => new FolioType(),
                     'allow_add'    => true,
                     'by_reference' => false,
+                    'prototype_name' => '__folioform__'
                     ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

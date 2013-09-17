@@ -63,9 +63,8 @@ class PlanillaHistoricas
     private $tipoPlanTpl;
 
     /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla
-     * @ORM\ManyToOne(targetEntity="Subtplanilla", inversedBy="subplanillas")
-     * @ORM\JoinColumn(name="SUBT_PLAN_STP", referencedColumnName="SUBT_PLAN_STP")     
+     * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla     
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=true )
      */
     private $subtPlanTpl;
 
@@ -78,7 +77,7 @@ class PlanillaHistoricas
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\conceptos
-     * @ORM\ManyToOne(targetEntity="Conceptos", inversedBy="conceptos")
+     * @ORM\ManyToOne(targetEntity="Conceptos")
      * @ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")
      */
     private $codiConcTco;
