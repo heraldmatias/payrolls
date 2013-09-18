@@ -17,10 +17,13 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 
 class FolioType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
+        $entityManager = $options['em'];
+        $transformer = new ValidateConceptTransformer($entityManager);
         $builder->add('folio', null, array(
                     'attr' => array('class' => 'folio')
                 ))
@@ -34,12 +37,13 @@ class FolioType extends AbstractType
                     'attr' => array('class' => 'planilla')
                 ))
                 ->add('subtPlanStp', null, array())
-                ->add('conceptos', 'collection', array(
+                ->add($builder->create('conceptos', 'collection', array(
                     'type'         => new ConceptoFolioType(),
                     'allow_add'    => true,
+                    'allow_delete'    => true,
                     'by_reference' => false,
-                    'prototype_name' => '__conceptform__'
-                ));
+                    'prototype_name' => '__conceptform__'))->addModelTransformer($transformer)
+                );
     }
 
     public function getName() {
@@ -53,6 +57,14 @@ class FolioType extends AbstractType
             'csrf_field_name' => '_token',
             // a unique key to help generate the secret token
             'intention' => 'task_item',
+        ));
+        
+        $resolver->setRequired(array(
+            'em',
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'em' => 'Doctrine\Common\Persistence\ObjectManager',
         ));
     }
 

@@ -1,5 +1,6 @@
 {% extends 'IneiAuthBundle:Secured:index.html.twig' %}
 {% form_theme form 'IneiPayrollBundle:Form:form_table_horizontal_layout.html.twig' %}
+{% form_theme form.folios.vars.prototype.conceptos 'IneiPayrollBundle:Form:form_table_td_layout.html.twig' %}
 {% block css %}
 <style type="text/css" >
         .folio{
@@ -24,7 +25,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Modificar Tomos</h3>
         </div>
-        <div class="modal-body">
+        <div class="modal-body">        
         {{ form_errors(form) }}
             {{ form_label(form.anoTomo) }}
             {{ form_errors(form.anoTomo) }}
@@ -53,7 +54,7 @@
                         <td>{{ form_errors(folio.tipoPlanTpl) }}{{ form_widget(folio.tipoPlanTpl) }}</td>
                         <td>{{ form_errors(folio.subtPlanStp) }}{{ form_widget(folio.subtPlanStp) }}</td>
                         <td>{% for concepto in folio.conceptos %}
-                            {{ form_errors(concepto.descConcTco) }}{{ form_widget(concepto.descConcTco) }}
+                            {{ form_errors(concepto.codiConcTco) }}{{ form_widget(concepto.codiConcTco) }}
                             {% endfor %}
                             <input type="button" name="btnconcept-{{ loop.index0 }}" value="add concept">
                         </td>
@@ -84,6 +85,7 @@
         jQuery(document).ready(function() {
             // add the "add a tag" anchor and li to the tags ul
             options.append($newLinkLi);
+            conceptoEvents();
 
             // count the current form inputs we have (e.g. 2), use that as the new
             // index when inserting a new item (e.g. 2)
@@ -108,11 +110,11 @@
             // instead be a number based on how many items we have
             var newForm = prototype.replace(/__folioform__/g, index);
             var $newForm = $(newForm);
-            var concepts = $newForm.find('td:last-child');
+            var concepts = $('<td></td>');
             concepts.html($addConcept);
             // increase the index with one for the next item
             collectionHolder.data('index', index + 1);
-                        
+            $newForm.append(concepts);
             collectionHolder.append($newForm);
 
             $addConcept.on('click', function(e) {
@@ -130,28 +132,34 @@
             // get the new index
             var index2 = collectionHolder.data('index2');
             
-            var newForm = prototype.replace(/__folioform__/g, index).replace(/__conceptform__/g, index2);
-            var $newForm = $(newForm);
+            var newForm = prototype.replace(/__folioform__/g, index).replace(/__conceptform__/g, index2);            
             
             // increase the index with one for the next item
             collectionHolder.data('index2', index2 + 1);
                         
-            collectionHolder.append($newForm);
+            collectionHolder.append(newForm);
         }
         function refreshEvents(collectionHolder) {
             // get the new index
-            var index = collectionHolder.data('index');
             $.each(collectionHolder.find('tr'), function(k,v){
                 var concepts = $(v).find('td:last-child');
                 var $addConcept = concepts.find("input[type='button']");
                 $addConcept.on('click', function(e) {
                     // prevent the link from creating a "#" on the URL
+                    var count = concepts.find("input[type='text']").length;
                     e.preventDefault();
-                    concepts.data('index2', concepts.find("input[type='text']").length);
+                    concepts.data('index2', count);
                     // add a new tag form (see next code block)
-                    addConceptForm(concepts, index);
+                    addConceptForm(concepts, k);
                 });
             });            
+        }
+        function conceptoEvents(){
+            $.each($("input[type='text']").find('.codiconcepto'),function(k, v){
+                $(v).on('dblclick', function(e){
+                   $(this).remove();
+                });
+            });
         }
         </script>
 {% endblock %}    

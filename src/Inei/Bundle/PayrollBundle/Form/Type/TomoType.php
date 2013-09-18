@@ -28,8 +28,10 @@ class TomoType extends AbstractType
                 ->add('folios', 'collection', array(
                     'type'         => new FolioType(),
                     'allow_add'    => true,
+                    'allow_delete'    => true,
                     'by_reference' => false,
-                    'prototype_name' => '__folioform__'
+                    'prototype_name' => '__folioform__',
+                    'options' => array ('em' => $options['em'],)
                     ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
@@ -50,6 +52,14 @@ class TomoType extends AbstractType
             'csrf_field_name' => '_token',
             // a unique key to help generate the secret token
             'intention' => 'task_item',
+        ));
+        
+        $resolver->setRequired(array(
+            'em',
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'em' => 'Doctrine\Common\Persistence\ObjectManager',
         ));
     }
 

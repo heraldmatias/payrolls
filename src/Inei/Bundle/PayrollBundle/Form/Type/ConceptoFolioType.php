@@ -21,8 +21,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ConceptoFolioType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('descConcTco', null, array(
-                    'attr' => array('class' => 'desc')
+        $builder->add('codiConcTco', null, array(
+                    'attr' => array('class' => 'codiconcepto span2')
                 ));
     }
 

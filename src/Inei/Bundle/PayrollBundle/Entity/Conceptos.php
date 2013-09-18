@@ -18,7 +18,6 @@ class Conceptos
     * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
     * @ORM\Id
     * @ORM\GeneratedValue(strategy="SEQUENCE")
-    * @ORM\SequenceGenerator(sequenceName="CONCEPTOS_CODI_CONC_TCO_seq", allocationSize=1, initialValue=1)
     */
     private $codiConcTco;
 
@@ -581,7 +580,7 @@ class Conceptos
      */
     public function __construct()
     {
-        $this->folios = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->folios = new ArrayCollection();
     }
     
     /**
@@ -592,9 +591,7 @@ class Conceptos
      */
     public function addFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
     {
-        $this->folios[] = $folios;
-    
-        return $this;
+        $this->folios[] = $folios;        
     }
 
     /**

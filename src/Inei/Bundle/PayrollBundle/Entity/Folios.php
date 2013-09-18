@@ -4,14 +4,17 @@ namespace Inei\Bundle\PayrollBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 /**
  * Folios
  *
  * @ORM\Table(name="FOLIOS")
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\FoliosRepository")
+ * @HasLifecycleCallbacks
  */
+
 class Folios
-{    
+{        
     /**
      * @var integer
      * @ORM\Id
@@ -236,8 +239,10 @@ class Folios
      */
     public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos)
     {
-        $this->conceptos[] = $conceptos;
-    
+        echo $conceptos->getCodiConcTco();
+        if(!$this->conceptos->contains($conceptos)){
+            $this->conceptos[] = $conceptos;
+        }
         return $this;
     }
 
