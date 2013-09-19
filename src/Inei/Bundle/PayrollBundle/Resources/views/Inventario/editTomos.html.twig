@@ -120,7 +120,7 @@
             $addConcept.on('click', function(e) {
                 // prevent the link from creating a "#" on the URL
                 e.preventDefault();
-                concepts.data('index2', concepts.find('tr').length);
+                concepts.data('index2', concepts.find("input[type='text']").length);
                 // add a new tag form (see next code block)
                 addConceptForm(concepts, index);
             });

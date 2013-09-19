@@ -59,35 +59,23 @@ class ValidateConceptTransformer implements DataTransformerInterface {
         if (!$concepts) {
             return null;
         }
-        $toremove = array();
-        $topersist = array();
-        /* SI ES UNA NUEVA COLLECCION DE CONCEPTOS */
-        if (!$concepts instanceof \Doctrine\ORM\PersistentCollection) {
-            foreach ($concepts as $key => $concept) {
-                $_concept = $this->om
-                        ->getRepository('IneiPayrollBundle:Conceptos')
-                        ->findOneBy(array('codiConcTco' => $concept->getCodiConcTco()));
-                if ($_concept) {
-                    $topersist[] = $_concept;
-                }
-            }
-            return $topersist;
-        }
         /* SI ES QUE ES UNA ACTUALIZACION DE LOS CONCEPTOS */
-        foreach ($concepts as $key => $concept) {
-            $_concept = $this->om
-                    ->getRepository('IneiPayrollBundle:Conceptos')
-                    ->findOneBy(array('codiConcTco' => $concept->getCodiConcTco()));
-            if (!$_concept) {
-                $toremove[] = $concept;
-            } else {
-                $topersist[] = $_concept;
-            }
+        foreach ($concepts as $concept) {
+            $topersist[] = $concept->getCodiConcTco();
         }
-        foreach ($topersist as $key => $value) {
-            $concepts->set($key, $value);
-        }
-        return $concepts;
+        $_topersist = $this->getQueryConceptos($topersist)->getResult();
+        return $_topersist;
+    }
+    
+    private function getQueryConceptos($codigos){
+        $qb = $this->om->createQueryBuilder();
+        $qb->select('c')
+                ->from('IneiPayrollBundle:Conceptos', 'c')
+                ->where('c.codiConcTco IN (:lista)')
+                ->orderBy('c.codiConcTco', 'ASC')
+                ->setParameter('lista', $codigos);
+        $query = $qb->getQuery();
+        return $query;
     }
 
 }

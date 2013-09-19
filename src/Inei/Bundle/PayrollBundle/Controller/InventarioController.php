@@ -62,20 +62,16 @@ class InventarioController extends Controller {
         $em = $this->getDoctrine()
             ->getRepository('IneiPayrollBundle:Tomos');
         $object = $em->find($pk);
-        //$object->getConceptos();
+        /*LIMPIAR LA REFERENCIA ENTRE CONCEPTOS Y FOLIOS*/
+        if($request->getMethod()==='POST'){
+            foreach ($object->getFolios() as $value) {
+                $value->getConceptos()->clear();
+            }
+        }
         $form = $this->createForm('tomo', $object, array('em' => $this->getDoctrine()->getManager()));
-        //if($request->getMethod()==='POST'){
-//            $em = $this->getDoctrine()->getManager();
-//            foreach ($object->getFolios() as $key => $value) {
-//                $value->getConceptos()->clear();
-//            }
-//            $em->persist($object);
-//                $em->flush();
-        //}
         $form->handleRequest($request);
-        /*BUSCAR ACTUALIZAR LA RELACION SIN QUE INSERTE*/
+        /*VERFICAR SI EL FORMULARIO ES VALIDO*/
         if ($form->isValid()) {
-            // perform some action, such as saving the task to the database
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
@@ -83,8 +79,7 @@ class InventarioController extends Controller {
             return $this->redirect($this->generateUrl($nextAction));
         }
         return array(
-            'form' => $form->createView(),
-            //'conceptos' => $object->getFolios()[2]->getConceptos()
+            'form' => $form->createView()
         );
     }
 
