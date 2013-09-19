@@ -50,7 +50,7 @@ class Tomos
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\Folios
-     * @ORM\OneToMany(targetEntity="Folios", mappedBy="tomo", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Folios", mappedBy="tomo", cascade={"persist"}, fetch="EXTRA_LAZY")
      */
     private $folios;
 

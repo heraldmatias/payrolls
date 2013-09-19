@@ -26,7 +26,7 @@ class InventarioController extends Controller {
         $query = $em->findAll();
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-                $query, $this->get('request')->query->get('page', 1)/* page number */, 450/* limit per page */
+                $query, $this->get('request')->query->get('page', 1)/* page number */, 15/* limit per page */
         );
         return array(
             'pagination' => $pagination
@@ -68,10 +68,10 @@ class InventarioController extends Controller {
             foreach ($object->getFolios() as $value) {
                 $value->getConceptos()->clear();
             }
-            $originalFolios = array();
-            foreach ($object->getFolios() as $folio) {
-                $originalFolios[] = $folio;
-            }
+            $originalFolios = $object->getFolios()->toArray();
+//            foreach ($object->getFolios() as $folio) {
+//                $originalFolios[] = $folio;
+//            }
         }
         $form = $this->createForm('tomo', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);

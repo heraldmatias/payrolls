@@ -148,7 +148,7 @@ class Conceptos
     private $sedeConcTco;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Folios", mappedBy="conceptos")
+     * @ORM\ManyToMany(targetEntity="Folios", mappedBy="conceptos", fetch="EXTRA_LAZY")
      */
     private $folios; 
 

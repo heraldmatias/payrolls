@@ -67,7 +67,7 @@ class Folios
     /**
      * Bidirectional - muchas planillas tienen muchos conceptos (OWNING SIDE)
      *
-     * @ORM\ManyToMany(targetEntity="Conceptos", inversedBy="folios", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="Conceptos", inversedBy="folios", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinTable(name="folios_conceptos",
      *   joinColumns={@ORM\JoinColumn(name="CODI_FOLIO", referencedColumnName="CODI_FOLIO")},
      *   inverseJoinColumns={@ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")}

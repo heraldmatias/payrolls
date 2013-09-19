@@ -37,12 +37,6 @@ class ValidateConceptTransformer implements DataTransformerInterface {
         if (null === $concepts) {
             return null;
         }
-        /* if ($concept instanceof \Doctrine\ORM\PersistentCollection){
-          return null;
-          } */
-//        $p = new \Doctrine\ORM\PersistentCollection();
-//        $p->set($key, $value);
-//        $p->removeElement($element);
         return $concepts;
     }
 
@@ -64,19 +58,19 @@ class ValidateConceptTransformer implements DataTransformerInterface {
         foreach ($concepts as $concept) {
             $topersist[] = $concept->getCodiConcTco();
         }
-        $_topersist = $this->getQueryConceptos($topersist)->getResult();
+        $_topersist = $this->getQueryConceptos($topersist);
         return $_topersist;
     }
     
     private function getQueryConceptos($codigos){
         $qb = $this->om->createQueryBuilder();
-        $qb->select('c')
+        $qb->select('partial c.{codiConcTco}')
                 ->from('IneiPayrollBundle:Conceptos', 'c')
                 ->where('c.codiConcTco IN (:lista)')
                 ->orderBy('c.codiConcTco', 'ASC')
                 ->setParameter('lista', $codigos);
         $query = $qb->getQuery();
-        return $query;
+        return $query->getResult();//\Doctrine\ORM\Query::HYDRATE_ARRAY
     }
 
 }
