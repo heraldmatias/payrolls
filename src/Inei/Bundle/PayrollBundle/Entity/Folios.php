@@ -18,7 +18,7 @@ class Folios
     /**
      * @var integer
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="CODI_FOLIO", type="integer", nullable=false)
      */
     private $codiFolio;

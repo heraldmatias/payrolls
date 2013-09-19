@@ -18,21 +18,33 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class TomoType extends AbstractType
-{
+class TomoType extends AbstractType {
+
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('anoTomo', null, array())
-                ->add('periodoTomo', null, array())
-                ->add('foliosTomo', null, array())
-                ->add('descTomo', null, array())
+        $builder->add('anoTomo', null, array(
+                    'label' => 'Año'
+                ))
+                ->add('periodoTomo', null, array(
+                    'label' => 'Periodo'
+                ))
+                ->add('foliosTomo', null, array(
+                    'label' => 'Folios'
+                ))
+                ->add('descTomo', null, array(
+                    'label' => 'Descripción',
+                    'attr' => array(
+                        'style' => 'width:100%;',
+                        'rows' => '5'
+                    )
+                ))
                 ->add('folios', 'collection', array(
-                    'type'         => new FolioType(),
-                    'allow_add'    => true,
-                    'allow_delete'    => true,
+                    'type' => new FolioType(),
+                    'allow_add' => true,
+                    'allow_delete' => true,
                     'by_reference' => false,
                     'prototype_name' => '__folioform__',
-                    'options' => array ('em' => $options['em'],)
-                    ))
+                    'options' => array('em' => $options['em'],)
+                ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))
@@ -53,7 +65,7 @@ class TomoType extends AbstractType
             // a unique key to help generate the secret token
             'intention' => 'task_item',
         ));
-        
+
         $resolver->setRequired(array(
             'em',
         ));

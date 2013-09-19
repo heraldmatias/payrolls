@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\Tomos;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 /**
  * Description of InventarioController
  *
@@ -21,11 +22,11 @@ class InventarioController extends Controller {
      */
     public function tomosAction() {
         $em = $this->getDoctrine()
-            ->getRepository('IneiPayrollBundle:Tomos');
+                ->getRepository('IneiPayrollBundle:Tomos');
         $query = $em->findAll();
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-                $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
+                $query, $this->get('request')->query->get('page', 1)/* page number */, 450/* limit per page */
         );
         return array(
             'pagination' => $pagination
@@ -60,19 +61,36 @@ class InventarioController extends Controller {
      */
     public function editTomosAction(Request $request, $pk) {
         $em = $this->getDoctrine()
-            ->getRepository('IneiPayrollBundle:Tomos');
+                ->getRepository('IneiPayrollBundle:Tomos');
         $object = $em->find($pk);
-        /*LIMPIAR LA REFERENCIA ENTRE CONCEPTOS Y FOLIOS*/
-        if($request->getMethod()==='POST'){
+        /* LIMPIAR LA REFERENCIA ENTRE CONCEPTOS Y FOLIOS */
+        if ($request->getMethod() === 'POST') {
             foreach ($object->getFolios() as $value) {
                 $value->getConceptos()->clear();
+            }
+            $originalFolios = array();
+            foreach ($object->getFolios() as $folio) {
+                $originalFolios[] = $folio;
             }
         }
         $form = $this->createForm('tomo', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);
-        /*VERFICAR SI EL FORMULARIO ES VALIDO*/
+        /* VERFICAR SI EL FORMULARIO ES VALIDO */
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            // buscar los folios que ya no estan contenidos en un tomo
+            foreach ($object->getFolios() as $folio) {
+                foreach ($originalFolios as $key => $toDel) {
+                    if ($toDel->getCodiFolio() === $folio->getCodiFolio()) {
+                        unset($originalFolios[$key]);
+                    }
+                }
+            }
+            foreach ($originalFolios as $folio) {
+                // Eliminar los folios del tomo y de la base de datos
+                $object->removeFolio($folio);
+                $em->remove($folio);
+            }
             $em->persist($object);
             $em->flush();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
@@ -87,7 +105,7 @@ class InventarioController extends Controller {
      * @Route("/save/test", name="_inventario_test")
      * @Template("")
      */
-    public function testAction(){
+    public function testAction() {
         $emf = $this->getDoctrine()->getRepository('IneiPayrollBundle:Folios');
         $emc = $this->getDoctrine()->getRepository('IneiPayrollBundle:Conceptos');
         $em = $this->getDoctrine()->getManager();
@@ -95,19 +113,20 @@ class InventarioController extends Controller {
         $concept1 = $emc->findOneBy(array('codiConcTco' => '00103'));
         $concept2 = $emc->findOneBy(array('codiConcTco' => '00102'));
         $concept3 = $emc->findOneBy(array('codiConcTco' => '00101'));
-        if(!$folio->getConceptos()->contains($concept1)){
+        if (!$folio->getConceptos()->contains($concept1)) {
             $folio->addConcepto($concept1);
         }
-        if(!$folio->getConceptos()->contains($concept2)){
+        if (!$folio->getConceptos()->contains($concept2)) {
             $folio->addConcepto($concept2);
         }
-        if(!$folio->getConceptos()->contains($concept3)){
+        if (!$folio->getConceptos()->contains($concept3)) {
             $folio->getConceptos()->set(2, $concept3);
         }
         $em->persist($folio);
         $em->flush();
         return new Response(
-            'TODOD BIEN'
+                'TODOD BIEN'
         );
     }
+
 }

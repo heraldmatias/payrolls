@@ -15,7 +15,7 @@ class Tomos
     /**
      * @var integer
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="CODI_TOMO", type="integer", nullable=false)
      */
     private $codiTomo;

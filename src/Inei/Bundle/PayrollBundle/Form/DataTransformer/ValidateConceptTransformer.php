@@ -59,6 +59,7 @@ class ValidateConceptTransformer implements DataTransformerInterface {
         if (!$concepts) {
             return null;
         }
+        $topersist = array();
         /* SI ES QUE ES UNA ACTUALIZACION DE LOS CONCEPTOS */
         foreach ($concepts as $concept) {
             $topersist[] = $concept->getCodiConcTco();
