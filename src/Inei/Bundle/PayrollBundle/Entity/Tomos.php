@@ -15,7 +15,7 @@ class Tomos
     /**
      * @var integer
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(name="CODI_TOMO", type="integer", nullable=false)
      */
     private $codiTomo;
@@ -54,6 +54,10 @@ class Tomos
      */
     private $folios;
 
+    public function __toString() {
+        return 'TOMO - '.$this->codiTomo;
+    }
+    
     public function __construct()
     {
         $this->folios = new ArrayCollection();
@@ -69,16 +73,6 @@ class Tomos
         
     }*/
     
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     /**
      * Set codiTomo
      *

@@ -148,10 +148,13 @@ class Conceptos
     private $sedeConcTco;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Folios", mappedBy="conceptos", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="folios", fetch="EXTRA_LAZY")
      */
     private $folios; 
 
+    public function __toString() {
+        return $this->getCodiConcTco().' - '.$this->getDescCortTco();
+    }
     /**
      * Get codiConcTco
      *

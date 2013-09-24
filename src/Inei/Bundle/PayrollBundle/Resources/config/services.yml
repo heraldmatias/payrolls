@@ -21,3 +21,26 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoFolioType
         tags:
             - { name: form.type, alias: conceptofolio }
+    #ONLY ENTITY
+    inei_payroll.form.type.tomos:
+        class: Inei\Bundle\PayrollBundle\Form\Type\TomosType
+        tags:
+            - { name: form.type, alias: tomos }
+    inei_payroll.form.type.folios:
+        class: Inei\Bundle\PayrollBundle\Form\Type\FoliosType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: folios }
+    inei_payroll.form.type.conceptofolios:
+        class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoFoliosType
+        tags:
+            - { name: form.type, alias: conceptofolios }
+    #SEARCHS
+    inei_payroll.form.type.search_tomos:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchTomosType
+        tags:
+            - { name: form.type, alias: search_tomos }
+    inei_payroll.form.type.search_folios:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchFoliosType
+        tags:
+            - { name: form.type, alias: search_folios }

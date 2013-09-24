@@ -1,0 +1,58 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block form %}
+<div class="span10">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Listar Folios</h3>
+            <a href="{{ path('_inventario_list') }}" class="close" ><i class="icon-arrow-left"></i></a>
+        </div>
+        <div class="modal-body">
+            {{ form_start(form) }}
+            <div class="row-fluid"><div class="span7">
+            <fieldset>
+                <legend>Opciones de Busqueda</legend>
+                <div class="row-fluid">
+                <div class="span1">{{ form_label(form.folio) }}</div><div class="span2"> {{ form_widget(form.folio) }} </div>
+                <div class="span2">{{ form_label(form.periodoFolio) }}</div><div class="span3"> {{ form_widget(form.periodoFolio) }} </div>
+                <div class="span1">{{ form_label(form.registrosFolio) }}</div><div class="span2">{{ form_widget(form.registrosFolio) }} </div>
+                <div class="span1">{{ form_widget(form.search) }} </div>
+                </div>
+            </fieldset>
+            </div></div>{{ form_end(form) }}
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Num Folio</th>
+                        <th>Periodo</th>
+                        <th>Registros</th>
+                        <th>Tipo Planilla</th>
+                        <th>Sub Planilla</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for folio in pagination %}
+                    <tr {% if loop.index is odd %}class="info"{% endif %}>
+                        <td>{{ folio.codiFolio }}</td>
+                        <td>{{ folio.folio }}</td>
+                        <td>{{ folio.periodoFolio }}</td>
+                        <td>{{ folio.registrosFolio }}</td>
+                        <td>{{ folio.tipoPlanTpl }}</td>
+                        <td>{{ folio.subtPlanStp }}</td>
+                        <td><!--- LINK A LAS PLANILLAS--->
+                            <a href="{{ path('_inventario_folio_edit', {'pk': folio.codiFolio}) }}" 
+                               title="Editar Folio"><i class="icon-edit"></i> </a>
+                            <a href="#" title="Ver Planillas"><i class="icon-list"></i> </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

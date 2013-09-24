@@ -25,9 +25,8 @@ class Folios
     
     /**
      * @var string
-     * 
-     * @ORM\Column(name="NUM_FOLIO", type="string", length=5, nullable=false)
-     */
+     * @ORM\Column(name="NUM_FOLIO", type="integer", nullable=false)
+    */
     private $folio;
 
     /**
@@ -65,13 +64,8 @@ class Folios
     private $subtPlanStp;
 
     /**
-     * Bidirectional - muchas planillas tienen muchos conceptos (OWNING SIDE)
      *
-     * @ORM\ManyToMany(targetEntity="Conceptos", inversedBy="folios", cascade={"persist"}, fetch="EXTRA_LAZY")
-     * @ORM\JoinTable(name="folios_conceptos",
-     *   joinColumns={@ORM\JoinColumn(name="CODI_FOLIO", referencedColumnName="CODI_FOLIO")},
-     *   inverseJoinColumns={@ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")}
-     * )
+     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="codiFolio", cascade={"persist"}, fetch="EXTRA_LAZY")
      */
     private $conceptos;
 
@@ -88,29 +82,6 @@ class Folios
     public function getCodiFolio()
     {
         return $this->codiFolio;
-    }
-
-    /**
-     * Set folio
-     *
-     * @param string $folio
-     * @return Folios
-     */
-    public function setFolio($folio)
-    {
-        $this->folio = $folio;
-    
-        return $this;
-    }
-
-    /**
-     * Get folio
-     *
-     * @return string 
-     */
-    public function getFolio()
-    {
-        return $this->folio;
     }
 
     /**
@@ -237,13 +208,14 @@ class Folios
      * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
      * @return Folios
      */
-    public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos)
+    public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos)
     {
-        echo $conceptos->getCodiConcTco();
-        if(!$this->conceptos->contains($conceptos)){
+        //echo $conceptos->getCodiConcTco();
+        //if(!$this->conceptos->contains($conceptos)){
             $this->conceptos[] = $conceptos;
-        }
-        return $this;
+            $conceptos->setCodiFolio($this);
+        //}
+        //return $this;
     }
 
     /**
@@ -251,7 +223,7 @@ class Folios
      *
      * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
      */
-    public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos)
+    public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos)
     {
         $this->conceptos->removeElement($conceptos);
     }
@@ -264,5 +236,41 @@ class Folios
     public function getConceptos()
     {
         return $this->conceptos;
+    }
+
+    /**
+     * Set codiFolio
+     *
+     * @param integer $codiFolio
+     * @return Folios
+     */
+    public function setCodiFolio($codiFolio)
+    {
+        $this->codiFolio = $codiFolio;
+
+        return $this;
+    }
+
+    /**
+     * Set folio
+     *
+     * @param integer $folio
+     * @return Folios
+     */
+    public function setFolio($folio)
+    {
+        $this->folio = $folio;
+
+        return $this;
+    }
+
+    /**
+     * Get folio
+     *
+     * @return integer 
+     */
+    public function getFolio()
+    {
+        return $this->folio;
     }
 }

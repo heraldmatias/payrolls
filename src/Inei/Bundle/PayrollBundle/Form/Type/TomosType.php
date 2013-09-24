@@ -18,26 +18,37 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ConceptoType extends AbstractType
-{
+class TomosType extends AbstractType {
+
+    private function generateCodes(){
+        $codes = array();
+        foreach (range(1, 419) as $number) {
+            $codes[$number] = 'TOMO - '.$number;
+        }
+        return $codes;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('codiCiclCic', null, array())
-                ->add('descConcTco', null, array())
-                ->add('descCortTco', null, array())
-                ->add('tipoConcTco', null, array())
-                ->add('tipoCalcTco', null, array())
-                ->add('secuCalcTco', null, array())
-                ->add('flagAsocTco', null, array())
-                ->add('flagRecuTco', null, array())
-                ->add('rntaQntaTco', null, array())
-                ->add('ctsCtsTco', null, array())
-                ->add('codiConcOnc', null, array())
-                ->add('codiEntiEnt', null, array())
-                ->add('cntaDebeTco', null, array())
-                ->add('cntaHabeTco', null, array())
-                ->add('clasConcTco', null, array())
-                ->add('flagPagoTco', null, array())
-                ->add('sedeConcTco', null, array())
+        $builder->add('codiTomo', 'choice', array(
+                    'label' => 'Tomo',
+                    'choices' => $this->generateCodes()
+                ))
+                ->add('anoTomo', null, array(
+                    'label' => 'Año'
+                ))
+                ->add('periodoTomo', null, array(
+                    'label' => 'Periodo'
+                ))
+                ->add('foliosTomo', null, array(
+                    'label' => 'Folios'
+                ))
+                ->add('descTomo', null, array(
+                    'label' => 'Descripción',
+                    'attr' => array(
+                        'style' => 'width:100%;',
+                        'rows' => '5'
+                    )
+                ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))
@@ -47,12 +58,12 @@ class ConceptoType extends AbstractType
     }
 
     public function getName() {
-        return 'concepto';
+        return 'tomos';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'Inei\Bundle\PayrollBundle\Entity\Conceptos',
+            'data_class' => 'Inei\Bundle\PayrollBundle\Entity\Tomos',
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             // a unique key to help generate the secret token

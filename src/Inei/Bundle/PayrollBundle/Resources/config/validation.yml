@@ -1,0 +1,15 @@
+Inei\Bundle\PayrollBundle\Entity\Tomos:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [codiTomo]
+            message: 'Ya existe un tomo con este número de tomo.'            
+Inei\Bundle\PayrollBundle\Entity\Folios:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [tomo, folio]
+            message: 'Ya existe un folio con este número de folio en el tomo seleccionado.'
+Inei\Bundle\PayrollBundle\Entity\ConceptosFolios:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [codiFolio, codiConcTco]
+            message: 'Ya existe un concepto en el mismo folio.'            

@@ -43,7 +43,12 @@ class FolioType extends AbstractType
                     'allow_delete'    => true,
                     'by_reference' => false,
                     'prototype_name' => '__conceptform__'))->addModelTransformer($transformer)
-                );
+                )->add('save', 'submit', array(
+                    'label' => 'Guardar',
+                    'attr' => array('class' => 'btn btn-primary'),))
+                ->add('saveAndAdd', 'submit', array(
+                    'label' => 'Guardar y Añadir Otro',
+                    'attr' => array('class' => 'btn btn-primary')));
     }
 
     public function getName() {

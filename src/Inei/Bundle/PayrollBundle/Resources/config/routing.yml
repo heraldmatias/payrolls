@@ -6,6 +6,8 @@ _inei_payroll_inventory:
     resource: "@IneiPayrollBundle/Controller/InventarioController.php"
     type:     annotation
     prefix:   /admin/inventory
+    requirements:
+        name: ".+"
     
 _inei_payroll_concept:
     resource: "@IneiPayrollBundle/Controller/ConceptoController.php"
