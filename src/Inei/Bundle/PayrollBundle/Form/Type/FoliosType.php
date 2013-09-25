@@ -119,9 +119,6 @@ class FoliosType extends AbstractType {
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             'method' => 'post',
-            'attr' => array(
-                'style' => 'margin:50px;'
-            ),
             // a unique key to help generate the secret token
             'intention' => 'task_item',
         ));

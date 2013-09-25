@@ -10,7 +10,6 @@
  *
  * @author holivares
  */
-// src/Inei/Bundle/PayrollBundle/Form/Type/TomoType.php
 
 namespace Inei\Bundle\PayrollBundle\Form\Type;
 
@@ -21,23 +20,65 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ConceptoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('codiCiclCic', null, array())
-                ->add('descConcTco', null, array())
-                ->add('descCortTco', null, array())
-                ->add('tipoConcTco', null, array())
-                ->add('tipoCalcTco', null, array())
+        $builder->add('codiCiclCic', null, array(
+                    'label' => 'Codigo'
+                ))
+                ->add('descConcTco', null, array(
+                    'label' => 'Descripcion'
+                ))
+                ->add('descCortTco', null, array(
+                    'label' => 'Descripcion Corta'
+                ))
+                ->add('tipoConcTco', 'choice', array(
+                    'label' => 'Tipo Concepto',
+                    'choices' => array(
+                        0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
+                    )
+                ))
+                ->add('tipoCalcTco', 'choice', array(
+                    'label' => 'Tipo Calculo',
+                    'choices' => array(
+                        0 => 'Otros', 1 => 'Fijo', 2  => 'Formula'
+                    )
+                ))
                 ->add('secuCalcTco', null, array())
                 ->add('flagAsocTco', null, array())
-                ->add('flagRecuTco', null, array())
-                ->add('rntaQntaTco', null, array())
-                ->add('ctsCtsTco', null, array())
+                ->add('flagRecuTco', null, array(
+                    'label' => 'Flag'
+                ))
+                ->add('rntaQntaTco', null, array(
+                    'label' => 'Renta Quinta'
+                ))
+                ->add('ctsCtsTco', null, array(
+                    'label' => 'Seleccion de CTS'
+                ))
                 ->add('codiConcOnc', null, array())
-                ->add('codiEntiEnt', null, array())
-                ->add('cntaDebeTco', null, array())
-                ->add('cntaHabeTco', null, array())
-                ->add('clasConcTco', null, array())
-                ->add('flagPagoTco', null, array())
-                ->add('sedeConcTco', null, array())
+                ->add('codiEntiEnt', null, array(
+                    
+                ))
+                ->add('cntaDebeTco', null, array(
+                    'label' => 'Cuenta Debe'
+                ))
+                ->add('cntaHabeTco', null, array(
+                    'label' => 'Cuenta Haber'
+                ))
+                ->add('clasConcTco', 'choice', array(
+                    'choices' => array(
+                        1 => 'Fijo', 2 => 'Variable'
+                    )
+                ))
+                ->add('flagPagoTco', 'choice', array(
+                    'choices' => array(
+                        1 => 'INEI', 2 => 'MEF'
+                    ),
+                    'label' => 'Pago'
+                ))
+                ->add('sedeConcTco', 'choice', array(
+                    'choices' => array(
+                        0 => 'Lima', 1 => 'ODEIS'
+                    ),
+                    'label' => 'Sede'
+                ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))
@@ -55,11 +96,8 @@ class ConceptoType extends AbstractType
             'data_class' => 'Inei\Bundle\PayrollBundle\Entity\Conceptos',
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
-            // a unique key to help generate the secret token
+            'method' => 'post',
             'intention' => 'task_item',
-            'attr' => array(
-                'style' => 'margin:50px;'
-            ),
         ));
     }
 

@@ -1,6 +1,6 @@
 {% extends 'IneiAuthBundle:Secured:index.html.twig' %}
 {% form_theme form.conceptos 'IneiPayrollBundle:Form:form_table_horizontal_layout.html.twig' %}
-{% block css %}
+{% block csspage %}
 <style type="text/css" >
         .folio{
             width: 50px;
@@ -90,12 +90,12 @@
                 </tbody>
             </table>
         </div>
-            <div class="modal-footer">
-                {{ form_widget(form.save) }}
-                {{ form_widget(form.saveAndAdd) }}
-                <a href="#" class="btn">Cerrar</a>
-            </div>            
-        </div>
+        <div class="modal-footer">
+            {{ form_widget(form.save) }}
+            {{ form_widget(form.saveAndAdd) }}
+            <a href="#" class="btn">Cerrar</a>
+        </div>            
+    </div>
         {{ form_end(form) }}
 </div>
 {% endblock %}
