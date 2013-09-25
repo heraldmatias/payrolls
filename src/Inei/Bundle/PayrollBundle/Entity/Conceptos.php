@@ -4,21 +4,22 @@ namespace Inei\Bundle\PayrollBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Conceptos
  *
  * @ORM\Table(name="CONCEPTOS")
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\ConceptosRepository")
  */
-class Conceptos
-{    
+class Conceptos {
+
     /**
-    * @var string
-    *
-    * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
-    * @ORM\Id
-    * @ORM\GeneratedValue(strategy="SEQUENCE")
-    */
+     * @var string
+     *
+     * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     */
     private $codiConcTco;
 
     /**
@@ -150,18 +151,68 @@ class Conceptos
     /**
      * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="folios", fetch="EXTRA_LAZY")
      */
-    private $folios; 
+    private $folios;
+    private static $TIPOS = array(
+        0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
+    );
+    private static $CALCULOS = array(
+        0 => 'Otros', 1 => 'Fijo', 2 => 'Formula'
+    );
+    private static $CLASE = array(
+        1 => 'Fijo', 2 => 'Variable'
+    );
+    private static $PAGO = array(
+        1 => 'INEI', 2 => 'MEF'
+    );
+    private static $SEDES = array(
+        0 => 'Lima', 1 => 'ODEIS'
+    );
+
+    public function getTipoConcTco_display() {
+        if (null === $this->tipoConcTco) {
+            return;
+        }
+        return Conceptos::$TIPOS[$this->tipoConcTco];
+    }
+
+    public function getTipoCalcTco_display() {
+        if (null === $this->tipoCalcTco) {
+            return;
+        }
+        return Conceptos::$CALCULOS[$this->tipoCalcTco];
+    }
+
+    public function getClasConcTco_display() {
+        if (null === $this->clasConcTco) {
+            return;
+        }
+        return Conceptos::$CLASE[$this->clasConcTco];
+    }
+
+    public function getFlagPagoTco_display() {
+        if (null === $this->flagPagoTco) {
+            return;
+        }
+        return Conceptos::$PAGO[$this->flagPagoTco];
+    }
+    
+    public function getSedeConcTco_display() {
+        if (null === $this->sedeConcTco) {
+            return;
+        }
+        return Conceptos::$SEDES[$this->sedeConcTco];
+    }
 
     public function __toString() {
-        return $this->getCodiConcTco().' - '.$this->getDescCortTco();
+        return $this->getCodiConcTco() . ' - ' . $this->getDescCortTco();
     }
+
     /**
      * Get codiConcTco
      *
      * @return string 
      */
-    public function getCodiConcTco()
-    {
+    public function getCodiConcTco() {
         return $this->codiConcTco;
     }
 
@@ -171,10 +222,9 @@ class Conceptos
      * @param string $codiOperOpe
      * @return Conceptos
      */
-    public function setCodiOperOpe($codiOperOpe)
-    {
+    public function setCodiOperOpe($codiOperOpe) {
         $this->codiOperOpe = $codiOperOpe;
-    
+
         return $this;
     }
 
@@ -183,8 +233,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCodiOperOpe()
-    {
+    public function getCodiOperOpe() {
         return $this->codiOperOpe;
     }
 
@@ -194,10 +243,9 @@ class Conceptos
      * @param string $codiCiclCic
      * @return Conceptos
      */
-    public function setCodiCiclCic($codiCiclCic)
-    {
+    public function setCodiCiclCic($codiCiclCic) {
         $this->codiCiclCic = $codiCiclCic;
-    
+
         return $this;
     }
 
@@ -206,8 +254,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCodiCiclCic()
-    {
+    public function getCodiCiclCic() {
         return $this->codiCiclCic;
     }
 
@@ -217,10 +264,9 @@ class Conceptos
      * @param string $descConcTco
      * @return Conceptos
      */
-    public function setDescConcTco($descConcTco)
-    {
+    public function setDescConcTco($descConcTco) {
         $this->descConcTco = $descConcTco;
-    
+
         return $this;
     }
 
@@ -229,8 +275,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getDescConcTco()
-    {
+    public function getDescConcTco() {
         return $this->descConcTco;
     }
 
@@ -240,10 +285,9 @@ class Conceptos
      * @param string $descCortTco
      * @return Conceptos
      */
-    public function setDescCortTco($descCortTco)
-    {
+    public function setDescCortTco($descCortTco) {
         $this->descCortTco = $descCortTco;
-    
+
         return $this;
     }
 
@@ -252,8 +296,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getDescCortTco()
-    {
+    public function getDescCortTco() {
         return $this->descCortTco;
     }
 
@@ -263,10 +306,9 @@ class Conceptos
      * @param string $tipoConcTco
      * @return Conceptos
      */
-    public function setTipoConcTco($tipoConcTco)
-    {
+    public function setTipoConcTco($tipoConcTco) {
         $this->tipoConcTco = $tipoConcTco;
-    
+
         return $this;
     }
 
@@ -275,8 +317,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getTipoConcTco()
-    {
+    public function getTipoConcTco() {
         return $this->tipoConcTco;
     }
 
@@ -286,10 +327,9 @@ class Conceptos
      * @param string $tipoCalcTco
      * @return Conceptos
      */
-    public function setTipoCalcTco($tipoCalcTco)
-    {
+    public function setTipoCalcTco($tipoCalcTco) {
         $this->tipoCalcTco = $tipoCalcTco;
-    
+
         return $this;
     }
 
@@ -298,8 +338,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getTipoCalcTco()
-    {
+    public function getTipoCalcTco() {
         return $this->tipoCalcTco;
     }
 
@@ -309,10 +348,9 @@ class Conceptos
      * @param string $secuCalcTco
      * @return Conceptos
      */
-    public function setSecuCalcTco($secuCalcTco)
-    {
+    public function setSecuCalcTco($secuCalcTco) {
         $this->secuCalcTco = $secuCalcTco;
-    
+
         return $this;
     }
 
@@ -321,8 +359,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getSecuCalcTco()
-    {
+    public function getSecuCalcTco() {
         return $this->secuCalcTco;
     }
 
@@ -332,10 +369,9 @@ class Conceptos
      * @param string $flagAsocTco
      * @return Conceptos
      */
-    public function setFlagAsocTco($flagAsocTco)
-    {
+    public function setFlagAsocTco($flagAsocTco) {
         $this->flagAsocTco = $flagAsocTco;
-    
+
         return $this;
     }
 
@@ -344,8 +380,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getFlagAsocTco()
-    {
+    public function getFlagAsocTco() {
         return $this->flagAsocTco;
     }
 
@@ -355,10 +390,9 @@ class Conceptos
      * @param string $flagRecuTco
      * @return Conceptos
      */
-    public function setFlagRecuTco($flagRecuTco)
-    {
+    public function setFlagRecuTco($flagRecuTco) {
         $this->flagRecuTco = $flagRecuTco;
-    
+
         return $this;
     }
 
@@ -367,8 +401,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getFlagRecuTco()
-    {
+    public function getFlagRecuTco() {
         return $this->flagRecuTco;
     }
 
@@ -378,10 +411,9 @@ class Conceptos
      * @param string $rntaQntaTco
      * @return Conceptos
      */
-    public function setRntaQntaTco($rntaQntaTco)
-    {
+    public function setRntaQntaTco($rntaQntaTco) {
         $this->rntaQntaTco = $rntaQntaTco;
-    
+
         return $this;
     }
 
@@ -390,8 +422,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getRntaQntaTco()
-    {
+    public function getRntaQntaTco() {
         return $this->rntaQntaTco;
     }
 
@@ -401,10 +432,9 @@ class Conceptos
      * @param string $ctsCtsTco
      * @return Conceptos
      */
-    public function setCtsCtsTco($ctsCtsTco)
-    {
+    public function setCtsCtsTco($ctsCtsTco) {
         $this->ctsCtsTco = $ctsCtsTco;
-    
+
         return $this;
     }
 
@@ -413,8 +443,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCtsCtsTco()
-    {
+    public function getCtsCtsTco() {
         return $this->ctsCtsTco;
     }
 
@@ -424,10 +453,9 @@ class Conceptos
      * @param string $codiConcOnc
      * @return Conceptos
      */
-    public function setCodiConcOnc($codiConcOnc)
-    {
+    public function setCodiConcOnc($codiConcOnc) {
         $this->codiConcOnc = $codiConcOnc;
-    
+
         return $this;
     }
 
@@ -436,8 +464,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCodiConcOnc()
-    {
+    public function getCodiConcOnc() {
         return $this->codiConcOnc;
     }
 
@@ -447,10 +474,9 @@ class Conceptos
      * @param string $codiEntiEnt
      * @return Conceptos
      */
-    public function setCodiEntiEnt($codiEntiEnt)
-    {
+    public function setCodiEntiEnt($codiEntiEnt) {
         $this->codiEntiEnt = $codiEntiEnt;
-    
+
         return $this;
     }
 
@@ -459,8 +485,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCodiEntiEnt()
-    {
+    public function getCodiEntiEnt() {
         return $this->codiEntiEnt;
     }
 
@@ -470,10 +495,9 @@ class Conceptos
      * @param string $cntaDebeTco
      * @return Conceptos
      */
-    public function setCntaDebeTco($cntaDebeTco)
-    {
+    public function setCntaDebeTco($cntaDebeTco) {
         $this->cntaDebeTco = $cntaDebeTco;
-    
+
         return $this;
     }
 
@@ -482,8 +506,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCntaDebeTco()
-    {
+    public function getCntaDebeTco() {
         return $this->cntaDebeTco;
     }
 
@@ -493,10 +516,9 @@ class Conceptos
      * @param string $cntaHabeTco
      * @return Conceptos
      */
-    public function setCntaHabeTco($cntaHabeTco)
-    {
+    public function setCntaHabeTco($cntaHabeTco) {
         $this->cntaHabeTco = $cntaHabeTco;
-    
+
         return $this;
     }
 
@@ -505,8 +527,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getCntaHabeTco()
-    {
+    public function getCntaHabeTco() {
         return $this->cntaHabeTco;
     }
 
@@ -516,10 +537,9 @@ class Conceptos
      * @param string $clasConcTco
      * @return Conceptos
      */
-    public function setClasConcTco($clasConcTco)
-    {
+    public function setClasConcTco($clasConcTco) {
         $this->clasConcTco = $clasConcTco;
-    
+
         return $this;
     }
 
@@ -528,8 +548,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getClasConcTco()
-    {
+    public function getClasConcTco() {
         return $this->clasConcTco;
     }
 
@@ -539,10 +558,9 @@ class Conceptos
      * @param string $flagPagoTco
      * @return Conceptos
      */
-    public function setFlagPagoTco($flagPagoTco)
-    {
+    public function setFlagPagoTco($flagPagoTco) {
         $this->flagPagoTco = $flagPagoTco;
-    
+
         return $this;
     }
 
@@ -551,8 +569,7 @@ class Conceptos
      *
      * @return string 
      */
-    public function getFlagPagoTco()
-    {
+    public function getFlagPagoTco() {
         return $this->flagPagoTco;
     }
 
@@ -562,10 +579,9 @@ class Conceptos
      * @param string $sedeConcTco
      * @return Conceptos
      */
-    public function setSedeConcTco($sedeConcTco)
-    {
+    public function setSedeConcTco($sedeConcTco) {
         $this->sedeConcTco = $sedeConcTco;
-    
+
         return $this;
     }
 
@@ -574,27 +590,25 @@ class Conceptos
      *
      * @return string 
      */
-    public function getSedeConcTco()
-    {
+    public function getSedeConcTco() {
         return $this->sedeConcTco;
     }
+
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->folios = new ArrayCollection();
     }
-    
+
     /**
      * Add folios
      *
      * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
      * @return Conceptos
      */
-    public function addFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
-    {
-        $this->folios[] = $folios;        
+    public function addFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios) {
+        $this->folios[] = $folios;
     }
 
     /**
@@ -602,8 +616,7 @@ class Conceptos
      *
      * @param \Inei\Bundle\PayrollBundle\Entity\Folios $folios
      */
-    public function removeFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios)
-    {
+    public function removeFolio(\Inei\Bundle\PayrollBundle\Entity\Folios $folios) {
         $this->folios->removeElement($folios);
     }
 
@@ -612,8 +625,7 @@ class Conceptos
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getFolios()
-    {
+    public function getFolios() {
         return $this->folios;
     }
 
@@ -623,10 +635,10 @@ class Conceptos
      * @param string $codiConcTco
      * @return Conceptos
      */
-    public function setCodiConcTco($codiConcTco)
-    {
+    public function setCodiConcTco($codiConcTco) {
         $this->codiConcTco = $codiConcTco;
-    
+
         return $this;
     }
+
 }

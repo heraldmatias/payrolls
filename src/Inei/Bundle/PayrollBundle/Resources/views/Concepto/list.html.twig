@@ -18,6 +18,7 @@
                         <th>Clase</th>
                         <th>Pago</th>
                         <th>Sede</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,13 +26,18 @@
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td><a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}">{{ tomo.codiConcTco }}</a></td>
                         <td>{{ tomo.descCortTco }}</td>
-                        <td>{{ tomo.tipoConcTco }}</td>
-                        <td>{{ tomo.tipoCalcTco }}</td>
+                        <td>{{ tomo.getTipoConcTco_display }}</td>
+                        <td>{{ tomo.getTipoCalcTco_display }}</td>
                         <td>{{ tomo.cntaDebeTco }}</td>
                         <td>{{ tomo.cntaHabeTco }}</td>
-                        <td>{{ tomo.clasConcTco }}</td>
-                        <td>{{ tomo.flagPagoTco }}</td>
-                        <td>{{ tomo.sedeConcTco }}</td>
+                        <td>{{ tomo.getClasConcTco_display }}</td>
+                        <td>{{ tomo.getFlagPagoTco_display }}</td>
+                        <td>{{ tomo.getSedeConcTco_display }}</td>
+                        <td><!--- LINK A LAS PLANILLAS--->
+                            <a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}" 
+                               title="Editar Folio"><i class="icon-edit"></i> </a>
+                            <a href="#" title="Ver Planillas"><i class="icon-list"></i> </a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
