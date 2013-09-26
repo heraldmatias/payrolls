@@ -13,3 +13,8 @@ _inei_payroll_concept:
     resource: "@IneiPayrollBundle/Controller/ConceptoController.php"
     type:     annotation
     prefix:   /admin/concept
+    
+_inei_payroll_payroll:
+    resource: "@IneiPayrollBundle/Controller/PlanillaController.php"
+    type:     annotation
+    prefix:   /admin/payroll

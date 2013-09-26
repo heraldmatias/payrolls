@@ -12,4 +12,11 @@ use Doctrine\ORM\EntityRepository;
  */
 class PlanillaHistoricasRepository extends EntityRepository
 {
+    public function getByFolio($folio){
+        //$em = $this->getEntityManager();
+        return $this->findBy(array(
+            'folio' => $folio
+        ));
+    }
+    
 }

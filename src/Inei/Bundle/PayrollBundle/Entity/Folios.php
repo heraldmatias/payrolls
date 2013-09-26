@@ -5,6 +5,8 @@ namespace Inei\Bundle\PayrollBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Inei\Bundle\PayrollBundle\Repository\PlanillaHistoricasRepository;
+
 /**
  * Folios
  *
@@ -12,9 +14,8 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\FoliosRepository")
  * @HasLifecycleCallbacks
  */
+class Folios {
 
-class Folios
-{        
     /**
      * @var integer
      * @ORM\Id
@@ -22,11 +23,11 @@ class Folios
      * @ORM\Column(name="CODI_FOLIO", type="integer", nullable=false)
      */
     private $codiFolio;
-    
+
     /**
      * @var string
      * @ORM\Column(name="NUM_FOLIO", type="integer", nullable=false)
-    */
+     */
     private $folio;
 
     /**
@@ -42,7 +43,7 @@ class Folios
      * @ORM\Column(name="REG_FOLIO", type="integer", nullable=false)
      */
     private $registrosFolio;
-    
+
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\Tomos
      * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="setfolios")
@@ -69,18 +70,24 @@ class Folios
      */
     private $conceptos;
 
-    public function __construct()
-    {
+    /**
+     * @var \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas
+     * 
+     */
+    //@ORM\OneToMany(targetEntity="PlanillaHistoricas", mappedBy="folio", cascade={"persist"}, fetch="EXTRA_LAZY")
+    private $planillas;
+
+    public function __construct() {
         $this->conceptos = new ArrayCollection();
+        //$this->planillas = new ArrayCollection();
     }
-    
+
     /**
      * Get codiFolio
      *
      * @return integer 
      */
-    public function getCodiFolio()
-    {
+    public function getCodiFolio() {
         return $this->codiFolio;
     }
 
@@ -90,10 +97,9 @@ class Folios
      * @param string $periodoFolio
      * @return Folios
      */
-    public function setPeriodoFolio($periodoFolio)
-    {
+    public function setPeriodoFolio($periodoFolio) {
         $this->periodoFolio = $periodoFolio;
-    
+
         return $this;
     }
 
@@ -102,8 +108,7 @@ class Folios
      *
      * @return string 
      */
-    public function getPeriodoFolio()
-    {
+    public function getPeriodoFolio() {
         return $this->periodoFolio;
     }
 
@@ -113,10 +118,9 @@ class Folios
      * @param integer $registrosFolio
      * @return Folios
      */
-    public function setRegistrosFolio($registrosFolio)
-    {
+    public function setRegistrosFolio($registrosFolio) {
         $this->registrosFolio = $registrosFolio;
-    
+
         return $this;
     }
 
@@ -125,8 +129,7 @@ class Folios
      *
      * @return integer 
      */
-    public function getRegistrosFolio()
-    {
+    public function getRegistrosFolio() {
         return $this->registrosFolio;
     }
 
@@ -136,10 +139,9 @@ class Folios
      * @param \Inei\Bundle\PayrollBundle\Entity\TPlanilla $tipoPlanTpl
      * @return Folios
      */
-    public function setTipoPlanTpl(\Inei\Bundle\PayrollBundle\Entity\TPlanilla $tipoPlanTpl = null)
-    {
+    public function setTipoPlanTpl(\Inei\Bundle\PayrollBundle\Entity\TPlanilla $tipoPlanTpl = null) {
         $this->tipoPlanTpl = $tipoPlanTpl;
-    
+
         return $this;
     }
 
@@ -148,10 +150,9 @@ class Folios
      *
      * @return \Inei\Bundle\PayrollBundle\Entity\TPlanilla 
      */
-    public function getTipoPlanTpl()
-    {
+    public function getTipoPlanTpl() {
         return $this->tipoPlanTpl;
-    }    
+    }
 
     /**
      * Set tomo
@@ -159,10 +160,9 @@ class Folios
      * @param \Inei\Bundle\PayrollBundle\Entity\Tomos $tomo
      * @return Folios
      */
-    public function setTomo(\Inei\Bundle\PayrollBundle\Entity\Tomos $tomo = null)
-    {
+    public function setTomo(\Inei\Bundle\PayrollBundle\Entity\Tomos $tomo = null) {
         $this->tomo = $tomo;
-    
+
         return $this;
     }
 
@@ -171,12 +171,9 @@ class Folios
      *
      * @return \Inei\Bundle\PayrollBundle\Entity\Tomos 
      */
-    public function getTomo()
-    {
+    public function getTomo() {
         return $this->tomo;
     }
-
-    
 
     /**
      * Set subtPlanStp
@@ -184,10 +181,9 @@ class Folios
      * @param string $subtPlanStp
      * @return Folios
      */
-    public function setSubtPlanStp($subtPlanStp)
-    {
+    public function setSubtPlanStp($subtPlanStp) {
         $this->subtPlanStp = $subtPlanStp;
-    
+
         return $this;
     }
 
@@ -196,11 +192,9 @@ class Folios
      *
      * @return string 
      */
-    public function getSubtPlanStp()
-    {
+    public function getSubtPlanStp() {
         return $this->subtPlanStp;
     }
-
 
     /**
      * Add conceptos
@@ -208,12 +202,11 @@ class Folios
      * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
      * @return Folios
      */
-    public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos)
-    {
+    public function addConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos) {
         //echo $conceptos->getCodiConcTco();
         //if(!$this->conceptos->contains($conceptos)){
-            $this->conceptos[] = $conceptos;
-            $conceptos->setCodiFolio($this);
+        $this->conceptos[] = $conceptos;
+        $conceptos->setCodiFolio($this);
         //}
         //return $this;
     }
@@ -223,9 +216,22 @@ class Folios
      *
      * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
      */
-    public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos)
-    {
+    public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos) {
         $this->conceptos->removeElement($conceptos);
+    }
+
+    /**
+     * Remove conceptos
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
+     */
+    public function getConcepto($pk) {
+        foreach ($this->getConceptos() as $concepto) {
+            if ($concepto->getCodiConcTco()->getCodiConcTco() === $pk) {
+                return $concepto->getCodiConcTco();
+                break;
+            }
+        }
     }
 
     /**
@@ -233,8 +239,7 @@ class Folios
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getConceptos()
-    {
+    public function getConceptos() {
         return $this->conceptos;
     }
 
@@ -244,8 +249,7 @@ class Folios
      * @param integer $codiFolio
      * @return Folios
      */
-    public function setCodiFolio($codiFolio)
-    {
+    public function setCodiFolio($codiFolio) {
         $this->codiFolio = $codiFolio;
 
         return $this;
@@ -257,8 +261,7 @@ class Folios
      * @param integer $folio
      * @return Folios
      */
-    public function setFolio($folio)
-    {
+    public function setFolio($folio) {
         $this->folio = $folio;
 
         return $this;
@@ -269,8 +272,56 @@ class Folios
      *
      * @return integer 
      */
-    public function getFolio()
-    {
+    public function getFolio() {
         return $this->folio;
     }
+
+    /**
+     * Add planillas
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas $planillas
+     * @return Folios
+     */
+    public function addPlanilla(\Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas $planillas) {
+        $this->planillas[] = $planillas;
+        $planillas->setFolio($this);
+        return $this;
+    }
+
+    /**
+     * Remove planillas
+     *
+     * @param \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas $planillas
+     */
+    public function removePlanilla(\Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas $planillas) {
+        $this->planillas->removeElement($planillas);
+    }
+
+    /**
+     * Get planillas
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPlanillas($em) {
+        //return $this->planillas;
+        if (null === $this->planillas) {
+            $qb = $em->createQueryBuilder();
+            $qb->select('c')
+                ->from('IneiPayrollBundle:PlanillaHistoricas', 'c')
+                ->where('c.folio = :folio')
+                ->orderBy('c.codiEmplPer', 'DESC')
+                ->setParameter('folio', $this->codiFolio);
+            $this->planillas = $qb->getQuery()->getResult();
+        }
+        return $this->planillas;
+    }
+
+    public function getPayrolls() {
+        if ($this->getPlanillas()->count() > 0) {
+            return $this->getPlanillas();
+        }
+        return array_map(
+                create_function('$item', 'return array();'), range(1, $this->getRegistrosFolio()));
+    }
+
 }

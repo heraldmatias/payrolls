@@ -22,43 +22,24 @@ class PlanillaHistoricas
 
     /**
      * @var string
-     */
-    private $tipoPlanTplId;
-
-    /**
-     * @var string
-     */
-    private $subtPlanTplId;
-
-    /**
-     * @var string
+     * @ORM\Column(name="ANO_PERI_TPE", type="string", length=4) 
      */
     private $anoPeriTpe;
 
     /**
      * @var string
+     * @ORM\Column(name="NUME_PERI_TPE", type="string", length=2) 
      */
     private $numePeriTpe;
 
     /**
-     * @var string
-     */
-    private $codiEmplPerId;
-
-    /**
-     * @var string
-     */
-    private $codiConcTcoId;
-
-    /**
      * @var float
+     * @ORM\Column(name="VALO_CALC_PHI", type="float")
      */
     private $valoCalcPhi;
 
     /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
-     * @ORM\ManyToOne(targetEntity="TPlanilla", inversedBy="planillas")
-     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
+     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=5)
      */
     private $tipoPlanTpl;
 
@@ -69,20 +50,28 @@ class PlanillaHistoricas
     private $subtPlanTpl;
 
     /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\maestroPersonal
-     * @ORM\ManyToOne(targetEntity="MaestroPersonal", inversedBy="empleados")
-     * @ORM\JoinColumn(name="CODI_EMPL_PER", referencedColumnName="CODI_EMPL_PER")
+     * @var \Inei\Bundle\PayrollBundle\Entity\maestroPersonal     
+     * @ORM\Column(name="CODI_EMPL_PER", type="string", length=8)
      */
     private $codiEmplPer;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\conceptos
-     * @ORM\ManyToOne(targetEntity="Conceptos")
-     * @ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO")
+     * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5)
      */
     private $codiConcTco;
 
-
+    /**
+     * @var \Inei\Bundle\PayrollBundle\Entity\Folios     
+     * @ORM\Column(name="CODI_FOLIO", type="integer", nullable=true)
+     */
+    private $folio;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="DESC_PLAN_STP", type="text", nullable=True)
+     */
+    private $descripcion;
     /**
      * Get id
      *
@@ -93,53 +82,7 @@ class PlanillaHistoricas
         return $this->id;
     }
 
-    /**
-     * Set tipoPlanTplId
-     *
-     * @param string $tipoPlanTplId
-     * @return PlanillaHistoricas
-     */
-    public function setTipoPlanTplId($tipoPlanTplId)
-    {
-        $this->tipoPlanTplId = $tipoPlanTplId;
-    
-        return $this;
-    }
-
-    /**
-     * Get tipoPlanTplId
-     *
-     * @return string 
-     */
-    public function getTipoPlanTplId()
-    {
-        return $this->tipoPlanTplId;
-    }
-
-    /**
-     * Set subtPlanTplId
-     *
-     * @param string $subtPlanTplId
-     * @return PlanillaHistoricas
-     */
-    public function setSubtPlanTplId($subtPlanTplId)
-    {
-        $this->subtPlanTplId = $subtPlanTplId;
-    
-        return $this;
-    }
-
-    /**
-     * Get subtPlanTplId
-     *
-     * @return string 
-     */
-    public function getSubtPlanTplId()
-    {
-        return $this->subtPlanTplId;
-    }
-
-    /**
+       /**
      * Set anoPeriTpe
      *
      * @param string $anoPeriTpe
@@ -184,53 +127,7 @@ class PlanillaHistoricas
     {
         return $this->numePeriTpe;
     }
-
-    /**
-     * Set codiEmplPerId
-     *
-     * @param string $codiEmplPerId
-     * @return PlanillaHistoricas
-     */
-    public function setCodiEmplPerId($codiEmplPerId)
-    {
-        $this->codiEmplPerId = $codiEmplPerId;
     
-        return $this;
-    }
-
-    /**
-     * Get codiEmplPerId
-     *
-     * @return string 
-     */
-    public function getCodiEmplPerId()
-    {
-        return $this->codiEmplPerId;
-    }
-
-    /**
-     * Set codiConcTcoId
-     *
-     * @param string $codiConcTcoId
-     * @return PlanillaHistoricas
-     */
-    public function setCodiConcTcoId($codiConcTcoId)
-    {
-        $this->codiConcTcoId = $codiConcTcoId;
-    
-        return $this;
-    }
-
-    /**
-     * Get codiConcTcoId
-     *
-     * @return string 
-     */
-    public function getCodiConcTcoId()
-    {
-        return $this->codiConcTcoId;
-    }
-
     /**
      * Set valoCalcPhi
      *
@@ -253,24 +150,24 @@ class PlanillaHistoricas
     {
         return $this->valoCalcPhi;
     }
-
+    
     /**
      * Set tipoPlanTpl
      *
-     * @param \Inei\Bundle\PayrollBundle\Entity\tplanilla $tipoPlanTpl
+     * @param string $tipoPlanTpl
      * @return PlanillaHistoricas
      */
-    public function setTipoPlanTpl(\Inei\Bundle\PayrollBundle\Entity\tplanilla $tipoPlanTpl = null)
+    public function setTipoPlanTpl($tipoPlanTpl)
     {
         $this->tipoPlanTpl = $tipoPlanTpl;
-    
+
         return $this;
     }
 
     /**
      * Get tipoPlanTpl
      *
-     * @return \Inei\Bundle\PayrollBundle\Entity\tplanilla 
+     * @return string 
      */
     public function getTipoPlanTpl()
     {
@@ -280,20 +177,20 @@ class PlanillaHistoricas
     /**
      * Set subtPlanTpl
      *
-     * @param \Inei\Bundle\PayrollBundle\Entity\subtplanilla $subtPlanTpl
+     * @param string $subtPlanTpl
      * @return PlanillaHistoricas
      */
-    public function setSubtPlanTpl(\Inei\Bundle\PayrollBundle\Entity\subtplanilla $subtPlanTpl = null)
+    public function setSubtPlanTpl($subtPlanTpl)
     {
         $this->subtPlanTpl = $subtPlanTpl;
-    
+
         return $this;
     }
 
     /**
      * Get subtPlanTpl
      *
-     * @return \Inei\Bundle\PayrollBundle\Entity\subtplanilla 
+     * @return string 
      */
     public function getSubtPlanTpl()
     {
@@ -303,20 +200,20 @@ class PlanillaHistoricas
     /**
      * Set codiEmplPer
      *
-     * @param \Inei\Bundle\PayrollBundle\Entity\maestroPersonal $codiEmplPer
+     * @param string $codiEmplPer
      * @return PlanillaHistoricas
      */
-    public function setCodiEmplPer(\Inei\Bundle\PayrollBundle\Entity\maestroPersonal $codiEmplPer = null)
+    public function setCodiEmplPer($codiEmplPer)
     {
         $this->codiEmplPer = $codiEmplPer;
-    
+
         return $this;
     }
 
     /**
      * Get codiEmplPer
      *
-     * @return \Inei\Bundle\PayrollBundle\Entity\maestroPersonal 
+     * @return string 
      */
     public function getCodiEmplPer()
     {
@@ -326,23 +223,69 @@ class PlanillaHistoricas
     /**
      * Set codiConcTco
      *
-     * @param \Inei\Bundle\PayrollBundle\Entity\conceptos $codiConcTco
+     * @param string $codiConcTco
      * @return PlanillaHistoricas
      */
-    public function setCodiConcTco(\Inei\Bundle\PayrollBundle\Entity\conceptos $codiConcTco = null)
+    public function setCodiConcTco($codiConcTco)
     {
         $this->codiConcTco = $codiConcTco;
-    
+
         return $this;
     }
 
     /**
      * Get codiConcTco
      *
-     * @return \Inei\Bundle\PayrollBundle\Entity\conceptos 
+     * @return string 
      */
     public function getCodiConcTco()
     {
         return $this->codiConcTco;
+    }
+
+    /**
+     * Set folio
+     *
+     * @param integer $folio
+     * @return PlanillaHistoricas
+     */
+    public function setFolio($folio)
+    {
+        $this->folio = $folio;
+
+        return $this;
+    }
+
+    /**
+     * Get folio
+     *
+     * @return integer 
+     */
+    public function getFolio()
+    {
+        return $this->folio;
+    }
+
+    /**
+     * Set descripcion
+     *
+     * @param string $descripcion
+     * @return PlanillaHistoricas
+     */
+    public function setDescripcion($descripcion)
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get descripcion
+     *
+     * @return string 
+     */
+    public function getDescripcion()
+    {
+        return $this->descripcion;
     }
 }

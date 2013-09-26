@@ -26,9 +26,9 @@
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th>Codigo</th>
-                        <th>Año</th>
+                        <th>Tomo</th>
                         <th>Periodo</th>
+                        <th>Año</th>
                         <th>Folios</th>                        
                         <th>Opciones</th>
                     </tr>
@@ -36,9 +36,9 @@
                 <tbody>
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
-                        <td><a href="{{ path('_inventario_edit', {'pk': tomo.codiTomo}) }}">{{ tomo.codiTomo }}</a></td>
-                        <td>{{ tomo.anoTomo }}</td>
+                        <td>{{ tomo.codiTomo }}</td>
                         <td>{{ tomo.periodoTomo }}</td>
+                        <td>{{ tomo.anoTomo }}</td>                        
                         <td>{{ tomo.foliosTomo }}</td>                        
                         <td>
                             <a href="{{ path('_inventario_tomo_edit', {'pk': tomo.codiTomo}) }}" title="Editar Tomo">

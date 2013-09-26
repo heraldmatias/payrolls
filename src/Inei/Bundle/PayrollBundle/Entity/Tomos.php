@@ -44,7 +44,7 @@ class Tomos
     /**
      * @var string
      * 
-     * @ORM\Column(name="DESC_TOMO", type="text", nullable=false)
+     * @ORM\Column(name="DESC_TOMO", type="text", nullable=true)
      */
     private $descTomo;
 

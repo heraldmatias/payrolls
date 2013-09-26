@@ -43,7 +43,8 @@
                         <td><!--- LINK A LAS PLANILLAS--->
                             <a href="{{ path('_inventario_folio_edit', {'pk': folio.codiFolio}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>
-                            <a href="#" title="Ver Planillas"><i class="icon-list"></i> </a>
+                            <a href="{{ path('_planilla_add', {'pk': folio.codiFolio}) }}"
+                               title="Ver Planillas"><i class="icon-list"></i> </a>
                         </td>
                     </tr>
                 {% endfor %}

@@ -167,7 +167,7 @@ class InventarioController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/folios/{tomo}", name="_inventario_folio_list")
      * @Template("")
@@ -191,10 +191,11 @@ class InventarioController extends Controller {
                 unset($criteria[$key]);
             }
         }
-        $criteria['tomo'] = $tomo;
-        $tem = $this->getDoctrine()
+        if (!null === $tomo)
+            $criteria['tomo'] = $tomo;
+        /*$tem = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tomos');
-        $_tomo = $tem->find($tomo);
+        $_tomo = $tem->find($tomo);*/
         $fem = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
         $query = $fem->findBy($criteria);
@@ -204,9 +205,17 @@ class InventarioController extends Controller {
         );
         return array(
             'pagination' => $pagination,
-            'tomo' => $_tomo,
+            //'tomo' => $_tomo,
             'form' => $form->createView()
         );
+    }
+    
+    /**
+     * @Route("/folios/", name="_inventario_folio_listall")
+     * @Template("IneiPayrollBundle:Inventario:folios.html.twig")
+     */
+    public function foliosAllAction(Request $request) {
+        return $this->foliosAction($request, null);
     }
 
     /**
@@ -300,5 +309,5 @@ class InventarioController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
 }

@@ -17,12 +17,20 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 
 class SearchFoliosType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('folio', null, array(
+        $builder->add('tomo', 'choice', array(
+                    'attr' => array(
+                        'class' => 'tomo',
+                        'style' => 'width:100%;'
+                     ),
+                    'required' => false,
+                    'choices' => array_key_exists('tomos', $options) ?$options['tomos']:array(),
+                    'empty_value' => '---SELECCIONE---'
+                ))
+                ->add('folio', null, array(
                     'attr' => array(
                         'class' => 'folio',
                         'style' => 'width:100%;'

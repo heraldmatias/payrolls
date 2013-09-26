@@ -21,6 +21,10 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoFolioType
         tags:
             - { name: form.type, alias: conceptofolio }
+    inei_payroll.form.type.planilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\PlanillaType
+        tags:
+            - { name: form.type, alias: planilla }
     #ONLY ENTITY
     inei_payroll.form.type.tomos:
         class: Inei\Bundle\PayrollBundle\Form\Type\TomosType

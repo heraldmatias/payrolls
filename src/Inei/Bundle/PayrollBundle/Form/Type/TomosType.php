@@ -28,13 +28,22 @@ class TomosType extends AbstractType {
         return $codes;
     }
     
+    private function getAnos(){
+        $codes = array();
+        foreach (range(1961, 2002) as $number) {
+            $codes[$number] = $number;
+        }
+        return $codes;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('codiTomo', 'choice', array(
                     'label' => 'Tomo',
                     'choices' => $this->generateCodes()
                 ))
-                ->add('anoTomo', null, array(
-                    'label' => 'Año'
+                ->add('anoTomo', 'choice', array(
+                    'label' => 'Año',
+                    'choices' => $this->getAnos()
                 ))
                 ->add('periodoTomo', null, array(
                     'label' => 'Periodo'

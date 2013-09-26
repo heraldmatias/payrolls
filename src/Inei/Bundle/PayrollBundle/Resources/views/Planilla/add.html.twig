@@ -1,0 +1,123 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% if form %}
+{% form_theme form.payrolls 'IneiPayrollBundle:Form:form_table_horizontal_layout.html.twig' %}
+{% endif %}
+{% block csspage %}
+<style type="text/css">        
+        td.column-monto{
+            width: 150px;
+        }
+        td.column-nombre{
+            width: 200px;
+        }
+        td.column-descripcion{
+            width: 200px;
+        }
+</style>
+{% endblock %}
+{% block form %}
+<div class="span10">
+    {% if form %}{{ form_start(form) }}{% endif %}
+    <div class="modal">
+        <div class="modal-header">
+
+            <h3>Registrar Planillas</h3>
+        </div>
+        <div class="modal-body">
+             {% if form %}
+            <table id="tplanillas" class="table table-bordered">
+                <thead></thead>
+                <tbody data-prototype="{{ form_widget(form.payrolls.vars.prototype)|e }}"></tbody>
+                {% for planilla in form.payrolls%}
+                    {{ form_widget(planilla) }}
+                {% endfor %}
+            </table>{% endif %}
+        </div>
+        <div class="modal-footer">
+            {% if form %}{{ form_widget(form.save) }}{% endif %}
+            <a href="#" class="btn">Cerrar</a>
+        </div>            
+    </div>
+         {% if form %}{{ form_end(form) }}{% endif %}
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    function loadColumns(){
+        var form = $($('#tplanillas tbody').data('prototype'));
+        var collectionColumns = $('#tplanillas thead');
+        var $column = null;
+        $.each(form.find('td'), function(index, field){
+            $field = $(field);
+            $column = $('<th></th>');
+            $column.html($field.find('*').data('title'));
+            collectionColumns.append($column);
+        });
+    }
+    $(document).ready(function(){
+       loadColumns();
+    });
+    /*var collectionHolder = $('#tplanillas tbody');
+    var options = $('ul.folio-options');
+    var $addTagLink = $('<a href="#" class="btn btn-primary">Agregar Registro</a>');
+    var $newLinkLi = $('<li></li>').append($addTagLink);
+
+    jQuery(document).ready(function() {
+        // add the "add a tag" anchor and li to the tags ul
+        collectionHolder.find('tr').each(function() {
+            addOptions($(this));
+        });
+        options.append($newLinkLi);
+        loadColumns(collectionHolder);
+
+        collectionHolder.data('index', collectionHolder.find('tr').length);
+        $addTagLink.on('click', function(e) {
+            e.preventDefault();
+            addConceptForm(collectionHolder);
+        });
+    });
+    
+    function loadColumns(collectionHolder){
+        var form = $(collectionHolder.data('prototype'));
+        var collectionColumns = $('#tplanillas thead');
+        var $column = null;
+        $.each(form.find('td'), function(index, field){
+            $field = $(field);
+            $column = $('<th></th>');
+            $column.html($field.find('*').data('title'));
+            collectionColumns.append($column);
+        });
+        $column = $('<th>OPCIONES</th>');
+        collectionColumns.append($column);
+    }
+
+    function addConceptForm(collectionHolder) {
+        var prototype = collectionHolder.data('prototype');
+        var index = collectionHolder.data('index');
+        var newForm = prototype.replace(/__name__/g, index);
+        var $newForm = $(newForm);
+        addOptions($newForm);
+        collectionHolder.data('index', index + 1);
+
+        collectionHolder.append($newForm);
+
+    }
+
+    function addOptions($newForm) {
+        var $viewopt = $('<a href="#verconcepto" title="Ver Concepto"><i class="icon-edit"></i> </a>');
+        var $newopt = $('<a href="#nuevoconcepoto" title="Nuevo concepto"><i class="icon-plus"></i> </a>');
+        var $deleteopt = $('<a href="#" title="Eliminar concepto"><i class="icon-trash"></i> </a>');
+        var $options = $('<td></td>');
+        $options.append($viewopt);
+        $options.append($newopt);
+        $options.append($deleteopt);
+        $newForm.append($options);
+        $deleteopt.on('click', function(e) {
+            // prevent the link from creating a "#" on the URL
+            e.preventDefault();
+            // remove the li for the tag form
+            $newForm.remove();
+        });
+    }*/
+    </script>
+{% endblock %}
