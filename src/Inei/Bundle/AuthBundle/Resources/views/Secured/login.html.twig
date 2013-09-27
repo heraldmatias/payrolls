@@ -37,16 +37,16 @@
 {% block content %}
     <div class="container">
         <form action="{{ path("_admin_security_check") }}" method="post" id="login" class="form-signin">
-            <h2 class="form-signin-heading">Please sign in</h2>
+            <h2 class="form-signin-heading">Acceso</h2>
     {% if error %}
             <div class="error">{{ error.message }}</div>
     {% endif %}
-            <input type="text" class="input-block-level" placeholder="Email address" id="username" name="_username">
-            <input type="password" class="input-block-level" placeholder="Password" id="password" name="_password">
+            <input type="text" class="input-block-level" placeholder="Usuario" id="username" name="_username">
+            <input type="password" class="input-block-level" placeholder="Contraseña" id="password" name="_password">
             <label class="checkbox">
-                <input type="checkbox" value="remember-me"> Remember me
+                <input type="checkbox" value="remember-me"> Guardar Contraseña
             </label>
-            <button class="btn btn-large btn-primary" type="submit">Sign in</button>
+            <button class="btn btn-large btn-primary" type="submit">Ingresar</button>
         </form>
     </div>
 {% endblock %}

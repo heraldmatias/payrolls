@@ -5,7 +5,6 @@ namespace Inei\Bundle\PayrollBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
-use Inei\Bundle\PayrollBundle\Repository\PlanillaHistoricasRepository;
 
 /**
  * Folios
@@ -58,15 +57,15 @@ class Folios {
      */
     private $tipoPlanTpl;
 
-    /**
-     * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla     
-     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=40, nullable=true)     
+    /**              
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=true)     
      */
     private $subtPlanStp;
 
     /**
      *
      * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="codiFolio", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\OrderBy({"orden" = "ASC"})
      */
     private $conceptos;
 
@@ -77,6 +76,16 @@ class Folios {
     //@ORM\OneToMany(targetEntity="PlanillaHistoricas", mappedBy="folio", cascade={"persist"}, fetch="EXTRA_LAZY")
     private $planillas;
 
+    private $descSubtStp;
+    
+    public function setDescSubtStp($descSubtStp){
+        $this->descSubtStp = $descSubtStp;
+    }
+    
+    public function getDescSubtStp(){
+        return $this->descSubtStp;
+    }
+    
     public function __construct() {
         $this->conceptos = new ArrayCollection();
         //$this->planillas = new ArrayCollection();

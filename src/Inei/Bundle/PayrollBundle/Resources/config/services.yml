@@ -25,6 +25,14 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\PlanillaType
         tags:
             - { name: form.type, alias: planilla }
+    inei_payroll.form.type.tplanilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\TplanillaType
+        tags:
+            - { name: form.type, alias: tplanilla }
+    inei_payroll.form.type.subtplanilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SubtplanillaType
+        tags:
+            - { name: form.type, alias: subtplanilla }
     #ONLY ENTITY
     inei_payroll.form.type.tomos:
         class: Inei\Bundle\PayrollBundle\Form\Type\TomosType
@@ -52,9 +60,3 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\RegistrarPlanillaType
         tags:
             - { name: form.type, alias: registrar_planilla }
-#TEST FORMS
-    inei_payroll.form.type.folios_1:
-        class: Inei\Bundle\PayrollBundle\Form\Type\FoliosOtroType
-        arguments: ["@doctrine.orm.entity_manager"]
-        tags:
-            - { name: form.type, alias: folios_1 }

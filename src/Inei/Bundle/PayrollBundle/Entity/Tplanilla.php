@@ -18,14 +18,14 @@ class Tplanilla
      * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=2, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="TPLANILLA_TIPO_PLAN_TPL_seq", allocationSize=1, initialValue=1)
+     * @ORM\SequenceGenerator(sequenceName="TPLANILLA_TIPO_PLAN_TPL_seq", allocationSize=1, initialValue=15)
      */
     private $tipoPlanTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=30, nullable=true)
+     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=30, nullable=false)
      */
     private $descTipoTpl;
 
@@ -66,6 +66,16 @@ class Tplanilla
 
     public function __toString() {
         return $this->descTipoTpl;
+    }
+    
+    /**
+     * Get tipoPlanTpl
+     *
+     * @return string 
+     */
+    public function setTipoPlanTpl($tipoPlanTpl)
+    {
+       $this->tipoPlanTpl = $tipoPlanTpl;
     }
 
     /**

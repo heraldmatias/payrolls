@@ -48,6 +48,10 @@ class ConceptoController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'concepto',
+            'Registro grabado satisfactoriamente'
+            );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_concepto_add' : '_concepto_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -72,6 +76,10 @@ class ConceptoController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'concepto',
+            'Registro modificado satisfactoriamente'
+            );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_concepto_add' : '_concepto_list';
             return $this->redirect($this->generateUrl($nextAction));
         }

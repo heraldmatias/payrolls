@@ -1,0 +1,61 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block form %}
+<div class="span10">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Consultar SubTipos de Planilla</h3>
+        </div>
+        <div class="modal-body">
+            {% for flashMessage in app.session.flashbag.get('subtplanilla') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+            <!---<div class="row-fluid">
+            <div class="span7">
+             
+            <fieldset>
+                <legend>Opciones de Busqueda</legend>
+                <div class="row-fluid">
+                
+                </div>
+            </fieldset>
+            </div></div>-->
+            
+            <h4>Listado de Subtipos de Planilla</h4>
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Planilla</th>
+                        <th>SubTipo</th>
+                        <th>Descripción</th>
+                        <th>Abreviatura</th>                        
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for object in pagination %}
+                    <tr {% if loop.index is odd %}class="info"{% endif %}>
+                        <td>{{ object.tipoPlanTpl }}</td>
+                        <td>{{ object.subtPlanStp }}</td>
+                        <td>{{ object.descSubtStp }}</td>
+                        <td>{{ object.tituSubtStp }}</td>                                           
+                        <td>
+                            <a href="{{ path('_planilla_subtplanilla_edit', {
+                                'planilla': object.tipoPlanTpl.tipoPlanTpl,
+                                'pk': object.subtPlanStp}) }}" title="Editar">
+                                <i class="icon-edit"></i> </a>
+                            
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

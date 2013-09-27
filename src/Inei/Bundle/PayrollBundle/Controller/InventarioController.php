@@ -69,6 +69,10 @@ class InventarioController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'tomo',
+            'Registro grabado satisfactoriamente'
+            );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -91,6 +95,10 @@ class InventarioController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'tomo',
+            'Registro grabado satisfactoriamente'
+            );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -160,6 +168,10 @@ class InventarioController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'tomo',
+            'Registro modificado satisfactoriamente'
+            );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -193,10 +205,11 @@ class InventarioController extends Controller {
         }        
         $fem = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
-        $query = $fem->findBy($criteria, array(
-            'tomo' => 'asc',
-            'codiFolio' => 'asc'
-        ));
+//        $query = $fem->findBy($criteria, array(
+//            'tomo' => 'asc',
+//            'codiFolio' => 'asc'
+//        ));
+        $query = $fem->findCustomBy($criteria);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
@@ -241,6 +254,10 @@ class InventarioController extends Controller {
                 }
             }
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'folio',
+            'Registro grabado satisfactoriamente'
+            );
             $tomo = $object->getTomo()->getCodiTomo();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
             $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array();
@@ -249,51 +266,7 @@ class InventarioController extends Controller {
         return array(
             'form' => $form->createView()
         );
-    }
-    
-     /**
-     * @Route("/folios/otro/add/", name="_inventario_folio_add_otro")
-     * @Template("IneiPayrollBundle:Inventario:addFoliosOtro.html.twig")
-     */
-    public function addFoliosOTROAction(Request $request) {
-        $object = new Folios();
-        $em = $this->getDoctrine()
-                ->getRepository('IneiPayrollBundle:Tomos');
-        $tomo = $request->get('tomo') ? $request->get('tomo') : 0;
-        $_tomo = $em->find($tomo);
-        $object->setTomo($_tomo);
-        $form = $this->createForm('folios_1', $object, array('em' => $this->getDoctrine()->getManager()));
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $conceptos = $object->getConceptos()->toArray();
-            $object->getConceptos()->clear();
-            $_pks = array_unique(array_map(
-                            create_function('$concept', 'return $concept->getcodiConcTco();'), $conceptos
-            ));
-            $em->persist($object);
-            $em->flush();
-            foreach ($_pks as $pk) {
-                foreach ($conceptos as $concepto) {
-                    if ($concepto->getCodiConcTco() === $pk) {
-                        $concepto->setCodiFolio($object);
-                        $em->persist($concepto);
-                        break;
-                    }
-                }
-            }
-            $em->flush();
-            $tomo = $object->getTomo()->getCodiTomo();
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
-            $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array();
-            return $this->redirect($this->generateUrl($nextAction, $parameters));
-        }
-        return array(
-            'form' => $form->createView()
-        );
-    }
+    }    
 
     /**
      * @Route("/folios/edit/{pk}/", name="_inventario_folio_edit")
@@ -312,6 +285,10 @@ class InventarioController extends Controller {
             //$object->getConceptos()->clear();
             $em->persist($object);
             $em->flush();
+            $this->get('session')->getFlashBag()->add(
+            'folio',
+            'Registro modificado satisfactoriamente'
+            );
             $tomo = $object->getTomo()->getCodiTomo();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
             $parameters = $form->get('saveAndAdd')->isClicked() ? array() : array('tomo' => $tomo);

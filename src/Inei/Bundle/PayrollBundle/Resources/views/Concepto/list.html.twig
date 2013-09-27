@@ -6,6 +6,12 @@
             <h3>Consultar Conceptos</h3>
         </div>
         <div class="modal-body">
+             {% for flashMessage in app.session.flashbag.get('concepto') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
@@ -36,7 +42,6 @@
                         <td><!--- LINK A LAS PLANILLAS--->
                             <a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>
-                            <a href="#" title="Ver Planillas"><i class="icon-list"></i> </a>
                         </td>
                     </tr>
                 {% endfor %}

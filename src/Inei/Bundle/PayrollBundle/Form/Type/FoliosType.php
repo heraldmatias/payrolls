@@ -44,10 +44,10 @@ class FoliosType extends AbstractType {
                     'label' => 'Planilla',
                     'empty_value' => '---SELECCIONE---',
                 ))
-                ->add('subtPlanStp', null, array(
+                /*->add('subtPlanStp', null, array(
                     'label' => 'Sub Tipo Planilla',
                     'max_length' => 40
-                ))
+                ))*/
                 ->add($builder->create('conceptos', 'collection', array(
                             'type' => new ConceptoFoliosType(),
                             'allow_add' => true,
@@ -69,7 +69,12 @@ class FoliosType extends AbstractType {
                     'attr' => array('class' => 'num_folio'),
                     'choices' => $this->getFolios($event->getData(), $entityManager),
                     );
-                    $form->add('folio', 'choice', $formOptions);
+                    $form->add('folio', 'choice', $formOptions)
+                            ->add('subtPlanStp', 'choice', array(
+                                'label' => 'Sub Tipo Planilla',
+                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'empty_value' => '---SELECCIONE---'
+                    ));
                 }
         );
         $builder->addEventListener(
@@ -80,7 +85,12 @@ class FoliosType extends AbstractType {
                     'attr' => array('class' => 'num_folio'),
                     'choices' => $this->getFolios($event->getData(), $entityManager),
                     );
-                    $form->add('folio', 'choice', $formOptions);
+                    $form->add('folio', 'choice', $formOptions)
+                            ->add('subtPlanStp', 'choice', array(
+                                'label' => 'Sub Tipo Planilla',
+                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'empty_value' => '---SELECCIONE---'
+                    ));
                 }
         );
     }
@@ -104,11 +114,16 @@ class FoliosType extends AbstractType {
                 $_pk = $planilla;    
             }
         }
-        $subt = $em->getRepository('IneiPayrollBundle:Subtplanilla')->findAll();
-        //echo $subt;
+        $qb = $em->createQuery(
+                            "SELECT s.subtPlanStp, s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
+                        WHERE s.tipoPlanTpl = :pla ")
+                    ->setParameters(array(                
+                'pla' => $_pk,
+            ));
+        $subt = $qb->getResult();
         $_subt = array();
         foreach ($subt as $value) {
-            $_subt[$value->getDescSubtStp()] = $value->getDescSubtStp();
+            $_subt[$value['subtPlanStp']] = $value['descSubtStp'];
         }
         return $_subt;
     }

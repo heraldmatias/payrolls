@@ -21,11 +21,10 @@
     <div class="modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Modificar Tomos</h3>
+            <h3>Registrar SubTipo de Planilla</h3>
         </div>
-        <div class="modal-body"> 
-            
-        {% for flashMessage in app.session.flashbag.get('tomo') %}
+        <div class="modal-body">
+            {% for flashMessage in app.session.flashbag.get('subtplanilla') %}
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ flashMessage }}
@@ -34,43 +33,43 @@
         {{ form_errors(form) }}
             <div class="row-fluid">
                 <div class="span1">
-                    {{ form_label(form.codiTomo) }}
+                    {{ form_label(form.tipoPlanTpl) }}                    
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.codiTomo) }}
-                    {{ form_widget(form.codiTomo) }}
+                    {{ form_errors(form.tipoPlanTpl) }}
+                    {{ form_widget(form.tipoPlanTpl) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.subtPlanStp) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.subtPlanStp) }}
+                    {{ form_widget(form.subtPlanStp) }}
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span1">
-                    {{ form_label(form.anoTomo) }}
+                    {{ form_label(form.descSubtStp) }}
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.anoTomo) }}
-                    {{ form_widget(form.anoTomo) }}
-                </div>
+                    {{ form_errors(form.descSubtStp) }}
+                    {{ form_widget(form.descSubtStp) }}
+                </div>                    
                 <div class="span1">
-                    {{ form_label(form.periodoTomo) }}                    
+                    {{ form_label(form.tituSubtStp) }}
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.periodoTomo) }}
-                    {{ form_widget(form.periodoTomo) }}
-                </div>
-                <div class="span1">
-                    {{ form_label(form.foliosTomo) }}                    
-                </div>
-                <div class="span2">
-                    {{ form_errors(form.foliosTomo) }}
-                    {{ form_widget(form.foliosTomo) }}
+                    {{ form_errors(form.tituSubtStp) }}
+                    {{ form_widget(form.tituSubtStp) }}
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span1">
-                    {{ form_label(form.descTomo) }}
+                    {{ form_label(form.observ) }}
                 </div>
                 <div class="span8">
-                    {{ form_errors(form.descTomo) }}
-                    {{ form_widget(form.descTomo) }}
+                    {{ form_errors(form.observ) }}
+                    {{ form_widget(form.observ) }}
                 </div>
             </div>
             </div>

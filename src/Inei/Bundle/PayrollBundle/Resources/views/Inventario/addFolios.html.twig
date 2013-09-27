@@ -32,6 +32,12 @@
             <h3>Registrar Folio</h3>
         </div>
         <div class="modal-body"> 
+                    {% for flashMessage in app.session.flashbag.get('folio') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
         {{ form_errors(form) }}
             <div class="row-fluid">
                 <div class="span1">
@@ -131,6 +137,9 @@
                 e.preventDefault();
                 loadFolios($(this).val());
             });
+            $('#folios_tipoPlanTpl').on('change', function(e) {
+                loadSubPlanillas($(this).val());
+            });
         });
         function addConceptForm(collectionHolder) {
             var prototype = collectionHolder.data('prototype');
@@ -169,6 +178,17 @@
             });
         }
 
+        function loadSubPlanillas(pla) {        
+            var $folios = $('#folios_subtPlanStp');
+            $folios.empty();
+            $folios.append($('<option value="">---SELECCIONE---</option>'));
+            $.get('{{ path('_planilla_tplanilla_ajax') }}', {"pla": pla}, function(json){
+                $.each(json, function(k, v){
+                    $folios.append($('<option value='+v['subtPlanStp']+'>'+v['descSubtStp']+'</option>'));
+                });
+            });
+        }
+    
         
         </script>
 {% endblock %}    

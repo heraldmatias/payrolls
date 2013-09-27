@@ -27,6 +27,12 @@
                 <h3>Registrar Planillas</h3>
             </div>
             <div class="modal-body">
+                {% for flashMessage in app.session.flashbag.get('planilla') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
                 <div class="row-fluid">
                     <div class="span7">
                     {{ form_start(sform) }}
@@ -45,7 +51,7 @@
                     <div class="span1"> <h4>Año:</h4> </div><div class="span1"> <h4>{{ folio.tomo.anoTomo }}</h4> </div>
                     <div class="span1"> <h4>Registros:</h4> </div><div class="span1"> <h4>{{ folio.registrosFolio }}</h4> </div>
                     <div class="span1"> <h4>Periodo:</h4> </div><div class="span2"> <h4>{{ folio.periodoFolio }}</h4> </div>
-                    <div class="span1"> <h4>Planilla:</h4> </div><div class="span2"> <h4>{{ folio.tipoPlanTpl }} - {{ folio.subtPlanStp }}</h4> </div>
+                    <div class="span1"> <h4>Planilla:</h4> </div><div class="span2"> <h4>{{ folio.tipoPlanTpl }} - {{ folio.descSubtStp }}</h4> </div>
                     </div></div>
                 
                     {% endif %}
@@ -91,7 +97,7 @@
     function indexar() {
         var rows = $('#tplanillas tbody').find('tr');
         $.each(rows, function(i, v){
-           var $td = $('<td class="column-item">'+i+'</td>');
+           var $td = $('<td class="column-item">'+(i+1)+'</td>');
            $(v).prepend($td);
         });
     }

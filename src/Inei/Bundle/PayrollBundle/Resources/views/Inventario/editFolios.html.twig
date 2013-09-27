@@ -13,7 +13,13 @@
         }
         .planilla{
             width: 200px;
-        }        
+        }
+        .codiconcepto{
+            width: 350px;
+        }
+        .ordenconcepto{
+            width: 50px;
+        }
 </style>
 {% endblock %}
 {% block form %}
@@ -25,6 +31,12 @@
             <h3>Modificar Folio</h3>
         </div>
         <div class="modal-body"> 
+            {% for flashMessage in app.session.flashbag.get('folio') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
         {{ form_errors(form) }}
             <div class="row-fluid">
                 <div class="span1">
@@ -74,17 +86,17 @@
                     {{ form_widget(form.subtPlanStp) }}
                 </div>
             </div>             
-            <ul class="folio-options"></ul>
+            <div class="folio-options"></div><br>
             <table id="tfolios" class="table-bordered table-condensed">
                 <thead>
-                <th>Codigo</th><th>Orden</th><th>Opciones</th>
+                <th>Orden</th><th>Concepto</th><th>Opciones</th>
                 </thead>
                 <tbody data-prototype="{{ form_widget(form.conceptos.vars.prototype)|e }}"
                        data-options =''>
                     {% for concepto in form.conceptos %}
                     <tr>
-                        <td>{{ form_errors(concepto.codiConcTco) }}{{ form_widget(concepto.codiConcTco) }}</td>
                         <td>{{ form_errors(concepto.orden) }}{{ form_widget(concepto.orden) }}</td>
+                        <td>{{ form_errors(concepto.codiConcTco) }}{{ form_widget(concepto.codiConcTco) }}</td>
                     </tr>
                     {% endfor %}                    
                 </tbody>
@@ -103,22 +115,28 @@
     <script type="text/javascript">
      // Get the ul that holds the collection of tags
         var collectionHolder = $('#tfolios tbody');
-        var options = $('ul.folio-options');
+        var options = $('div.folio-options');
         var $addTagLink = $('<a href="#" class="btn btn-primary">Agregar Concepto</a>');
-        var $newLinkLi = $('<li></li>').append($addTagLink);        
 
         jQuery(document).ready(function() {
             // add the "add a tag" anchor and li to the tags ul
             collectionHolder.find('tr').each(function() {
                 addOptions($(this));
             });    
-            options.append($newLinkLi);
+            options.append($addTagLink);
             
             collectionHolder.data('index', collectionHolder.find('tr').length);            
             $addTagLink.on('click', function(e) {
                 e.preventDefault();
                 addConceptForm(collectionHolder);
-            });            
+            });
+            $('#folios_tomo').on('change', function(e){
+                e.preventDefault();
+                loadFolios($(this).val());
+            });
+            $('#folios_tipoPlanTpl').on('change', function(e) {
+                loadSubPlanillas($(this).val());
+            });
         });
         function addConceptForm(collectionHolder) {
             var prototype = collectionHolder.data('prototype');
@@ -136,8 +154,8 @@
             var $newopt = $('<a href="#nuevoconcepoto" title="Nuevo concepto"><i class="icon-plus"></i> </a>');
             var $deleteopt = $('<a href="#" title="Eliminar concepto"><i class="icon-trash"></i> </a>');
             var $options = $('<td></td>');
-            $options.append($viewopt);
-            $options.append($newopt);
+            //$options.append($viewopt);
+            //$options.append($newopt);
             $options.append($deleteopt);
             $newForm.append($options);
             $deleteopt.on('click', function(e) {
@@ -147,7 +165,27 @@
                 $newForm.remove();
             });
         }
+        
+        function loadFolios(tomo) {        
+            var $folios = $('#folios_folio');
+            $folios.empty();
+            $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json){
+                $.each(json, function(k, v){
+                    $folios.append($('<option value='+k+'>'+v+'</option>'));
+                });
+            });
+        }
 
+        function loadSubPlanillas(pla) {        
+            var $folios = $('#folios_subtPlanStp');
+            $folios.empty();
+            $folios.append($('<option value="">---SELECCIONE---</option>'));
+            $.get('{{ path('_planilla_tplanilla_ajax') }}', {"pla": pla}, function(json){
+                $.each(json, function(k, v){
+                    $folios.append($('<option value='+v['subtPlanStp']+'>'+v['tituSubtStp']+'</option>'));
+                });
+            });
+        }
         
         </script>
 {% endblock %}    

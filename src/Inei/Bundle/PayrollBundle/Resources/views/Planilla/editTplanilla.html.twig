@@ -21,11 +21,10 @@
     <div class="modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Modificar Tomos</h3>
+            <h3>Modificar Tipo de Planilla</h3>
         </div>
-        <div class="modal-body"> 
-            
-        {% for flashMessage in app.session.flashbag.get('tomo') %}
+         <div class="modal-body"> 
+             {% for flashMessage in app.session.flashbag.get('tplanilla') %}
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ flashMessage }}
@@ -34,44 +33,43 @@
         {{ form_errors(form) }}
             <div class="row-fluid">
                 <div class="span1">
-                    {{ form_label(form.codiTomo) }}
+                    {{ form_label(form.descTipoTpl) }}                    
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.codiTomo) }}
-                    {{ form_widget(form.codiTomo) }}
+                    {{ form_errors(form.descTipoTpl) }}
+                    {{ form_widget(form.descTipoTpl) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.tarjInicTpl) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tarjInicTpl) }}
+                    {{ form_widget(form.tarjInicTpl) }}
+                </div>                
+                <div class="span1">
+                    {{ form_label(form.tarjFinaTpl) }}                    
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tarjFinaTpl) }}
+                    {{ form_widget(form.tarjFinaTpl) }}
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span1">
-                    {{ form_label(form.anoTomo) }}
+                    {{ form_label(form.cantPeriTpl) }}
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.anoTomo) }}
-                    {{ form_widget(form.anoTomo) }}
-                </div>
+                    {{ form_errors(form.cantPeriTpl) }}
+                    {{ form_widget(form.cantPeriTpl) }}
+                </div>                    
                 <div class="span1">
-                    {{ form_label(form.periodoTomo) }}                    
+                    {{ form_label(form.abrevTipoTpl) }}
                 </div>
                 <div class="span2">
-                    {{ form_errors(form.periodoTomo) }}
-                    {{ form_widget(form.periodoTomo) }}
+                    {{ form_errors(form.abrevTipoTpl) }}
+                    {{ form_widget(form.abrevTipoTpl) }}
                 </div>
-                <div class="span1">
-                    {{ form_label(form.foliosTomo) }}                    
-                </div>
-                <div class="span2">
-                    {{ form_errors(form.foliosTomo) }}
-                    {{ form_widget(form.foliosTomo) }}
-                </div>
-            </div>
-            <div class="row-fluid">
-                <div class="span1">
-                    {{ form_label(form.descTomo) }}
-                </div>
-                <div class="span8">
-                    {{ form_errors(form.descTomo) }}
-                    {{ form_widget(form.descTomo) }}
-                </div>
+                    
             </div>
             </div>
             <div class="modal-footer">

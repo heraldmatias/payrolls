@@ -24,13 +24,13 @@ class Subtplanilla
     /**
      * @ORM\Id
      * @var string
-     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=true)
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=false)
      */
     private $subtPlanStp;    
 
     /**
      * @var string
-     * @ORM\Column(name="DESC_SUBT_STP", type="string", length=40, nullable=true)
+     * @ORM\Column(name="DESC_SUBT_STP", type="string", length=40, nullable=false)
      */
     private $descSubtStp;
 
