@@ -3,7 +3,7 @@
 <div class="span10">
     <div class="modal">
         <div class="modal-header">
-            <h3>Listar Folios</h3>
+            <h3>Consultar Folios</h3>
             <a href="{{ path('_inventario_list') }}" class="close" ><i class="icon-arrow-left"></i></a>
         </div>
         <div class="modal-body">
@@ -12,9 +12,11 @@
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
-                <div class="span1">{{ form_label(form.folio) }}</div><div class="span2"> {{ form_widget(form.folio) }} </div>
+                <div class="span2">{{ form_label(form.tomo) }}</div><div class="span3">{{ form_widget(form.tomo) }} </div>
+                <div class="span2">{{ form_label(form.folio) }}</div><div class="span3"> {{ form_widget(form.folio) }} </div>
+                </div><div class="row-fluid">
                 <div class="span2">{{ form_label(form.periodoFolio) }}</div><div class="span3"> {{ form_widget(form.periodoFolio) }} </div>
-                <div class="span1">{{ form_label(form.registrosFolio) }}</div><div class="span2">{{ form_widget(form.registrosFolio) }} </div>
+                <div class="span2">{{ form_label(form.registrosFolio) }}</div><div class="span2">{{ form_widget(form.registrosFolio) }} </div>
                 <div class="span1">{{ form_widget(form.search) }} </div>
                 </div>
             </fieldset>
@@ -22,8 +24,8 @@
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th>Codigo</th>
-                        <th>Num Folio</th>
+                        <th>Tomo</th>
+                        <th>Número de Folio</th>
                         <th>Periodo</th>
                         <th>Registros</th>
                         <th>Tipo Planilla</th>
@@ -34,7 +36,7 @@
                 <tbody>
                 {% for folio in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
-                        <td>{{ folio.codiFolio }}</td>
+                        <td>{{ folio.tomo.codiTomo }}</td>
                         <td>{{ folio.folio }}</td>
                         <td>{{ folio.periodoFolio }}</td>
                         <td>{{ folio.registrosFolio }}</td>

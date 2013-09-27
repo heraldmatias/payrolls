@@ -21,7 +21,7 @@ use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class FoliosType extends AbstractType {
+class FoliosOtroType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
@@ -42,11 +42,7 @@ class FoliosType extends AbstractType {
                 ->add('tipoPlanTpl', null, array(
                     'attr' => array('class' => 'planilla'),
                     'label' => 'Planilla',
-                    'empty_value' => '---SELECCIONE---',
-                ))
-                ->add('subtPlanStp', null, array(
-                    'label' => 'Sub Tipo Planilla',
-                    'max_length' => 40
+                    'empty_value' => '---SELECCIONE---'
                 ))
                 ->add($builder->create('conceptos', 'collection', array(
                             'type' => new ConceptoFoliosType(),
@@ -66,10 +62,16 @@ class FoliosType extends AbstractType {
                     $form = $event->getForm();
 
                     $formOptions = array(
-                    'attr' => array('class' => 'num_folio'),
-                    'choices' => $this->getFolios($event->getData(), $entityManager),
+                        'attr' => array('class' => 'num_folio'),
+                        'choices' => $this->getFolios($event->getData(), $entityManager),
                     );
-                    $form->add('folio', 'choice', $formOptions);
+                    $form->add('folio', 'choice', $formOptions)
+                            ->add('subtPlanStp', 'choice', array(
+                                'label' => 'Sub Tipo Planilla',
+                                'max_length' => 2,
+                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'empty_value' => '---SELECCIONE---'
+                    ));
                 }
         );
         $builder->addEventListener(
@@ -77,14 +79,20 @@ class FoliosType extends AbstractType {
                     $form = $event->getForm();
 
                     $formOptions = array(
-                    'attr' => array('class' => 'num_folio'),
-                    'choices' => $this->getFolios($event->getData(), $entityManager),
+                        'attr' => array('class' => 'num_folio'),
+                        'choices' => $this->getFolios($event->getData(), $entityManager),
                     );
-                    $form->add('folio', 'choice', $formOptions);
+                    $form->add('folio', 'choice', $formOptions)
+                            ->add('subtPlanStp', 'choice', array(
+                                'label' => 'Sub Tipo Planilla',
+                                'max_length' => 2,
+                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'empty_value' => '---SELECCIONE---'
+                    ));
                 }
         );
     }
-    
+
     private function getSubPlanilla($data, $em) {
         if (null === $data) {
             return;
@@ -117,21 +125,21 @@ class FoliosType extends AbstractType {
         if (null === $data) {
             return;
         }
-        if($data instanceof \Inei\Bundle\PayrollBundle\Entity\Folios){
+        if ($data instanceof \Inei\Bundle\PayrollBundle\Entity\Folios) {
             $tomo = $data->getTomo();
-            if (null === $tomo){
+            if (null === $tomo) {
                 return;
             }
             $nfolios = $tomo->getFoliosTomo();
-        }else{
+        } else {
             $tomo = $data['tomo'];
             $_tomo = $em->getRepository('IneiPayrollBundle:Tomos')->find($tomo);
-            if (null === $_tomo){
+            if (null === $_tomo) {
                 return;
             }
             $nfolios = $_tomo->getFoliosTomo();
         }
-        
+
         $folios = array();
         foreach (range(1, $nfolios) as $value) {
             $folios[$value] = 'FOLIO - ' . $value;
@@ -140,7 +148,7 @@ class FoliosType extends AbstractType {
     }
 
     public function getName() {
-        return 'folios';
+        return 'folios_1';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

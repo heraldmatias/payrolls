@@ -47,4 +47,14 @@ services:
     inei_payroll.form.type.search_folios:
         class: Inei\Bundle\PayrollBundle\Form\Type\SearchFoliosType
         tags:
-            - { name: form.type, alias: search_folios }
+            - { name: form.type, alias: search_folios }            
+    inei_payroll.form.type.registrar_planilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\RegistrarPlanillaType
+        tags:
+            - { name: form.type, alias: registrar_planilla }
+#TEST FORMS
+    inei_payroll.form.type.folios_1:
+        class: Inei\Bundle\PayrollBundle\Form\Type\FoliosOtroType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: folios_1 }

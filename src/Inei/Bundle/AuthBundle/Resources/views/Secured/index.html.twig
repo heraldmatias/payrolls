@@ -29,14 +29,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     </button>
-                    <a class="brand" href="#">PLANILLAS 2013</a>
+                    <a class="brand" href="#">SISTEMA DE REGISTRO DE PLANILLAS DE REMUNERACIONES / INEI</a>
                     <div class="nav-collapse collapse">
                         <p class="navbar-text pull-right">
                             Bienvenido <a href="{{ path('_admin_logout') }}" class="navbar-link">{{ app.user.nombres }}</a>
                         </p>
-                        <ul class="nav">
-                            <li class=""><a href="#" class="active">Acerca de</a></li>                            
-                        </ul>
                     </div><!--/.nav-collapse -->
                 </div>
             </div>
@@ -53,14 +50,13 @@
                             <li class=""><a href="{{ path('_inventario_list') }}">Consultar Tomos</a></li>                            
                             <li class="nav-header">Folios</li>
                             <li class=""><a href="{{ path('_inventario_folio_add') }}">Registrar Folio</a></li>
-                            <li class=""><a href="{{ path('_inventario_folio_listall') }}">Consultar Folios</a></li>
+                            <li class=""><a href="{{ path('_inventario_folio_list') }}">Consultar Folios</a></li>
                             <li class="nav-header">Planillas</li>
                             <li class=""><a href="{{ path('_planilla_add') }}">Registrar Planillas</a></li>
-                            <li class=""><a href="{{ path('_concepto_list') }}">Consultar Planillas</a></li>
                             
                             <li class="nav-header">Conceptos</li>
-                            <li class=""><a href="{{ path('_concepto_list') }}">Consultar Conceptos</a></li>
                             <li class=""><a href="{{ path('_concepto_add') }}">Registrar Conceptos</a></li>
+                            <li class=""><a href="{{ path('_concepto_list') }}">Consultar Conceptos</a></li>
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->

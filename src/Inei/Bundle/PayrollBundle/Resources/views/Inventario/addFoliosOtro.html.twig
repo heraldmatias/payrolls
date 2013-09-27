@@ -127,7 +127,7 @@
                 e.preventDefault();
                 addConceptForm(collectionHolder);
             });
-            $('#folios_tomo').on('change', function(e){
+            $('#folios_1_tomo').on('change', function(e){
                 e.preventDefault();
                 loadFolios($(this).val());
             });
@@ -160,7 +160,7 @@
             });
         }
         function loadFolios(tomo) {        
-            var $folios = $('#folios_folio');
+            var $folios = $('#folios_1_folio');
             $folios.empty();
             $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json){
                 $.each(json, function(k, v){

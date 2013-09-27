@@ -169,10 +169,10 @@ class InventarioController extends Controller {
     }
 
     /**
-     * @Route("/folios/{tomo}", name="_inventario_folio_list")
+     * @Route("/folios/", name="_inventario_folio_list")
      * @Template("")
      */
-    public function foliosAction(Request $request, $tomo) {
+    public function foliosAction(Request $request) {
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
                         'SELECT distinct f.periodoFolio FROM IneiPayrollBundle:Folios f'
                 )->getResult();
@@ -190,32 +190,21 @@ class InventarioController extends Controller {
             if (!$value) {
                 unset($criteria[$key]);
             }
-        }
-        if (!null === $tomo)
-            $criteria['tomo'] = $tomo;
-        /*$tem = $this->getDoctrine()
-                ->getRepository('IneiPayrollBundle:Tomos');
-        $_tomo = $tem->find($tomo);*/
+        }        
         $fem = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
-        $query = $fem->findBy($criteria);
+        $query = $fem->findBy($criteria, array(
+            'tomo' => 'asc',
+            'codiFolio' => 'asc'
+        ));
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
         );
         return array(
             'pagination' => $pagination,
-            //'tomo' => $_tomo,
             'form' => $form->createView()
         );
-    }
-    
-    /**
-     * @Route("/folios/", name="_inventario_folio_listall")
-     * @Template("IneiPayrollBundle:Inventario:folios.html.twig")
-     */
-    public function foliosAllAction(Request $request) {
-        return $this->foliosAction($request, null);
     }
 
     /**
@@ -254,7 +243,51 @@ class InventarioController extends Controller {
             $em->flush();
             $tomo = $object->getTomo()->getCodiTomo();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
-            $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array('tomo' => $tomo);
+            $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array();
+            return $this->redirect($this->generateUrl($nextAction, $parameters));
+        }
+        return array(
+            'form' => $form->createView()
+        );
+    }
+    
+     /**
+     * @Route("/folios/otro/add/", name="_inventario_folio_add_otro")
+     * @Template("IneiPayrollBundle:Inventario:addFoliosOtro.html.twig")
+     */
+    public function addFoliosOTROAction(Request $request) {
+        $object = new Folios();
+        $em = $this->getDoctrine()
+                ->getRepository('IneiPayrollBundle:Tomos');
+        $tomo = $request->get('tomo') ? $request->get('tomo') : 0;
+        $_tomo = $em->find($tomo);
+        $object->setTomo($_tomo);
+        $form = $this->createForm('folios_1', $object, array('em' => $this->getDoctrine()->getManager()));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            // perform some action, such as saving the task to the database
+            $em = $this->getDoctrine()->getManager();
+            $conceptos = $object->getConceptos()->toArray();
+            $object->getConceptos()->clear();
+            $_pks = array_unique(array_map(
+                            create_function('$concept', 'return $concept->getcodiConcTco();'), $conceptos
+            ));
+            $em->persist($object);
+            $em->flush();
+            foreach ($_pks as $pk) {
+                foreach ($conceptos as $concepto) {
+                    if ($concepto->getCodiConcTco() === $pk) {
+                        $concepto->setCodiFolio($object);
+                        $em->persist($concepto);
+                        break;
+                    }
+                }
+            }
+            $em->flush();
+            $tomo = $object->getTomo()->getCodiTomo();
+            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
+            $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array();
             return $this->redirect($this->generateUrl($nextAction, $parameters));
         }
         return array(
@@ -297,13 +330,16 @@ class InventarioController extends Controller {
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tomos');
         $tomo = $request->query->get('tomo');
-        if (!is_numeric($tomo)) {
-            throw $this->createNotFoundException('The product does not exist');
-        }
         $folios = array();
-        $_tomo = $em->find($tomo);
-        foreach (range(1, $_tomo->getFoliosTomo()) as $value) {
-            $folios[$value] = 'FOLIO - ' . $value;
+        if (is_numeric($tomo)) {
+            $_tomo = $em->find($tomo);
+            if (null === $_tomo) {
+                //NADA
+            } else {
+                foreach (range(1, $_tomo->getFoliosTomo()) as $value) {
+                    $folios[$value] = 'FOLIO - ' . $value;
+                }
+            }
         }
         $response = new Response(json_encode($folios));
         $response->headers->set('content-type', 'application/json');

@@ -22,12 +22,14 @@ use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 class SearchTomosType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('anoTomo', null, array(
+        $builder->add('anoTomo', 'choice', array(
                     'attr' => array(
                         'class' => 'folio',
                         'style' => 'width:100%;'
                      ),
-                    'required' => false
+                    'required' => false,
+                    'choices' => $this->getAnos(),
+                    'label' => 'Año del Tomo'
                 ))
                 ->add('periodoTomo', 'choice', array(
                     'attr' => array(
@@ -36,7 +38,8 @@ class SearchTomosType extends AbstractType {
                         ),
                     'required' => false,
                     'choices' => $options['periodos'],
-                    'empty_value' => '---SELECCIONE---'
+                    'empty_value' => '---SELECCIONE---',
+                    'label' => 'Periodo del Tomo'
                 ))
                 ->add('foliosTomo', 'number', array(
                     'attr' => array(
@@ -51,6 +54,14 @@ class SearchTomosType extends AbstractType {
                     'attr' => array('class' => 'btn btn-primary'),));
     }
 
+    private function getAnos(){
+        $codes = array();
+        foreach (range(1961, 2002) as $number) {
+            $codes[$number] = $number;
+        }
+        return $codes;
+    }
+    
     public function getName() {
         return 'search_tomos';
     }

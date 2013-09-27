@@ -27,15 +27,18 @@ class SearchFoliosType extends AbstractType {
                         'style' => 'width:100%;'
                      ),
                     'required' => false,
-                    'choices' => array_key_exists('tomos', $options) ?$options['tomos']:array(),
+                    'choices' => array_combine(range(1, 419),range(1, 419)),
                     'empty_value' => '---SELECCIONE---'
                 ))
-                ->add('folio', null, array(
+                ->add('folio', 'choice', array(
                     'attr' => array(
                         'class' => 'folio',
                         'style' => 'width:100%;'
                      ),
-                    'required' => false
+                    'required' => false,
+                    'empty_value' => '---SELECCIONE---',
+                    'choices' => array_combine(range(1, 500),range(1, 500)),
+                    'label' => 'Numero de Folio'
                 ))
                 ->add('periodoFolio', 'choice', array(
                     'attr' => array(
@@ -52,7 +55,7 @@ class SearchFoliosType extends AbstractType {
                         'style' => 'width:100%;'
                         ),
                     'required' => false,
-                    'label' => 'Folios'
+                    'label' => 'Registros Por Folio'
                 ))
                 ->add('search', 'submit', array(
                     'label' => 'Buscar',

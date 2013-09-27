@@ -13,111 +13,104 @@
         td.column-descripcion{
             width: 200px;
         }
-</style>
+        td.column-item{
+            width: 30px;
+        }
+    </style>
 {% endblock %}
 {% block form %}
-<div class="span10">
-    {% if form %}{{ form_start(form) }}{% endif %}
-    <div class="modal">
-        <div class="modal-header">
+    <div class="span10">
+    
+        <div class="modal">
+            <div class="modal-header">
 
-            <h3>Registrar Planillas</h3>
-        </div>
-        <div class="modal-body">
-             {% if form %}
-            <table id="tplanillas" class="table table-bordered">
-                <thead></thead>
-                <tbody data-prototype="{{ form_widget(form.payrolls.vars.prototype)|e }}"></tbody>
-                {% for planilla in form.payrolls%}
-                    {{ form_widget(planilla) }}
-                {% endfor %}
-            </table>{% endif %}
-        </div>
-        <div class="modal-footer">
-            {% if form %}{{ form_widget(form.save) }}{% endif %}
-            <a href="#" class="btn">Cerrar</a>
-        </div>            
-    </div>
-         {% if form %}{{ form_end(form) }}{% endif %}
-</div>
+                <h3>Registrar Planillas</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid">
+                    <div class="span7">
+                    {{ form_start(sform) }}
+                        <div class="span1">{{ form_label(sform.tomo) }}</div>
+                        <div class="span2">{{ form_widget(sform.tomo) }}</div>
+                        <div class="span1">{{ form_label(sform.folio) }}</div>
+                        <div class="span2">{{ form_widget(sform.folio) }}</div>
+                        <div class="span2">{{ form_widget(sform.buscar) }}</div>
+                    {{ form_end(sform) }}
+                    </div>
+                </div>{% if folio %}
+                <div class="row-fluid">
+                    <div class="span12"><h4>Información del Folio</h4></div></div>
+                    <div class="row-fluid"><div class="span12">
+                    <div class="span1"> <h4>Tomo:</h4> </div><div class="span1"> <h4>{{ folio.tomo }}</h4> </div>
+                    <div class="span1"> <h4>Año:</h4> </div><div class="span1"> <h4>{{ folio.tomo.anoTomo }}</h4> </div>
+                    <div class="span1"> <h4>Registros:</h4> </div><div class="span1"> <h4>{{ folio.registrosFolio }}</h4> </div>
+                    <div class="span1"> <h4>Periodo:</h4> </div><div class="span2"> <h4>{{ folio.periodoFolio }}</h4> </div>
+                    <div class="span1"> <h4>Planilla:</h4> </div><div class="span2"> <h4>{{ folio.tipoPlanTpl }} - {{ folio.subtPlanStp }}</h4> </div>
+                    </div></div>
+                
+                    {% endif %}
+
+         {% if form %}
+             {{ form_start(form) }}
+                    <table id="tplanillas" class="table table-bordered">
+                        <thead></thead>
+                        <tbody data-prototype="{{ form_widget(form.payrolls.vars.prototype)|e }}">
+            {% for planilla in form.payrolls%}
+                {{ form_widget(planilla) }}
+            {% endfor %}</tbody>
+                    </table>
+                    <input type ="hidden" value="{% if folio %} {{ folio.folio }} {% endif %}" name ="folio">
+               {% else %}
+                    <b>EL FOLIO NO ESTA REGISTRADO</b>
+                    {% endif %}
+                    <div class="modal-footer">
+                        {% if form %} {{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
+                        <a href="#" class="btn">Cerrar</a>
+                    </div>
+                    </div>
+                            
+                </div>
+     
+            </div>
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
-    function loadColumns(){
+    function loadColumns() {
         var form = $($('#tplanillas tbody').data('prototype'));
         var collectionColumns = $('#tplanillas thead');
         var $column = null;
-        $.each(form.find('td'), function(index, field){
+        $.each(form.find('td'), function(index, field) {
             $field = $(field);
             $column = $('<th></th>');
             $column.html($field.find('*').data('title'));
             collectionColumns.append($column);
         });
+        $column = $('<th>REGISTRO</th>');
+        collectionColumns.prepend($column);
     }
-    $(document).ready(function(){
-       loadColumns();
+    function indexar() {
+        var rows = $('#tplanillas tbody').find('tr');
+        $.each(rows, function(i, v){
+           var $td = $('<td class="column-item">'+i+'</td>');
+           $(v).prepend($td);
+        });
+    }
+    function loadFolios(tomo) {
+        var $folios = $('#registrar_planilla_folio');
+        $folios.empty();
+        $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json) {
+            $.each(json, function(k, v) {
+                $folios.append($('<option value=' + k + '>' + v + '</option>'));
+            });
+        });
+    }
+    $(document).ready(function() {
+        loadColumns();
+        indexar();
+        $('#registrar_planilla_tomo').on('change', function(e) {
+            loadFolios($(this).val());
+        });
     });
-    /*var collectionHolder = $('#tplanillas tbody');
-    var options = $('ul.folio-options');
-    var $addTagLink = $('<a href="#" class="btn btn-primary">Agregar Registro</a>');
-    var $newLinkLi = $('<li></li>').append($addTagLink);
 
-    jQuery(document).ready(function() {
-        // add the "add a tag" anchor and li to the tags ul
-        collectionHolder.find('tr').each(function() {
-            addOptions($(this));
-        });
-        options.append($newLinkLi);
-        loadColumns(collectionHolder);
-
-        collectionHolder.data('index', collectionHolder.find('tr').length);
-        $addTagLink.on('click', function(e) {
-            e.preventDefault();
-            addConceptForm(collectionHolder);
-        });
-    });
-    
-    function loadColumns(collectionHolder){
-        var form = $(collectionHolder.data('prototype'));
-        var collectionColumns = $('#tplanillas thead');
-        var $column = null;
-        $.each(form.find('td'), function(index, field){
-            $field = $(field);
-            $column = $('<th></th>');
-            $column.html($field.find('*').data('title'));
-            collectionColumns.append($column);
-        });
-        $column = $('<th>OPCIONES</th>');
-        collectionColumns.append($column);
-    }
-
-    function addConceptForm(collectionHolder) {
-        var prototype = collectionHolder.data('prototype');
-        var index = collectionHolder.data('index');
-        var newForm = prototype.replace(/__name__/g, index);
-        var $newForm = $(newForm);
-        addOptions($newForm);
-        collectionHolder.data('index', index + 1);
-
-        collectionHolder.append($newForm);
-
-    }
-
-    function addOptions($newForm) {
-        var $viewopt = $('<a href="#verconcepto" title="Ver Concepto"><i class="icon-edit"></i> </a>');
-        var $newopt = $('<a href="#nuevoconcepoto" title="Nuevo concepto"><i class="icon-plus"></i> </a>');
-        var $deleteopt = $('<a href="#" title="Eliminar concepto"><i class="icon-trash"></i> </a>');
-        var $options = $('<td></td>');
-        $options.append($viewopt);
-        $options.append($newopt);
-        $options.append($deleteopt);
-        $newForm.append($options);
-        $deleteopt.on('click', function(e) {
-            // prevent the link from creating a "#" on the URL
-            e.preventDefault();
-            // remove the li for the tag form
-            $newForm.remove();
-        });
-    }*/
     </script>
 {% endblock %}

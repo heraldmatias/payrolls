@@ -51,7 +51,7 @@ class PlanillaHistoricas
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\maestroPersonal     
-     * @ORM\Column(name="CODI_EMPL_PER", type="string", length=8)
+     * @ORM\Column(name="CODI_EMPL_PER", type="string", length=100)
      */
     private $codiEmplPer;
 

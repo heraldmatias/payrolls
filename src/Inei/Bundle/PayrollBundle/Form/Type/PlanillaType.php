@@ -26,18 +26,19 @@ class PlanillaType extends AbstractType {
         $folio = $options['folio'];
         $builder->add('codiEmplPer', 'text', array(
                     'attr' => array(
-                        'data-title' => 'NOMBRES',
+                        'data-title' => 'NOMBRES Y APELLIDOS',
                         'class' => 'nombre',
                         'style' => 'width:98%;'
                     ),
-                    'max_length' => 8
+                    'max_length' => 100
                 ))
                 ->add('descripcion', 'textarea', array(
                     'attr' => array(
-                        'data-title' => 'DESCRIPCION',
+                        'data-title' => 'OBSERVACION',
                         'class' => 'descripcion',
                         'style' => 'width:98%;'
-                    )
+                    ),
+                    'required' => false
                 ));
         /* ->add('save', 'submit', array(
           'label' => 'Guardar',

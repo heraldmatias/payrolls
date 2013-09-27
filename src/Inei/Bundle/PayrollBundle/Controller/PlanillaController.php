@@ -19,16 +19,27 @@ use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 class PlanillaController extends Controller {
 
     /**
-     * @Route("/add", name="_planilla_add")
+     * @Route("/add/", name="_planilla_add")
      * @Template("")
      */
     public function addAction(Request $request) {
-        $pk = $request->get('folio');
+        $pk = null;$object = null;
+        if($request->request->get('form') ){
+            $pk = $request->request->get('folio');
+        }else if($request->request->get('registrar_planilla')){
+            $pk = array_key_exists('folio',$request->request->get('registrar_planilla'))?$request->request->get('registrar_planilla')['folio']:null;
+        }
         $form = null;
-        if ($pk) {
+        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
+        $sform->handleRequest($request);
+        
+        if($pk){
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->find($pk);
+            $object = $em->findOneBy(array('folio' => $pk)); 
+        }        
+        if ($object) {
+            
             $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
             $planilla = array();
             $array = array('payrolls' => array_map(
@@ -58,7 +69,7 @@ class PlanillaController extends Controller {
                             create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
             }
 
-            $form = $this->createFormBuilder($array)
+            $_form = $this->createFormBuilder($array)
                     ->add('payrolls', 'collection', array(
                         'required' => true,
                         'allow_delete' => true,
@@ -73,12 +84,13 @@ class PlanillaController extends Controller {
                         'label' => 'Guardar',
                         'attr' => array('class' => 'btn btn-primary'),))
                     ->getForm();
-            $form->handleRequest($request);
-            if ($form->isValid()) {
+            $_form->handleRequest($request);
+            if ($_form->isValid()) {
                 /*                 * **GUARDAR** */
                 $em = $this->getDoctrine()->getManager();
-                $data = $form->getData()['payrolls'];
+                $data = $_form->getData()['payrolls'];
                 $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
+                $q->execute();
                 foreach ($data as $key => $planilla) {
                     $dni = $planilla['codiEmplPer'];
                     $descripcion = $planilla['descripcion'];
@@ -101,14 +113,16 @@ class PlanillaController extends Controller {
                     $em->flush();
                     $em->clear();
                 }
-                $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_add' : '_inventario_list';
-                $parameters = $form->get('saveAndAdd')->isClicked() ? array('pk' => $pk) : array();
-                return $this->redirect($this->generateUrl($nextAction, $parameters));
+                $nextAction = '_planilla_add';                
+                return $this->redirect($this->generateUrl($nextAction));
+                $object = null;
             }
-            $form = $form->createView();
+            $form = $_form->createView();
         }
         return array(
-            'form' => $form
+            'form' => $form,
+            'sform' => $sform->createView(),
+            'folio' => $object
         );
     }
 

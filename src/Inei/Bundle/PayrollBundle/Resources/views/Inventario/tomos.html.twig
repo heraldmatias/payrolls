@@ -3,7 +3,7 @@
 <div class="span10">
     <div class="modal">
         <div class="modal-header">
-            <h3>Consulta Tomos</h3>
+            <h3>Consultar Tomos</h3>
         </div>
         <div class="modal-body">
             {{ form_start(form) }}
@@ -12,16 +12,14 @@
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
-                <div class="span1">{{ form_label(form.anoTomo) }}</div><div class="span2"> {{ form_widget(form.anoTomo) }} </div>
                 <div class="span2">{{ form_label(form.periodoTomo) }}</div><div class="span3"> {{ form_widget(form.periodoTomo) }} </div>
-                <div class="span1">{{ form_label(form.foliosTomo) }}</div><div class="span2">{{ form_widget(form.foliosTomo) }} </div>
+                <div class="span2">{{ form_label(form.anoTomo) }}</div><div class="span2"> {{ form_widget(form.anoTomo) }} </div>
+                <div class="span1">{{ form_label(form.foliosTomo) }}</div><div class="span1">{{ form_widget(form.foliosTomo) }} </div>
                 <div class="span1">{{ form_widget(form.search) }} </div>
                 </div>
             </fieldset>
             </div></div>{{ form_end(form) }}
-            <br>
-            <a href="{{ path('_inventario_tomo_add') }}" id="search_tomos_search" name="" class="btn btn-primary">Nuevo Tomo</a>
-            <br>
+            
             <h4>Listado de tomos</h4>
             <table class="table table-hover table-bordered">
                 <thead>
@@ -43,8 +41,7 @@
                         <td>
                             <a href="{{ path('_inventario_tomo_edit', {'pk': tomo.codiTomo}) }}" title="Editar Tomo">
                                 <i class="icon-edit"></i> </a>
-                            <a href="{{ path('_inventario_folio_list', {'tomo': tomo.codiTomo}) }}" title="Ver Folios">
-                                <i class="icon-list"></i> </a>
+                            
                         </td>
                     </tr>
                 {% endfor %}

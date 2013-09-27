@@ -21,11 +21,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ConceptoFoliosType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('codiConcTco', null, array(
-                    'attr' => array('class' => 'codiconcepto')
+        $builder->add('orden', 'choice', array(
+                    'attr' => array('class' => 'ordenconcepto'),
+                    'choices' => array_combine(range(1, 20), range(1, 20))
                 ))
-                ->add('orden', null, array(
-                    'attr' => array('class' => 'ordenconcepto')
+                ->add('codiConcTco', null, array(
+                    'attr' => array('class' => 'codiconcepto')
                 ));
 //                ->add('descCortTco', null, array(
 //                    'read_only' => true

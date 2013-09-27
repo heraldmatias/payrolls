@@ -60,7 +60,7 @@ class Folios {
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\subtplanilla     
-     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=false)     
+     * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=40, nullable=true)     
      */
     private $subtPlanStp;
 
