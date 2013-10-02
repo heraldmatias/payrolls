@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 use Inei\Bundle\PayrollBundle\Entity\Tplanilla;
 use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 /**
  * Description of InventarioController
  *
@@ -20,6 +21,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/add/", name="_planilla_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_PLANILLA")
      */
     public function addAction(Request $request) {
         $pk = null;$object = null;
@@ -150,6 +152,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/tplanilla/", name="_planilla_tplanilla_list")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
      */
     public function tplanillaAction(Request $request) {
 //        $form = $this->createForm('search_tomos', null, array(
@@ -181,6 +184,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/tplanilla/add/", name="_planilla_tplanilla_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
      */
     public function addTplanillaAction(Request $request) {
         $object = new Tplanilla();
@@ -207,6 +211,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/tplanilla/{pk}", name="_planilla_tplanilla_edit")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
      */
     public function editTplanillaAction(Request $request, $pk) {
         $em = $this->getDoctrine()
@@ -235,6 +240,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/", name="_planilla_subtplanilla_list")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function subtplanillaAction(Request $request) {
 //        $form = $this->createForm('search_tomos', null, array(
@@ -266,6 +272,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/add/", name="_planilla_subtplanilla_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function addSubtplanillaAction(Request $request) {
         $object = new Subtplanilla();
@@ -292,6 +299,7 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/{planilla}/{pk}", name="_planilla_subtplanilla_edit")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function editSubtplanillaAction(Request $request,$planilla, $pk) {
         $em = $this->getDoctrine()

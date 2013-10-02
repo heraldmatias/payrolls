@@ -9,7 +9,7 @@ use Inei\Bundle\PayrollBundle\Entity\Tomos;
 use Inei\Bundle\PayrollBundle\Entity\Folios;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use JMS\SecurityExtraBundle\Annotation\Secure;
 /**
  * Description of InventarioController
  *
@@ -20,6 +20,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/", name="_inventario_list")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function tomosAction(Request $request) {
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
@@ -84,6 +85,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/tomos/add", name="_inventario_tomo_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function addTomosAction(Request $request) {
         $object = new Tomos();
@@ -156,6 +158,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/{pk}", name="_inventario_tomo_edit")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function editTomosAction(Request $request, $pk) {
         $em = $this->getDoctrine()
@@ -183,6 +186,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/", name="_inventario_folio_list")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function foliosAction(Request $request) {
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
@@ -223,6 +227,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/add/", name="_inventario_folio_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function addFoliosAction(Request $request) {
         $object = new Folios();
@@ -271,6 +276,7 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/edit/{pk}/", name="_inventario_folio_edit")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function editFoliosAction(Request $request, $pk) {
         $em = $this->getDoctrine()

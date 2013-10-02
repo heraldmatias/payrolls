@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\Conceptos;
 use Symfony\Component\HttpFoundation\Request;
-
+use JMS\SecurityExtraBundle\Annotation\Secure;
 /**
  * Description of InventarioController
  *
@@ -18,6 +18,7 @@ class ConceptoController extends Controller {
     /**
      * @Route("/", name="_concepto_list")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function listAction() {
         $em = $this->getDoctrine()->getManager();
@@ -37,6 +38,7 @@ class ConceptoController extends Controller {
     /**
      * @Route("/add", name="_concepto_add")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function addAction(Request $request) {
         $object = new Conceptos();
@@ -63,6 +65,7 @@ class ConceptoController extends Controller {
     /**
      * @Route("/{pk}", name="_concepto_edit")
      * @Template("")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function editAction(Request $request, $pk) {
         $em = $this->getDoctrine()

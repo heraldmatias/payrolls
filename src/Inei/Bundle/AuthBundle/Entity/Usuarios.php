@@ -1,9 +1,12 @@
 <?php
+
 // src/Acme/UserBundle/Entity/User.php
+
 namespace Inei\Bundle\AuthBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Inei\Bundle\AuthBundle\Entity\User
@@ -11,15 +14,15 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
  * @ORM\Table(name="USUARIOS")
  * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\UsuariosRepository")
  */
-class Usuarios implements AdvancedUserInterface, \Serializable
-{
+class Usuarios implements AdvancedUserInterface, \Serializable {
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
+
     /**
      * @ORM\Column(name="NOM_COMP_USU", type="string", length=150)
      */
@@ -50,10 +53,20 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      */
     private $isActive;
 
-    public function __construct()
-    {
+    /**
+     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
+     *
+     */
+    private $roles;
+
+    public function getRoles() {
+        return $this->roles->toArray();
+    }
+
+    public function __construct() {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
+        $this->roles = new ArrayCollection();
     }
 
     public function eraseCredentials() {
@@ -64,9 +77,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
         return $this->password;
     }
 
-    public function getRoles() {
-        return array('ROLE_ADMIN');
-    }
+//    public function getRoles() {
+//        return array('ROLE_ADMIN');
+//    }
 
     public function getSalt() {
         return '';
@@ -79,8 +92,7 @@ class Usuarios implements AdvancedUserInterface, \Serializable
     /**
      * @see \Serializable::serialize()
      */
-    public function serialize()
-    {
+    public function serialize() {
         return serialize(array(
             $this->id,
         ));
@@ -89,21 +101,18 @@ class Usuarios implements AdvancedUserInterface, \Serializable
     /**
      * @see \Serializable::unserialize()
      */
-    public function unserialize($serialized)
-    {
+    public function unserialize($serialized) {
         list (
-            $this->id,
-        ) = unserialize($serialized);
+                $this->id,
+                ) = unserialize($serialized);
     }
-
 
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -113,10 +122,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param string $nombres
      * @return Usuarios
      */
-    public function setNombres($nombres)
-    {
+    public function setNombres($nombres) {
         $this->nombres = $nombres;
-    
+
         return $this;
     }
 
@@ -125,8 +133,7 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      *
      * @return string 
      */
-    public function getNombres()
-    {
+    public function getNombres() {
         return $this->nombres;
     }
 
@@ -136,10 +143,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param string $username
      * @return Usuarios
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
-    
+
         return $this;
     }
 
@@ -149,10 +155,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param string $salt
      * @return Usuarios
      */
-    public function setSalt($salt)
-    {
+    public function setSalt($salt) {
         $this->salt = $salt;
-    
+
         return $this;
     }
 
@@ -162,10 +167,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param string $password
      * @return Usuarios
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
-    
+
         return $this;
     }
 
@@ -175,10 +179,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param string $email
      * @return Usuarios
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
-    
+
         return $this;
     }
 
@@ -187,8 +190,7 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      *
      * @return string 
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -198,10 +200,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      * @param boolean $isActive
      * @return Usuarios
      */
-    public function setIsActive($isActive)
-    {
+    public function setIsActive($isActive) {
         $this->isActive = $isActive;
-    
+
         return $this;
     }
 
@@ -210,13 +211,12 @@ class Usuarios implements AdvancedUserInterface, \Serializable
      *
      * @return boolean 
      */
-    public function isActive()
-    {
+    public function isActive() {
         return $this->isActive;
     }
 
     public function isAccountNonExpired() {
-        return true;        
+        return true;
     }
 
     public function isAccountNonLocked() {
@@ -230,4 +230,43 @@ class Usuarios implements AdvancedUserInterface, \Serializable
     public function isEnabled() {
         return $this->isActive();
     }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive() {
+        return $this->isActive;
+    }
+
+    /**
+     * Add roles
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Role $roles
+     * @return Usuarios
+     */
+    public function addRole(\Inei\Bundle\AuthBundle\Entity\Role $roles) {
+        $this->roles[] = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Remove roles
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Role $roles
+     */
+    public function removeRole(\Inei\Bundle\AuthBundle\Entity\Role $roles) {
+        $this->roles->removeElement($roles);
+    }
+
+    public function getRolesCollection() {
+        return $this->roles;
+    }
+    
+    public function getActiveDisplay(){
+        return $this->isActive ? 'ACTIVO' : 'INACTIVO';
+    }
+
 }

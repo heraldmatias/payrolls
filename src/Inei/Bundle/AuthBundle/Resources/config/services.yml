@@ -5,3 +5,19 @@ services:
 #    inei_auth.example:
 #        class: %inei_auth.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    inei_auth.form.type.usuario:
+        class: Inei\Bundle\AuthBundle\Form\Type\UsuarioType
+        tags:
+            - { name: form.type, alias: usuario }
+            
+    inei_auth.form.type.role:
+        class: Inei\Bundle\AuthBundle\Form\Type\RoleType
+        tags:
+            - { name: form.type, alias: role }
+            
+    usuario_service:
+        class: Inei\Bundle\AuthBundle\Service\UsuarioService
+        arguments: ["@security.encoder_factory"]
+        tags:
+            - { name: service, alias: usuario_service }
+        

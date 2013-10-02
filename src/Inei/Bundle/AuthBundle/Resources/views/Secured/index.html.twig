@@ -3,8 +3,14 @@
 <style type="text/css">
         body {
             padding-top: 60px;
-            padding-bottom: 40px;
+            padding-bottom: 40px;            
+            font: 60%/1.4 "Lucida Sans",Arial,Helvetica,sans-serif;
+            background-image: url("{{ asset('bundles/inei/banner_srpr.jpg') }}");
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: auto 138px;
         }
+        
         .sidebar-nav {
             padding: 9px 0;
         }
@@ -17,49 +23,81 @@
                 padding-right: 5px;
             }
         }
+        #principal{
+            margin-top: 100px;
+        }
+        .modal{
+            background-color: rgb(255, 252, 238);
+            }
+        #menu-principal{
+            background-color: rgb(255, 252, 238);
+            border: 1px solid rgb(227, 227, 227);
+            border-radius: 4px 4px 4px 4px;
+            box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05) inset;
+            }
+        table.thead.tr{
+
+    background-color: rgb(33, 64, 116);
+    color: rgb(255, 255, 255);
+
+            }
+            .row-black {
+    background-color: rgb(33, 64, 116);
+    color: rgb(255, 255, 255);
+}
+h3{
+color: rgb(18, 80, 128);
+font-size: 18px;
+font-weight: bold;}
     </style>
     {% block csspage %}{% endblock %}
 {% endblock %}
 {% block content_header %}
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    </button>
-                    <a class="brand" href="#">SISTEMA DE REGISTRO DE PLANILLAS DE REMUNERACIONES / INEI</a>
-                    <div class="nav-collapse collapse">
-                        <p class="navbar-text pull-right">
-                            Bienvenido <a href="{{ path('_admin_logout') }}" class="navbar-link">{{ app.user.nombres }}</a>
-                        </p>
-                    </div><!--/.nav-collapse -->
-                </div>
-            </div>
-        </div>
+    
 {% endblock %}
 {% block content %}
-        <div class="container-fluid">
+        <div class="container-fluid" id="principal">
             <div class="row-fluid">
                 <div class="span2">
-                    <div class="well sidebar-nav">
+                    <div class="sidebar-nav" id="menu-principal">
                         <ul class="nav nav-list">
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TOMO') %}
                             <li class="nav-header">Tomos</li>
                             <li class=""><a href="{{ path('_inventario_tomo_add') }}">Registrar Tomo</a></li>
                             <li class=""><a href="{{ path('_inventario_list') }}">Consultar Tomos</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_FOLIO') %}
                             <li class="nav-header">Folios</li>
                             <li class=""><a href="{{ path('_inventario_folio_add') }}">Registrar Folio</a></li>
                             <li class=""><a href="{{ path('_inventario_folio_list') }}">Consultar Folios</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TIPO_PLANILLA')
+                                 or is_granted('ROLE_SUBTPLANILLA') or is_granted('ROLE_PLANILLA') %}
                             <li class="nav-header">Planillas</li>
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TIPO_PLANILLA') %}
                             <li class=""><a href="{{ path('_planilla_tplanilla_add') }}">Registrar Tipo de Planilla</a></li>
                             <li class=""><a href="{{ path('_planilla_tplanilla_list') }}">Consultar Tipo de Planilla</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SUBTPLANILLA') %}
                             <li class=""><a href="{{ path('_planilla_subtplanilla_add') }}">Registrar SubTipo de Planilla</a></li>
                             <li class=""><a href="{{ path('_planilla_subtplanilla_list') }}">Consultar SubTipo de Planilla</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_PLANILLA') %}
                             <li class=""><a href="{{ path('_planilla_add') }}">Registrar Planillas</a></li>
+                            {% endif %}
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_CONCEPTO') %}
                             <li class="nav-header">Conceptos</li>
                             <li class=""><a href="{{ path('_concepto_add') }}">Registrar Conceptos</a></li>
                             <li class=""><a href="{{ path('_concepto_list') }}">Consultar Conceptos</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SEGURIDAD') %}
+                            <li class="nav-header">Seguridad</li>
+                            <li class=""><a href="{{ path('_admin_user_add') }}">Registrar Usuarios</a></li>
+                            <li class=""><a href="{{ path('_admin_user_list') }}">Consultar Usuarios</a></li>
+                            <li class=""><a href="{{ path('_admin_role_add') }}">Registrar Roles</a></li>
+                            <li class=""><a href="{{ path('_admin_role_list') }}">Consultar Roles</a></li>
+                            {% endif %}
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->

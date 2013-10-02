@@ -1,8 +1,9 @@
-inei_auth_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: IneiAuthBundle:Default:index }
-
 _admin:
     resource: "@IneiAuthBundle/Controller/SecuredController.php"
     type:     annotation
     prefix:   /admin
+    
+_admin_crud:
+    resource: "@IneiAuthBundle/Controller/SecurityCrudController.php"
+    type:     annotation
+    prefix:   /admin/security

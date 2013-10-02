@@ -3,48 +3,50 @@
 <div class="span10">
     <div class="modal">
         <div class="modal-header">
-            <h3>Consultar Tipos de Planilla</h3>
+            <h3>Consultar Usuarios</h3>
         </div>
         <div class="modal-body">
-            {% for flashMessage in app.session.flashbag.get('tplanilla') %}
+            
+        {% for flashMessage in app.session.flashbag.get('usuario') %}
             <div class="alert alert-success">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ flashMessage }}
             </div>
         {% endfor %}
-            <!---<div class="row-fluid">
+            <!--form
+            <div class="row-fluid">
             <div class="span7">
-             
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
                 
                 </div>
             </fieldset>
-            </div></div>-->
-            
-            <h4>Listado de tipos de Planilla</h4>
+            </div></div>
+            -->
+            <h4>Listado de Usuarios</h4>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="row-black">
-                        <th>Tipo</th>
-                        <th>Descripción</th>
-                        <th>Meses por Año</th>
-                        <th>Abreviatura</th>                        
+                        <th>Item</th>
+                        <th>Nombres</th>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Activo</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                {% for object in pagination %}
+                {% for item in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
-                        <td>{{ object.tipoPlanTpl }}</td>
-                        <td>{{ object.descTipoTpl }}</td>
-                        <td>{{ object.cantPeriTpl }}</td>                        
-                        <td>{{ object.abrevTipoTpl }}</td>                        
+                        <td>{{ loop.index }}</td>
+                        <td>{{ item.nombres }}</td>
+                        <td>{{ item.username }}</td>
+                        <td>{{ item.email }}</td>                        
+                        <td>{{ item.getActiveDisplay }}</td>                        
                         <td>
-                            <a href="{{ path('_planilla_tplanilla_edit', {'pk': object.tipoPlanTpl}) }}" title="Editar Tomo">
+                            <a href="{{ path('_admin_user_edit', {'pk': item.id}) }}" title="Editar Tomo">
                                 <i class="icon-edit"></i> </a>
-                            
                         </td>
                     </tr>
                 {% endfor %}
