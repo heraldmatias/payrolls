@@ -43,6 +43,7 @@ class FoliosType extends AbstractType {
                     'attr' => array('class' => 'planilla'),
                     'label' => 'Planilla',
                     'empty_value' => '---SELECCIONE---',
+                    'required' => false
                 ))
                 /*->add('subtPlanStp', null, array(
                     'label' => 'Sub Tipo Planilla',
@@ -73,7 +74,8 @@ class FoliosType extends AbstractType {
                             ->add('subtPlanStp', 'choice', array(
                                 'label' => 'Sub Tipo Planilla',
                                 'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
-                                'empty_value' => '---SELECCIONE---'
+                                'empty_value' => '---SELECCIONE---',
+                                'required' => false
                     ));
                 }
         );
@@ -89,7 +91,8 @@ class FoliosType extends AbstractType {
                             ->add('subtPlanStp', 'choice', array(
                                 'label' => 'Sub Tipo Planilla',
                                 'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
-                                'empty_value' => '---SELECCIONE---'
+                                'empty_value' => '---SELECCIONE---',
+                                'required' => false
                     ));
                 }
         );

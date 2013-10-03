@@ -13,3 +13,8 @@ Inei\Bundle\PayrollBundle\Entity\ConceptosFolios:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [codiFolio, codiConcTco]
             message: 'Ya existe un concepto en el mismo folio.'            
+Inei\Bundle\PayrollBundle\Entity\Conceptos:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [codiConcTco]
+            message: 'Ya existe un concepto con este codigo de concepto.'   

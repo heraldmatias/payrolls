@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ConceptoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('codiCiclCic', null, array(
+        $builder->add('codiConcTco', null, array(
                     'label' => 'Codigo'
                 ))
                 ->add('descConcTco', null, array(
@@ -33,13 +33,18 @@ class ConceptoType extends AbstractType
                     'label' => 'Tipo Concepto',
                     'choices' => array(
                         0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
-                    )
+                    ),
+                    'empty_value' => '---Ninguno---',
+                    'required' => false
+                    
                 ))
                 ->add('tipoCalcTco', 'choice', array(
                     'label' => 'Tipo Calculo',
                     'choices' => array(
                         0 => 'Otros', 1 => 'Fijo', 2  => 'Formula'
-                    )
+                    ),
+                    'empty_value' => '---Ninguno---',
+                    'required' => false
                 ))
                 ->add('secuCalcTco', null, array())
                 ->add('flagAsocTco', null, array())
@@ -65,19 +70,25 @@ class ConceptoType extends AbstractType
                 ->add('clasConcTco', 'choice', array(
                     'choices' => array(
                         1 => 'Fijo', 2 => 'Variable'
-                    )
+                    ),
+                    'empty_value' => '---Ninguno---',
+                    'required' => false
                 ))
                 ->add('flagPagoTco', 'choice', array(
                     'choices' => array(
                         1 => 'INEI', 2 => 'MEF'
                     ),
-                    'label' => 'Pago'
+                    'label' => 'Pago',
+                    'empty_value' => '---Ninguno---',
+                    'required' => false
                 ))
                 ->add('sedeConcTco', 'choice', array(
                     'choices' => array(
                         0 => 'Lima', 1 => 'ODEIS'
                     ),
-                    'label' => 'Sede'
+                    'label' => 'Sede',
+                    'empty_value' => '---Ninguno---',
+                    'required' => false
                 ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

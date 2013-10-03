@@ -17,7 +17,7 @@ class FoliosRepository extends EntityRepository {
             SELECT t.codiTomo as tomo, f.codiFolio, f.folio, pla.descTipoTpl, f.periodoFolio, f.registrosFolio, f.subtPlanStp
             FROM IneiPayrollBundle:Folios f
             JOIN f.tomo t
-            JOIN f.tipoPlanTpl pla
+            LEFT JOIN f.tipoPlanTpl pla
         ";
         $where = array();
         if (array_key_exists('tomo', $criteria))

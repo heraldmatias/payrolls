@@ -18,7 +18,7 @@ class Conceptos {
      *
      * @ORM\Column(name="CODI_CONC_TCO", type="string", length=5, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $codiConcTco;
 
@@ -39,7 +39,7 @@ class Conceptos {
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=50, nullable=false)
+     * @ORM\Column(name="DESC_CONC_TCO", type="string", length=150, nullable=false)
      */
     private $descConcTco;
 

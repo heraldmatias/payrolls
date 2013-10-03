@@ -182,7 +182,7 @@
             $folios.append($('<option value="">---SELECCIONE---</option>'));
             $.get('{{ path('_planilla_tplanilla_ajax') }}', {"pla": pla}, function(json){
                 $.each(json, function(k, v){
-                    $folios.append($('<option value='+v['subtPlanStp']+'>'+v['tituSubtStp']+'</option>'));
+                    $folios.append($('<option value='+v['subtPlanStp']+'>'+v['descSubtStp']+'</option>'));
                 });
             });
         }

@@ -53,7 +53,7 @@ class Folios {
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
      * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="plafolios")
-     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL")
+     * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL", nullable=true)
      */
     private $tipoPlanTpl;
 

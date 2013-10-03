@@ -15,7 +15,7 @@ class Tplanilla
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=2, nullable=false)
+     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=3, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="SEQUENCE")
      * @ORM\SequenceGenerator(sequenceName="TPLANILLA_TIPO_PLAN_TPL_seq", allocationSize=1, initialValue=15)
@@ -25,7 +25,7 @@ class Tplanilla
     /**
      * @var string
      *
-     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=30, nullable=false)
+     * @ORM\Column(name="DESC_TIPO_TPL", type="string", length=100, nullable=false)
      */
     private $descTipoTpl;
 
