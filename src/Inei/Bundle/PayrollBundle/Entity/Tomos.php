@@ -30,7 +30,7 @@ class Tomos
     /**
      * @var integer
      * 
-     * @ORM\Column(name="ANO_TOMO", type="integer", nullable=false)
+     * @ORM\Column(name="ANO_TOMO", type="string", length=30, nullable=false)
      */
     private $anoTomo;
 

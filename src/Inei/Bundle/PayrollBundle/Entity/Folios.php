@@ -32,21 +32,21 @@ class Folios {
     /**
      * @var string
      * 
-     * @ORM\Column(name="PER_FOLIO", type="string", length=100, nullable=false)
+     * @ORM\Column(name="PER_FOLIO", type="string", length=100, nullable=true)
      */
     private $periodoFolio;
 
     /**
      * @var integer
      * 
-     * @ORM\Column(name="REG_FOLIO", type="integer", nullable=false)
+     * @ORM\Column(name="REG_FOLIO", type="integer", nullable=true)
      */
     private $registrosFolio;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\Tomos
      * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="setfolios")
-     * @ORM\JoinColumn(name="CODI_TOMO", referencedColumnName="CODI_TOMO", nullable=false)
+     * @ORM\JoinColumn(name="CODI_TOMO", referencedColumnName="CODI_TOMO", nullable=true)
      */
     private $tomo;
 

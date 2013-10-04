@@ -41,9 +41,9 @@ class TomosType extends AbstractType {
                     'label' => 'Tomo',
                     'choices' => $this->generateCodes()
                 ))
-                ->add('anoTomo', 'choice', array(
+                ->add('anoTomo', null, array(
                     'label' => 'Año',
-                    'choices' => $this->getAnos()
+                    //'choices' => $this->getAnos()
                 ))
                 ->add('periodoTomo', null, array(
                     'label' => 'Periodo'

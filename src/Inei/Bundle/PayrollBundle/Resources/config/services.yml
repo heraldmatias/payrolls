@@ -60,3 +60,7 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\RegistrarPlanillaType
         tags:
             - { name: form.type, alias: registrar_planilla }
+    inei_payroll.form.type.exceltomo:
+        class: Inei\Bundle\PayrollBundle\Form\Type\ExcelTomoType
+        tags:
+            - { name: form.type, alias: exceltomo }

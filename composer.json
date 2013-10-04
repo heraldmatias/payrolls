@@ -22,7 +22,8 @@
         "sensio/generator-bundle": "2.3.*",
         "incenteev/composer-parameter-handler": "~2.0",
         "knplabs/knp-paginator-bundle": "dev-master",
-        "jms/security-extra-bundle": "dev-master"
+        "jms/security-extra-bundle": "dev-master",
+        "phpexcel/phpexcel": "1.7.6"
     },
     "scripts": {
         "post-install-cmd": [
