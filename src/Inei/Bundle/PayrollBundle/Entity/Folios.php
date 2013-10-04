@@ -45,14 +45,14 @@ class Folios {
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\Tomos
-     * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="setfolios")
+     * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="folios")
      * @ORM\JoinColumn(name="CODI_TOMO", referencedColumnName="CODI_TOMO", nullable=true)
      */
     private $tomo;
 
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
-     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="plafolios")
+     * @ORM\ManyToOne(targetEntity="Tplanilla")
      * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL", nullable=true)
      */
     private $tipoPlanTpl;
@@ -64,7 +64,7 @@ class Folios {
 
     /**
      *
-     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="codiFolio", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="codiFolio", cascade={"persist","remove"}, fetch="EXTRA_LAZY")
      * @ORM\OrderBy({"orden" = "ASC"})
      */
     private $conceptos;
@@ -333,4 +333,7 @@ class Folios {
                 create_function('$item', 'return array();'), range(1, $this->getRegistrosFolio()));
     }
 
+    public function setConceptos($conceptos) {
+        return $this->conceptos = $conceptos;
+    }
 }

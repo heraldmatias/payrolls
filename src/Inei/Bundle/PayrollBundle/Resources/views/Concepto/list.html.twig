@@ -12,10 +12,21 @@
                 {{ flashMessage }}
             </div>
         {% endfor %}
+                {{ form_start(form) }}
+            <div class="row-fluid">
+            <div class="span7">
+            <fieldset>
+                <legend>Opciones de Busqueda</legend>
+                <div class="row-fluid">
+                <div class="span2">{{ form_label(form.descConcTco) }}</div><div class="span3"> {{ form_widget(form.descConcTco) }} </div>                
+                <div class="span1">{{ form_widget(form.search) }} </div>
+                </div>
+            </fieldset>
+            </div></div>{{ form_end(form) }}
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="row-black">
-                        <th>Codigo</th>
+                        <th>Item</th>
                         <th>Descripción</th>
                         <th>Tipo</th>
                         <th>Calculo</th>
@@ -30,7 +41,7 @@
                 <tbody>
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
-                        <td><a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}">{{ tomo.codiConcTco }}</a></td>
+                        <td>{{ loop.index }}</td>
                         <td>{{ tomo.descCortTco }}</td>
                         <td>{{ tomo.getTipoConcTco_display }}</td>
                         <td>{{ tomo.getTipoCalcTco_display }}</td>

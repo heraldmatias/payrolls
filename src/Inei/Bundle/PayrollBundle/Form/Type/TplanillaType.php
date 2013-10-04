@@ -21,9 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class TplanillaType extends AbstractType {
         
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder/*->add('tipoPlanTpl', null, array(
+        $builder->add('tipoPlanTpl', null, array(
                     'label' => 'Codigo'
-                ))*/
+                ))
                 ->add('descTipoTpl', null, array(
                     'label' => 'Descripción'
                 ))

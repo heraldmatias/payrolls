@@ -64,3 +64,15 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\ExcelTomoType
         tags:
             - { name: form.type, alias: exceltomo }
+    inei_payroll.form.type.search_tplanilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchTplanillaType
+        tags:
+            - { name: form.type, alias: search_tplanilla }
+    inei_payroll.form.type.search_subtplanilla:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchSubtplanillaType
+        tags:
+            - { name: form.type, alias: search_subtplanilla }
+    inei_payroll.form.type.search_concepto:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchConceptoType
+        tags:
+            - { name: form.type, alias: search_concepto }

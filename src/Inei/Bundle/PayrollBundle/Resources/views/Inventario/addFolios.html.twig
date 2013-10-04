@@ -20,6 +20,10 @@
         .ordenconcepto{
             width: 50px;
         }
+        .cantidad {
+            width: 70px;
+            text-align: center;
+        }
 </style>
 {% endblock %}
 {% block form %}
@@ -91,7 +95,7 @@
             <br>
             <table id="tfolios" class="table-bordered table-condensed">
                 <thead>
-                <th>Orden</th><th>Concepto</th><th>Opciones</th>
+                <th>Orden</th><th>Concepto</th><th>Cantidad</th><th>Opciones</th>
                 </thead>
                 <tbody data-prototype="{{ form_widget(form.conceptos.vars.prototype)|e }}"
                        data-options =''>
@@ -99,6 +103,7 @@
                     <tr>
                         <td>{{ form_errors(concepto.orden) }}{{ form_widget(concepto.orden) }}</td>
                         <td>{{ form_errors(concepto.codiConcTco) }}{{ form_widget(concepto.codiConcTco) }}</td>
+                        <td>{{ form_errors(concepto.cantidad) }}{{ form_widget(concepto.cantidad) }}</td>
                     </tr>
                     {% endfor %}                    
                 </tbody>

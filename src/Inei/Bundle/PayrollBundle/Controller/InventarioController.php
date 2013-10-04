@@ -281,7 +281,7 @@ class InventarioController extends Controller {
     public function editFoliosAction(Request $request, $pk) {
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
-        $object = $em->find($pk);
+        $object = $em->findOneCustomBy($pk);
         $form = $this->createForm('folios', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);
         /* VERFICAR SI EL FORMULARIO ES VALIDO */
@@ -327,6 +327,23 @@ class InventarioController extends Controller {
         $response = new Response(json_encode($folios));
         $response->headers->set('content-type', 'application/json');
         return $response;
+    }
+    
+    /**
+     * @Route("/delete/{pk}", name="_inventario_tomo_delete")
+     * @Template("")
+     */
+    public function deleteAction(Request $request, $pk) {
+        $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($pk);
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->remove($object);
+        $em->flush();
+        $this->get('session')->getFlashBag()->add(
+                    'tomo', 'Registro eliminado satisfactoriamente'
+            );
+        $nextAction = '_inventario_list';
+        return $this->redirect($this->generateUrl($nextAction));
     }
 
 }

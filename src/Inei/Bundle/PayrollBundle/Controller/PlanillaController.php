@@ -37,7 +37,7 @@ class PlanillaController extends Controller {
         if($pk){
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->findOneCustomBy(array('folio' => $pk)); 
+            $object = $em->findOneCustomByNum($pk); 
         }        
         if ($object) {
             
@@ -87,7 +87,7 @@ class PlanillaController extends Controller {
                     ->getForm();
             $_form->handleRequest($request);
             if ($_form->isValid()) {
-                /*                 * **GUARDAR** */
+                /** **GUARDAR** */
                 $em = $this->getDoctrine()->getManager();
                 $data = $_form->getData()['payrolls'];
                 $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
@@ -155,29 +155,27 @@ class PlanillaController extends Controller {
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
      */
     public function tplanillaAction(Request $request) {
-//        $form = $this->createForm('search_tomos', null, array(
-//            'method' => 'GET',
-//        ));
-//        $form->handleRequest($request);
-//        $criteria = $form->getData() ? $form->getData() : array();
-//        foreach ($criteria as $key => $value) {
-//            if (!$value) {
-//                unset($criteria[$key]);
-//            }
-//        }
+        $form = $this->createForm('search_tplanilla', null);
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tplanilla');
-//        $query = $em->findBy($criteria);
-        $query = $em->findBy(array(), array(
-            'descTipoTpl' => 'ASC'
-        ));
+        $query = $em->findUsingLike($criteria, 'order by t.descTipoTpl ASC');
+//        $query = $em->findBy(array(), array(
+//            'descTipoTpl' => 'ASC'
+//        ));
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1), 15
         );
         return array(
             'pagination' => $pagination,
-            //'form' => $form->createView()
+            'form' => $form->createView()
         );
     }
     
@@ -243,29 +241,29 @@ class PlanillaController extends Controller {
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function subtplanillaAction(Request $request) {
-//        $form = $this->createForm('search_tomos', null, array(
-//            'method' => 'GET',
-//        ));
-//        $form->handleRequest($request);
-//        $criteria = $form->getData() ? $form->getData() : array();
-//        foreach ($criteria as $key => $value) {
-//            if (!$value) {
-//                unset($criteria[$key]);
-//            }
-//        }
+        $form = $this->createForm('search_subtplanilla', null, array(
+            'method' => 'GET',
+        ));
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Subtplanilla');
-//        $query = $em->findBy($criteria);
-        $query = $em->findBy(array(), array(
-            'descSubtStp' => 'ASC'
-        ));
+        $query = $em->findUsingLike($criteria, 'ORDER BY t.descSubtStp ASC');
+//        $query = $em->findBy(array(), array(
+//            'descSubtStp' => 'ASC'
+//        ));
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1), 15
         );
         return array(
             'pagination' => $pagination,
-            //'form' => $form->createView()
+            'form' => $form->createView()
         );
     }
     

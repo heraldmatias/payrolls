@@ -20,18 +20,25 @@ class ConceptoController extends Controller {
      * @Template("")
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
-    public function listAction() {
-        $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery(
-            'SELECT c FROM IneiPayrollBundle:Conceptos c ORDER BY c.codiConcTco ASC'
-        );
-        $list = $query->getResult();
+    public function listAction(Request $request) {
+        $form = $this->createForm('search_concepto', null);
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }
+        }
+        $em = $this->getDoctrine()
+                ->getRepository('IneiPayrollBundle:Conceptos');
+        $query = $em->findUsingLike($criteria, 'order by t.descConcTco ASC');
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-                $list, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
+                $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
         );
         return array(
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'form' => $form->createView()
         );
     }
 

@@ -48,7 +48,8 @@
                         <td>
                             <a href="{{ path('_inventario_tomo_edit', {'pk': tomo.codiTomo}) }}" title="Editar Tomo">
                                 <i class="icon-edit"></i> </a>
-                            
+                            <a href="{{ path('_inventario_tomo_delete', {'pk': tomo.codiTomo}) }}" title="Eliminar Tomo">
+                                <i class="icon-trash"></i> </a>
                         </td>
                     </tr>
                 {% endfor %}

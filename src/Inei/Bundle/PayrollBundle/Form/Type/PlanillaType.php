@@ -59,7 +59,14 @@ class PlanillaType extends AbstractType {
                             'class' => 'monto',
                             'style' => 'width:98%;'
                         );
-                        $form->add($concepto->getCodiConcTco(), 'number', $formOptions);
+                        if($value->getCantidad()>1){
+                            for ($index = 0; $index < $value->getCantidad(); $index++) {
+                                $form->add('REP'.$index.'_'.$concepto->getCodiConcTco(), 'number', $formOptions);
+                            }
+                        }else{
+                            $form->add($concepto->getCodiConcTco(), 'number', $formOptions);
+                        }
+                        
                     }
                 }
         );

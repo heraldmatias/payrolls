@@ -12,22 +12,24 @@
                 {{ flashMessage }}
             </div>
         {% endfor %}
-            <!---<div class="row-fluid">
+            {{ form_start(form) }}
+            <div class="row-fluid">
             <div class="span7">
-             
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
-                
+                <div class="span2">{{ form_label(form.descTipoTpl) }}</div><div class="span3"> {{ form_widget(form.descTipoTpl) }} </div>                
+                <div class="span1">{{ form_widget(form.search) }} </div>
                 </div>
             </fieldset>
-            </div></div>-->
+            </div></div>{{ form_end(form) }}
             
             <h4>Listado de tipos de Planilla</h4>
             <table class="table table-hover table-bordered">
                 <thead>
                     <tr class="row-black">
-                        <th>Tipo</th>
+                        <th>Item</th>
+                        <th>Codigo</th>
                         <th>Descripción</th>
                         <th>Meses por Año</th>
                         <th>Abreviatura</th>                        
@@ -37,6 +39,7 @@
                 <tbody>
                 {% for object in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
+                        <td>{{ loop.index }}</td>
                         <td>{{ object.tipoPlanTpl }}</td>
                         <td>{{ object.descTipoTpl }}</td>
                         <td>{{ object.cantPeriTpl }}</td>                        

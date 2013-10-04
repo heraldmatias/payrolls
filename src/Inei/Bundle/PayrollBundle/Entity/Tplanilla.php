@@ -17,8 +17,7 @@ class Tplanilla
      *
      * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=3, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="SEQUENCE")
-     * @ORM\SequenceGenerator(sequenceName="TPLANILLA_TIPO_PLAN_TPL_seq", allocationSize=1, initialValue=15)
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $tipoPlanTpl;
 

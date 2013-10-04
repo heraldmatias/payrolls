@@ -51,7 +51,7 @@ class ExcelTomoController extends Controller {
     public function newAction(Request $request) {
         $object = new ExcelTomo();
         $object->setCreatedAt(new \DateTime("now"));
-        $form = $this->createForm('exceltomo', $object, array('tomo'=> $object));
+        $form = $this->createForm('exceltomo', $object);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -75,12 +75,17 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function editAction(Request $request, $pk) {
+
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
-        $form = $this->createForm('exceltomo', $object, array('file'=> $object->getFile()));
+        if (!$object) {
+            throw $this->createNotFoundException('Archivo no encontrado ' . $pk);
+        }
+        $form = $this->createForm('exceltomo', $object);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $object->uploadFile();
             $em->persist($object);
             $em->flush();
             $this->get('session')->getFlashBag()->add(
@@ -94,13 +99,30 @@ class ExcelTomoController extends Controller {
         );
     }
 
+    /**
+     * @Route("/delete/{pk}", name="admin_excel_delete")
+     * @Template("")
+     */
+    public function deleteAction(Request $request, $pk) {
+        $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->remove($object);
+        $em->flush();
+        $this->get('session')->getFlashBag()->add(
+                    'exceltomo', 'Registro eliminado satisfactoriamente'
+            );
+        $nextAction = 'admin_excel_list';
+        return $this->redirect($this->generateUrl($nextAction));
+    }
+
     function getUniqueConceptos($sheet, $colc, $filaf, $folio) {
         $data = array();
         while (true) {
             $conc = $sheet->getCellByColumnAndRow($colc, $filaf)->getValue();
             if (null === $conc | '' === trim($conc))
                 break;
-            $data[] = $conc;
+            $data[] = str_replace(' ', '', strtoupper($conc));
             $colc++;
         }
         $_conceptos = array_count_values($data);
@@ -119,13 +141,9 @@ class ExcelTomoController extends Controller {
      */
     public function processAction(Request $request) {
         $pk = $request->query->get('pk');
-        $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
-        $objPHPExcel = PHPExcel_IOFactory::load($object->getFullFilePath());
-        $sheet = $objPHPExcel->getSheet(0);
-        $conn = $this->get('database_connection');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
-        $conn->beginTransaction();
-        /**
+        $conn = $this->get('database_connection');
+        /**0 BASED INDEX
          * C  F
          * 0, 1 => TITULO
          * 0, 6 => CABECERA
@@ -148,7 +166,6 @@ class ExcelTomoController extends Controller {
         $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
         $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
         $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
-
         /*         * *************************SE GUARDA EL TOMO********************* */
         $insertFolio = 'INSERT INTO folios(
             per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, 
@@ -156,12 +173,16 @@ class ExcelTomoController extends Controller {
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
             codi_folio, codi_conc_tco, cantidad_conc) values ';
         try {
-            $tomo = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
+            $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
+            $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
+            $sheet = $objPHPExcel->getSheet(0);
+            $conn->beginTransaction();
+            $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $conn->insert('tomos', array(
                 'codi_tomo' => $tomo,
-                'per_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
-                'ano_tomo' => $sheet->getCellByColumnAndRow(4, $filat)->getValue(),
-                'folios_tomo' => $sheet->getCellByColumnAndRow(8, $filat)->getValue(),
+                'per_tomo' => $sheet->getCellByColumnAndRow(2, $filat)->getValue(),
+                'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
+                'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
                 'desc_tomo' => NULL
             ));
             while (true) {
@@ -175,7 +196,7 @@ class ExcelTomoController extends Controller {
                 $stmt->bindValue(2, $registros ? $registros : NULL);
                 $stmt->bindValue(3, NULL);
                 $stmt->bindValue(4, $tomo);
-                $stmt->bindValue(5, $tplanilla ? $tplanilla : NULL);
+                $stmt->bindValue(5, $tplanilla ? str_replace(' ', '',strtoupper($tplanilla)) : NULL);
                 $stmt->bindValue(6, $nfolio);
                 $stmt->execute();
                 $folio = $stmt->fetch()['codi_folio'];
@@ -192,9 +213,13 @@ class ExcelTomoController extends Controller {
             $conn->commit();
         } catch (DBALException $e) {
             $data['error'] = $e->getMessage();
-            $conn->rollback();            
+            $conn->rollback();
+        } catch (\Exception $e) {
+            $data['error'] = $e->getMessage();
         }
         $conn->close();
+
+
         $response = new Response(json_encode($data));
         $response->headers->set('content-type', 'application/json');
         return $response;

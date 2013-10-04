@@ -21,6 +21,7 @@
                         <th>Item</th>
                         <th>Nombre</th>
                         <th>Archivo</th>
+                        <th>Descripción</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -29,12 +30,15 @@
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ item.title }}</td>
-                        <td>{{ item.file }}</td>
+                        <td><a href="{{ asset('upload/tomos/') }}{{item.filename}}">{{ item.filename }}</a></td>
+                        <td>{{ item.description }}</td>
                         <td>
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" title="Editar">
                                 <i class="icon-edit"></i> </a>
                             <a href="javascript: process({{ item.id }})" title="Procesar">
                                 <i class="icon-refresh"></i> </a>
+                            <a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" title="Eliminar">
+                                <i class="icon-trash"></i> </a>
                         </td>
                     </tr>
                 {% endfor %}

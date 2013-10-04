@@ -27,6 +27,9 @@ class ConceptoFoliosType extends AbstractType
                 ))
                 ->add('codiConcTco', null, array(
                     'attr' => array('class' => 'codiconcepto')
+                ))
+                ->add('cantidad', null, array(
+                    'attr' => array('class' => 'cantidad')
                 ));
 //                ->add('descCortTco', null, array(
 //                    'read_only' => true

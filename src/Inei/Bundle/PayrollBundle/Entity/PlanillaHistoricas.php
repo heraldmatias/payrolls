@@ -72,6 +72,16 @@ class PlanillaHistoricas
      * @ORM\Column(name="DESC_PLAN_STP", type="text", nullable=True)
      */
     private $descripcion;
+    
+    /**
+     * SI ES UN CAMPO MULTICONCEPTO, AQUI SE ALMACENA LA POSICION
+     * QUE TIENE EL CONCEPTO EN LA LISTA TOTAL
+     * 
+     * @var \Inei\Bundle\PayrollBundle\Entity\Folios     
+     * @ORM\Column(name="FLAG_FOLIO", type="integer", nullable=true)
+     */
+    private $flag;
+    
     /**
      * Get id
      *
@@ -287,5 +297,28 @@ class PlanillaHistoricas
     public function getDescripcion()
     {
         return $this->descripcion;
+    }
+
+    /**
+     * Set flag
+     *
+     * @param integer $flag
+     * @return PlanillaHistoricas
+     */
+    public function setFlag($flag)
+    {
+        $this->flag = $flag;
+
+        return $this;
+    }
+
+    /**
+     * Get flag
+     *
+     * @return integer 
+     */
+    public function getFlag()
+    {
+        return $this->flag;
     }
 }

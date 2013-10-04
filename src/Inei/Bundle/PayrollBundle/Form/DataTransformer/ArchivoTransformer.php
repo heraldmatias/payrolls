@@ -23,10 +23,13 @@ class ArchivoTransformer implements DataTransformerInterface {
     }
 
     public function reverseTransform($file) {
-        print_r($this->tomo);
+        print_r('transformer:'.$this->tomo);
+        print_r('El nuevo es:'. $file->getFile());
 //        echo $file;
-        if(!null === $this->tomo & null === $file->getFile() ){
-            $file->setFile($this->tomo);
+        if(null === $file->getFile() ){
+            if(!null === $this->tomo)
+                echo 'entro';
+                $file->setFile(new File($this->tomo));
         }
 //        echo $file;
         return $file;

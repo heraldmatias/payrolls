@@ -33,22 +33,53 @@ class FoliosRepository extends EntityRepository {
         return $qb->getResult();
     }
 
-    public function findOneCustomBy($criteria) {
-        $folio = $this->findOneBy($criteria);
-        if ($folio) {
-            $qb = $this->getEntityManager()->createQuery(
-                            "SELECT s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
-                        WHERE s.subtPlanStp = :subt AND s.tipoPlanTpl = :pla ")
+    public function findOneCustomBy($pk) {
+        $DQL = "SELECT f, t, pla
+            FROM IneiPayrollBundle:Folios f
+            JOIN f.tomo t
+            LEFT JOIN f.tipoPlanTpl pla WHERE f.codiFolio = :pk";
+            $qb = $this->getEntityManager()->createQuery($DQL)
                     ->setParameters(array(
-                'subt' => $folio->getSubtPlanStp(),
-                'pla' => $folio->getTipoPlanTpl()->getTipoPlanTpl(),
+                'pk' => $pk,
             ));
             $re = $qb->getResult();
-            if ($re) {
-                $subt = $qb->getResult()[0]['descSubtStp'];
-                $folio->setDescSubtStp($subt);
-            }
-        }
+        $folio = $re[0];
+        
+        /***CONCEPTOS****/
+        $DQL = "SELECT cf, c
+            FROM IneiPayrollBundle:ConceptosFolios cf
+            JOIN cf.codiConcTco c
+            WHERE cf.codiFolio = :pk ORDER BY cf.orden";
+        $qbc = $this->getEntityManager()->createQuery($DQL)
+                    ->setParameters(array(
+                'pk' => $pk,
+            ));
+        $folio->setConceptos($qbc->getResult());
+        return $folio;
+    }
+    
+    public function findOneCustomByNum($pk) {
+        $DQL = "SELECT f, t, pla
+            FROM IneiPayrollBundle:Folios f
+            JOIN f.tomo t
+            LEFT JOIN f.tipoPlanTpl pla WHERE f.folio = :pk";
+            $qb = $this->getEntityManager()->createQuery($DQL)
+                    ->setParameters(array(
+                'pk' => $pk,
+            ));
+            $re = $qb->getResult();
+        $folio = $re[0];
+        
+        /***CONCEPTOS****/
+        $DQL = "SELECT cf, c
+            FROM IneiPayrollBundle:ConceptosFolios cf
+            JOIN cf.codiConcTco c
+            WHERE cf.codiFolio = :pk ORDER BY cf.orden";
+        $qbc = $this->getEntityManager()->createQuery($DQL)
+                    ->setParameters(array(
+                'pk' => $folio->getCodiFolio(),
+            ));
+        $folio->setConceptos($qbc->getResult());
         return $folio;
     }
 

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 //use Symfony\Component\Form\FormEvent;
 //use Symfony\Component\Form\FormEvents;
-use Inei\Bundle\PayrollBundle\Form\DataTransformer\ArchivoTransformer;
+//use Inei\Bundle\PayrollBundle\Form\DataTransformer\ArchivoTransformer;
 
 
 class ExcelTomoType extends AbstractType {
@@ -17,16 +17,14 @@ class ExcelTomoType extends AbstractType {
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        //$n = new ArchivoTransformer();
+
         
-        $tomo = $options['file'];
-        $transformer = new ArchivoTransformer($tomo);
         $builder
                 ->add('title', null, array())
                 ->add('description', null, array())
                 ->add('file', null, array(
                     'required' => false
-                ))->addModelTransformer($transformer)
+                ))//->addModelTransformer($transformer)
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))
@@ -74,14 +72,6 @@ class ExcelTomoType extends AbstractType {
         $resolver->setDefaults(array(
             'data_class' => 'Inei\Bundle\PayrollBundle\Entity\ExcelTomo'
         ));
-        
-        $resolver->setRequired(array(
-            'file',
-        ));
-
-//        $resolver->setAllowedTypes(array(
-//            'tomo' => 'Inei\Bundle\PayrollBundle\Entity\ExcelTomo',
-//        ));
     }
 
     /**
