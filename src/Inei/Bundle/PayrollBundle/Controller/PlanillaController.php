@@ -11,6 +11,8 @@ use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 use Inei\Bundle\PayrollBundle\Entity\Tplanilla;
 use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
+
 /**
  * Description of InventarioController
  *
@@ -24,23 +26,24 @@ class PlanillaController extends Controller {
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_PLANILLA")
      */
     public function addAction(Request $request) {
-        $pk = null;$object = null;
-        if($request->request->get('form') ){
+        $pk = null;
+        $object = null;
+        if ($request->request->get('form')) {
             $pk = $request->request->get('folio');
-        }else if($request->request->get('registrar_planilla')){
-            $pk = array_key_exists('folio',$request->request->get('registrar_planilla'))?$request->request->get('registrar_planilla')['folio']:null;
+        } else if ($request->request->get('registrar_planilla')) {
+            $pk = array_key_exists('folio', $request->request->get('registrar_planilla')) ? $request->request->get('registrar_planilla')['folio'] : null;
         }
         $form = null;
         $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
         $sform->handleRequest($request);
-        
-        if($pk){
+
+        if ($pk) {
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->findOneCustomByNum($pk); 
-        }        
+            $object = $em->findOneCustomByNum($pk);
+        }
         if ($object) {
-            
+
             $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
             $planilla = array();
             $array = array('payrolls' => array_map(
@@ -54,14 +57,21 @@ class PlanillaController extends Controller {
                         $dni = $value->getCodiEmplPer();
                         $planilla['codiEmplPer'] = $dni;
                         $planilla['descripcion'] = $value->getDescripcion();
-                        $planilla[$value->getCodiConcTco()] = $value->getValoCalcPhi();
+                        $key = null !== $value->getFlag() ?
+                                $value->getCodiConcTco() . '_' . $value->getFlag() :
+                                $value->getCodiConcTco();
+                        //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
+                        $planilla[$key] = $value->getValoCalcPhi();
                         continue;
                     }
+                    $key = null !== $value->getFlag() ?
+                                $value->getCodiConcTco() . '_' . $value->getFlag() :
+                                $value->getCodiConcTco();
                     $array['payrolls'][$co] = $planilla;
                     $dni = $value->getCodiEmplPer();
                     $planilla['codiEmplPer'] = $dni;
                     $planilla['descripcion'] = $value->getDescripcion();
-                    $planilla[$value->getCodiConcTco()] = $value->getValoCalcPhi();
+                    $planilla[$key] = $value->getValoCalcPhi();
                     $co++;
                 }
                 $array['payrolls'][$co] = $planilla;
@@ -87,7 +97,7 @@ class PlanillaController extends Controller {
                     ->getForm();
             $_form->handleRequest($request);
             if ($_form->isValid()) {
-                /** **GUARDAR** */
+                /**                 * *GUARDAR** */
                 $em = $this->getDoctrine()->getManager();
                 $data = $_form->getData()['payrolls'];
                 $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
@@ -98,9 +108,10 @@ class PlanillaController extends Controller {
                     unset($planilla['codiEmplPer']);
                     unset($planilla['descripcion']);
                     foreach ($planilla as $key => $valor) {
-                        //echo $object->getConcepto($key);
-                        $planillah = new \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas();
-                        $planillah->setCodiConcTco($key);
+                        $planillah = new PlanillaHistoricas();
+                        $pos = strpos($key, '_');
+                        $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, count($key) - $pos) : $key);
+                        $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
                         $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
                         $planillah->setSubtPlanTpl($object->getSubtPlanStp());
                         $planillah->setNumePeriTpe(01);
@@ -115,10 +126,9 @@ class PlanillaController extends Controller {
                     $em->clear();
                 }
                 $this->get('session')->getFlashBag()->add(
-            'planilla',
-            'Registro grabado satisfactoriamente'
-            );
-                $nextAction = '_planilla_add';                
+                        'planilla', 'Registro grabado satisfactoriamente'
+                );
+                $nextAction = '_planilla_add';
                 return $this->redirect($this->generateUrl($nextAction));
                 $object = null;
             }
@@ -139,16 +149,16 @@ class PlanillaController extends Controller {
         $pla = $request->query->get('pla');
         $qb = $this->getDoctrine()
                 ->getManager()->createQuery(
-                            "SELECT s.subtPlanStp, s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
+                        "SELECT s.subtPlanStp, s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
                         WHERE s.tipoPlanTpl = :pla ")
-                    ->setParameters(array(                
-                'pla' => $pla,
-            ));        
+                ->setParameters(array(
+            'pla' => $pla,
+        ));
         $response = new Response(json_encode($qb->getResult()));
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/tplanilla/", name="_planilla_tplanilla_list")
      * @Template("")
@@ -178,7 +188,7 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/tplanilla/add/", name="_planilla_tplanilla_add")
      * @Template("")
@@ -195,8 +205,7 @@ class PlanillaController extends Controller {
             $em->persist($object);
             $em->flush();
             $this->get('session')->getFlashBag()->add(
-            'tplanilla',
-            'Registro grabado satisfactoriamente'
+                    'tplanilla', 'Registro grabado satisfactoriamente'
             );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_tplanilla_add' : '_planilla_tplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
@@ -205,7 +214,7 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/tplanilla/{pk}", name="_planilla_tplanilla_edit")
      * @Template("")
@@ -224,8 +233,7 @@ class PlanillaController extends Controller {
             $em->persist($object);
             $em->flush();
             $this->get('session')->getFlashBag()->add(
-            'tplanilla',
-            'Registro modificado satisfactoriamente'
+                    'tplanilla', 'Registro modificado satisfactoriamente'
             );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_tplanilla_add' : '_planilla_tplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
@@ -234,7 +242,7 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/subtplanilla/", name="_planilla_subtplanilla_list")
      * @Template("")
@@ -266,7 +274,7 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/subtplanilla/add/", name="_planilla_subtplanilla_add")
      * @Template("")
@@ -283,8 +291,7 @@ class PlanillaController extends Controller {
             $em->persist($object);
             $em->flush();
             $this->get('session')->getFlashBag()->add(
-            'subtplanilla',
-            'Registro grabado satisfactoriamente'
+                    'subtplanilla', 'Registro grabado satisfactoriamente'
             );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_subtplanilla_add' : '_planilla_subtplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
@@ -293,13 +300,13 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/subtplanilla/{planilla}/{pk}", name="_planilla_subtplanilla_edit")
      * @Template("")
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
-    public function editSubtplanillaAction(Request $request,$planilla, $pk) {
+    public function editSubtplanillaAction(Request $request, $planilla, $pk) {
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Subtplanilla');
         $object = $em->findOneBy(array(
@@ -315,8 +322,7 @@ class PlanillaController extends Controller {
             $em->persist($object);
             $em->flush();
             $this->get('session')->getFlashBag()->add(
-            'subtplanilla',
-            'Registro modificado satisfactoriamente'
+                    'subtplanilla', 'Registro modificado satisfactoriamente'
             );
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_subtplanilla_add' : '_planilla_subtplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
@@ -325,4 +331,5 @@ class PlanillaController extends Controller {
             'form' => $form->createView()
         );
     }
+
 }

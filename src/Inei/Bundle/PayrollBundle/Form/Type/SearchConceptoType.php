@@ -21,7 +21,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class SearchConceptoType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('descConcTco', 'text', array(
+        $builder->add('codiConcTco', 'text', array(
+                    'required' => false,
+                    'label' => 'Codigo'
+                ))
+                ->add('descConcTco', 'text', array(
                     'attr' => array(
                         'class' => 'registros',
                         'style' => 'width:100%;'

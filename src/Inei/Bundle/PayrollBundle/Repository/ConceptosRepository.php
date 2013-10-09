@@ -17,7 +17,7 @@ class ConceptosRepository extends EntityRepository
                     if ($k === 'descConcTco') {
                         $v = " t.$k LIKE '%$v%'";
                     } else {
-                        $v = "t.$k = $v";
+                        $v = "t.$k = '$v'";
                     }
                 });
         $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';

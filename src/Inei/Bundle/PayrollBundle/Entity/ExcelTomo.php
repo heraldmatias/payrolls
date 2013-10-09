@@ -64,6 +64,14 @@ class ExcelTomo {
      */
     private $updatedAt;
     
+    /**
+     *
+     * @var integer
+     * @ORM\Column(name="tomo", type="integer", nullable=true)
+     */
+    private $tomo;
+    
+    
     public function getFullWebPath(){
         return null === $this->filename ? null : $this->getWebPath() . $this->filename;
     }
@@ -138,7 +146,9 @@ class ExcelTomo {
      * @ORM\PreRemove()
      */
     public function removeFile() {
-        unlink($this->getFullPath());
+        if(is_dir($this->getFullPath())){
+            unlink($this->getFullPath());
+        }
         //rmdir($this->getUploadRootDir());
     }
 
@@ -277,4 +287,27 @@ class ExcelTomo {
         return $this->filename;
     }
 
+
+    /**
+     * Set tomo
+     *
+     * @param integer $tomo
+     * @return ExcelTomo
+     */
+    public function setTomo($tomo)
+    {
+        $this->tomo = $tomo;
+
+        return $this;
+    }
+
+    /**
+     * Get tomo
+     *
+     * @return integer 
+     */
+    public function getTomo()
+    {
+        return $this->tomo;
+    }
 }

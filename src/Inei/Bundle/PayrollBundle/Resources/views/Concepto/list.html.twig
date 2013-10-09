@@ -18,7 +18,8 @@
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
-                <div class="span2">{{ form_label(form.descConcTco) }}</div><div class="span3"> {{ form_widget(form.descConcTco) }} </div>                
+                    <div class="span1">{{ form_label(form.codiConcTco) }}</div><div class="span4"> {{ form_widget(form.codiConcTco) }} </div>
+                    <div class="span2">{{ form_label(form.descConcTco) }}</div><div class="span3"> {{ form_widget(form.descConcTco) }} </div>
                 <div class="span1">{{ form_widget(form.search) }} </div>
                 </div>
             </fieldset>
@@ -27,6 +28,7 @@
                 <thead>
                     <tr class="row-black">
                         <th>Item</th>
+                        <th>Codigo</th>
                         <th>Descripción</th>
                         <th>Tipo</th>
                         <th>Calculo</th>
@@ -42,6 +44,7 @@
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
+                        <td>{{ tomo.codiConcTco }}</td>
                         <td>{{ tomo.descCortTco }}</td>
                         <td>{{ tomo.getTipoConcTco_display }}</td>
                         <td>{{ tomo.getTipoCalcTco_display }}</td>

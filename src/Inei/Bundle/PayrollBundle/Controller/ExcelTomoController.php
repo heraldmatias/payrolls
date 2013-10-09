@@ -105,13 +105,20 @@ class ExcelTomoController extends Controller {
      */
     public function deleteAction(Request $request, $pk) {
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
+        if (!null == $object->getTomo()) {
+            $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
 
+            $emt = $this->getDoctrine()->getEntityManager();
+            $emt->remove($tomo);
+            $emt->flush();
+        }
         $em = $this->getDoctrine()->getEntityManager();
         $em->remove($object);
         $em->flush();
+
         $this->get('session')->getFlashBag()->add(
-                    'exceltomo', 'Registro eliminado satisfactoriamente'
-            );
+                'exceltomo', 'Registro eliminado satisfactoriamente'
+        );
         $nextAction = 'admin_excel_list';
         return $this->redirect($this->generateUrl($nextAction));
     }
@@ -143,7 +150,7 @@ class ExcelTomoController extends Controller {
         $pk = $request->query->get('pk');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
-        /**0 BASED INDEX
+        /*         * 0 BASED INDEX
          * C  F
          * 0, 1 => TITULO
          * 0, 6 => CABECERA
@@ -174,13 +181,19 @@ class ExcelTomoController extends Controller {
             codi_folio, codi_conc_tco, cantidad_conc) values ';
         try {
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
+            if (!null == $object->getTomo()) {
+                $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
+                $emt = $this->getDoctrine()->getEntityManager();
+                $emt->remove($tomo);
+                $emt->flush();
+            }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $conn->insert('tomos', array(
                 'codi_tomo' => $tomo,
-                'per_tomo' => $sheet->getCellByColumnAndRow(2, $filat)->getValue(),
+                'per_tomo' =>  ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
                 'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
                 'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
                 'desc_tomo' => NULL
@@ -192,11 +205,11 @@ class ExcelTomoController extends Controller {
                 if (null === $nfolio)
                     break;
                 $stmt = $conn->prepare($insertFolio);
-                $stmt->bindValue(1, $sheet->getCellByColumnAndRow(1, $filaf)->getValue());
+                $stmt->bindValue(1, ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue()));
                 $stmt->bindValue(2, $registros ? $registros : NULL);
                 $stmt->bindValue(3, NULL);
                 $stmt->bindValue(4, $tomo);
-                $stmt->bindValue(5, $tplanilla ? str_replace(' ', '',strtoupper($tplanilla)) : NULL);
+                $stmt->bindValue(5, $tplanilla ? str_replace(' ', '', strtoupper($tplanilla)) : NULL);
                 $stmt->bindValue(6, $nfolio);
                 $stmt->execute();
                 $folio = $stmt->fetch()['codi_folio'];
@@ -207,15 +220,18 @@ class ExcelTomoController extends Controller {
                 }
                 $filaf++;
             }
-
             $data['success'] = true;
             $data['data'] = 'Almacenado con exito';
             $conn->commit();
+            $object->setTomo($tomo);
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->persist($object);
+            $em->flush();
         } catch (DBALException $e) {
-            $data['error'] = $e->getMessage();
+            $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
             $conn->rollback();
         } catch (\Exception $e) {
-            $data['error'] = $e->getMessage();
+            $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
         }
         $conn->close();
 

@@ -53,707 +53,707 @@ class MaestroPersonal
     /**
      * @var string
      *
-     * @ORM\Column(name="DIR_EMP_PER", type="string", length=150, nullable=false)
+     * @ORM\Column(name="DIR_EMP_PER", type="string", length=150, nullable=true)
      */
     private $dirEmpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_DEPA_DPT", type="string", length=2, nullable=false)
+     * @ORM\Column(name="CODI_DEPA_DPT", type="string", length=2, nullable=true)
      */
     private $codiDepaDpt;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_PROV_TPR", type="string", length=2, nullable=false)
+     * @ORM\Column(name="CODI_PROV_TPR", type="string", length=2, nullable=true)
      */
     private $codiProvTpr;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_DIST_TDI", type="string", length=2, nullable=false)
+     * @ORM\Column(name="CODI_DIST_TDI", type="string", length=2, nullable=true)
      */
     private $codiDistTdi;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUM_TEL_PER", type="string", length=10, nullable=false)
+     * @ORM\Column(name="NUM_TEL_PER", type="string", length=10, nullable=true)
      */
     private $numTelPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FEC_ING_PER", type="date", nullable=false)
+     * @ORM\Column(name="FEC_ING_PER", type="date", nullable=true)
      */
     private $fecIngPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=2, nullable=false)
+     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=2, nullable=true)
      */
     private $tipoPlanTpl;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="EST_CIV_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="EST_CIV_PER", type="string", length=1, nullable=true)
      */
     private $estCivPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SEX_EMP_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="SEX_EMP_PER", type="string", length=1, nullable=true)
      */
     private $sexEmpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="GRA_INS_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="GRA_INS_PER", type="string", length=1, nullable=true)
      */
     private $graInsPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FEC_NAC_PER", type="date", nullable=false)
+     * @ORM\Column(name="FEC_NAC_PER", type="date", nullable=true)
      */
     private $fecNacPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="PAIS_NACI_TPA", type="string", length=4, nullable=false)
+     * @ORM\Column(name="PAIS_NACI_TPA", type="string", length=4, nullable=true)
      */
     private $paisNaciTpa;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DEPA_NACI_DPT", type="string", length=2, nullable=false)
+     * @ORM\Column(name="DEPA_NACI_DPT", type="string", length=2, nullable=true)
      */
     private $depaNaciDpt;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="PROV_NACI_TPR", type="string", length=2, nullable=false)
+     * @ORM\Column(name="PROV_NACI_TPR", type="string", length=2, nullable=true)
      */
     private $provNaciTpr;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DIST_NACI_TDI", type="string", length=2, nullable=false)
+     * @ORM\Column(name="DIST_NACI_TDI", type="string", length=2, nullable=true)
      */
     private $distNaciTdi;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_DEPE_TDE", type="string", length=4, nullable=false)
+     * @ORM\Column(name="CODI_DEPE_TDE", type="string", length=4, nullable=true)
      */
     private $codiDepeTde;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="UBIC_FISI_TDE", type="string", length=4, nullable=false)
+     * @ORM\Column(name="UBIC_FISI_TDE", type="string", length=4, nullable=true)
      */
     private $ubicFisiTde;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_NIVE_TNI", type="string", length=3, nullable=false)
+     * @ORM\Column(name="CODI_NIVE_TNI", type="string", length=3, nullable=true)
      */
     private $codiNiveTni;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NIVE_ENC_TNI", type="string", length=3, nullable=false)
+     * @ORM\Column(name="NIVE_ENC_TNI", type="string", length=3, nullable=true)
      */
     private $niveEncTni;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ESTA_TRAB_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="ESTA_TRAB_PER", type="string", length=1, nullable=true)
      */
     private $estaTrabPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CON_TRA_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="CON_TRA_PER", type="string", length=1, nullable=true)
      */
     private $conTraPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="REG_LAB_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="REG_LAB_PER", type="string", length=8, nullable=true)
      */
     private $regLabPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="REG_PEN_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="REG_PEN_PER", type="string", length=8, nullable=true)
      */
     private $regPenPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_CARG_TCA", type="string", length=8, nullable=false)
+     * @ORM\Column(name="CODI_CARG_TCA", type="string", length=8, nullable=true)
      */
     private $codiCargTca;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CARG_ENC_TCA", type="string", length=8, nullable=false)
+     * @ORM\Column(name="CARG_ENC_TCA", type="string", length=8, nullable=true)
      */
     private $cargEncTca;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_AFP_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_AFP_PER", type="string", length=1, nullable=true)
      */
     private $flagAfpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_AFP", type="string", length=2, nullable=false)
+     * @ORM\Column(name="CODI_AFP", type="string", length=2, nullable=true)
      */
     private $codiAfp;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FECH_AFP_PER", type="date", nullable=false)
+     * @ORM\Column(name="FECH_AFP_PER", type="date", nullable=true)
      */
     private $fechAfpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_AFP_PER", type="string", length=15, nullable=false)
+     * @ORM\Column(name="CODI_AFP_PER", type="string", length=15, nullable=true)
      */
     private $codiAfpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="LIBR_ELEC_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="LIBR_ELEC_PER", type="string", length=8, nullable=true)
      */
     private $librElecPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="LIBR_MILI_PER", type="string", length=10, nullable=false)
+     * @ORM\Column(name="LIBR_MILI_PER", type="string", length=10, nullable=true)
      */
     private $librMiliPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_IPSS_PER", type="string", length=16, nullable=false)
+     * @ORM\Column(name="CODI_IPSS_PER", type="string", length=16, nullable=true)
      */
     private $codiIpssPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUME_BREV_PER", type="string", length=15, nullable=false)
+     * @ORM\Column(name="NUME_BREV_PER", type="string", length=15, nullable=true)
      */
     private $numeBrevPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="GRU_SANG_PER", type="string", length=4, nullable=false)
+     * @ORM\Column(name="GRU_SANG_PER", type="string", length=4, nullable=true)
      */
     private $gruSangPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="COD_MON_SUEL_PER", type="string", length=2, nullable=false)
+     * @ORM\Column(name="COD_MON_SUEL_PER", type="string", length=2, nullable=true)
      */
     private $codMonSuelPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_SUEL_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_SUEL_PER", type="string", length=1, nullable=true)
      */
     private $flagSuelPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="BANC_SUEL_TBC", type="string", length=2, nullable=false)
+     * @ORM\Column(name="BANC_SUEL_TBC", type="string", length=2, nullable=true)
      */
     private $bancSuelTbc;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SUEL_CTA_PER", type="string", length=18, nullable=false)
+     * @ORM\Column(name="SUEL_CTA_PER", type="string", length=18, nullable=true)
      */
     private $suelCtaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="BANC_CTS_TBC", type="string", length=2, nullable=false)
+     * @ORM\Column(name="BANC_CTS_TBC", type="string", length=2, nullable=true)
      */
     private $bancCtsTbc;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CTS_CTA_PER", type="string", length=18, nullable=false)
+     * @ORM\Column(name="CTS_CTA_PER", type="string", length=18, nullable=true)
      */
     private $ctsCtaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="COD_MON_CTS_PER", type="string", length=2, nullable=false)
+     * @ORM\Column(name="COD_MON_CTS_PER", type="string", length=2, nullable=true)
      */
     private $codMonCtsPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUME_PLAZ_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="NUME_PLAZ_PER", type="string", length=8, nullable=true)
      */
     private $numePlazPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FECH_RNOM_PER", type="date", nullable=false)
+     * @ORM\Column(name="FECH_RNOM_PER", type="date", nullable=true)
      */
     private $fechRnomPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUME_RNOM_PER", type="string", length=10, nullable=false)
+     * @ORM\Column(name="NUME_RNOM_PER", type="string", length=10, nullable=true)
      */
     private $numeRnomPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SEDE_ACTU_PER", type="string", length=3, nullable=false)
+     * @ORM\Column(name="SEDE_ACTU_PER", type="string", length=3, nullable=true)
      */
     private $sedeActuPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FING_ADM_PER", type="date", nullable=false)
+     * @ORM\Column(name="FING_ADM_PER", type="date", nullable=true)
      */
     private $fingAdmPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FING_CARRP_PER", type="date", nullable=false)
+     * @ORM\Column(name="FING_CARRP_PER", type="date", nullable=true)
      */
     private $fingCarrpPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="OTRO_DOCU_PER", type="string", length=15, nullable=false)
+     * @ORM\Column(name="OTRO_DOCU_PER", type="string", length=15, nullable=true)
      */
     private $otroDocuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="OBSERVA_PER", type="string", length=100, nullable=false)
+     * @ORM\Column(name="OBSERVA_PER", type="string", length=100, nullable=true)
      */
     private $observaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CARGO_REMU_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="CARGO_REMU_PER", type="string", length=8, nullable=true)
      */
     private $cargoRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NIVEL_REMU_PER", type="string", length=3, nullable=false)
+     * @ORM\Column(name="NIVEL_REMU_PER", type="string", length=3, nullable=true)
      */
     private $nivelRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="PLAZA_REMU_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="PLAZA_REMU_PER", type="string", length=8, nullable=true)
      */
     private $plazaRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DEPE_REMU_PER", type="string", length=4, nullable=false)
+     * @ORM\Column(name="DEPE_REMU_PER", type="string", length=4, nullable=true)
      */
     private $depeRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="OBSER_REMU_PER", type="string", length=100, nullable=false)
+     * @ORM\Column(name="OBSER_REMU_PER", type="string", length=100, nullable=true)
      */
     private $obserRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_CUEN_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="TIPO_CUEN_PER", type="string", length=1, nullable=true)
      */
     private $tipoCuenPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SEGU_MEDI_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="SEGU_MEDI_PER", type="string", length=1, nullable=true)
      */
     private $seguMediPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="SEDE_REMU_PER", type="string", length=3, nullable=false)
+     * @ORM\Column(name="SEDE_REMU_PER", type="string", length=3, nullable=true)
      */
     private $sedeRemuPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="APEP_SOLT_PER", type="string", length=20, nullable=false)
+     * @ORM\Column(name="APEP_SOLT_PER", type="string", length=20, nullable=true)
      */
     private $apepSoltPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="APEM_SOLT_PER", type="string", length=20, nullable=false)
+     * @ORM\Column(name="APEM_SOLT_PER", type="string", length=20, nullable=true)
      */
     private $apemSoltPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_SOLT_ER", type="string", length=30, nullable=false)
+     * @ORM\Column(name="NOMB_SOLT_ER", type="string", length=30, nullable=true)
      */
     private $nombSoltEr;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CESA_SOBR_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="CESA_SOBR_PER", type="string", length=1, nullable=true)
      */
     private $cesaSobrPer;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FEC_CESE_PER", type="date", nullable=false)
+     * @ORM\Column(name="FEC_CESE_PER", type="date", nullable=true)
      */
     private $fecCesePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_TITU_CES", type="string", length=70, nullable=false)
+     * @ORM\Column(name="NOMB_TITU_CES", type="string", length=70, nullable=true)
      */
     private $nombTituCes;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_COBR_CES", type="string", length=70, nullable=false)
+     * @ORM\Column(name="NOMB_COBR_CES", type="string", length=70, nullable=true)
      */
     private $nombCobrCes;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ENCA_PLAZ_PER", type="string", length=8, nullable=false)
+     * @ORM\Column(name="ENCA_PLAZ_PER", type="string", length=8, nullable=true)
      */
     private $encaPlazPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_PROPUESTA", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_PROPUESTA", type="string", length=1, nullable=true)
      */
     private $flagPropuesta;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="META_PROP", type="string", length=4, nullable=false)
+     * @ORM\Column(name="META_PROP", type="string", length=4, nullable=true)
      */
     private $metaProp;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FTEFTO", type="string", length=4, nullable=false)
+     * @ORM\Column(name="FTEFTO", type="string", length=4, nullable=true)
      */
     private $ftefto;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_PROY_PIN", type="string", length=4, nullable=false)
+     * @ORM\Column(name="CODI_PROY_PIN", type="string", length=4, nullable=true)
      */
     private $codiProyPin;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODRIE", type="string", length=2, nullable=false)
+     * @ORM\Column(name="CODRIE", type="string", length=2, nullable=true)
      */
     private $codrie;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_ALMACEN", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_ALMACEN", type="string", length=1, nullable=true)
      */
     private $flagAlmacen;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="FECH_INI_RECU", type="date", nullable=false)
+     * @ORM\Column(name="FECH_INI_RECU", type="date", nullable=true)
      */
     private $fechIniRecu;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_RECURRENTE", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_RECURRENTE", type="string", length=1, nullable=true)
      */
     private $flagRecurrente;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="OBS_RECU", type="string", length=200, nullable=false)
+     * @ORM\Column(name="OBS_RECU", type="string", length=200, nullable=true)
      */
     private $obsRecu;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_FOTOC_PER", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_FOTOC_PER", type="string", length=1, nullable=true)
      */
     private $flagFotocPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="IND_VALIDO", type="string", length=1, nullable=false)
+     * @ORM\Column(name="IND_VALIDO", type="string", length=1, nullable=true)
      */
     private $indValido;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="BIO_SUSERID", type="string", length=8, nullable=false)
+     * @ORM\Column(name="BIO_SUSERID", type="string", length=8, nullable=true)
      */
     private $bioSuserid;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_VIA_PER", type="string", length=2, nullable=false)
+     * @ORM\Column(name="TIPO_VIA_PER", type="string", length=2, nullable=true)
      */
     private $tipoViaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_VIA_PER", type="string", length=50, nullable=false)
+     * @ORM\Column(name="NOMB_VIA_PER", type="string", length=50, nullable=true)
      */
     private $nombViaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUME_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="NUME_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $numeDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="KM_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="KM_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $kmDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="MZ_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="MZ_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $mzDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="INTE_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="INTE_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $inteDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="DPTO_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="DPTO_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $dptoDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="LOTE_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="LOTE_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $loteDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="PISO_DIRE_PER", type="string", length=6, nullable=false)
+     * @ORM\Column(name="PISO_DIRE_PER", type="string", length=6, nullable=true)
      */
     private $pisoDirePer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_ZONA_PER", type="string", length=2, nullable=false)
+     * @ORM\Column(name="TIPO_ZONA_PER", type="string", length=2, nullable=true)
      */
     private $tipoZonaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_ZONA_PER", type="string", length=50, nullable=false)
+     * @ORM\Column(name="NOMB_ZONA_PER", type="string", length=50, nullable=true)
      */
     private $nombZonaPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_REFDOM_PER", type="string", length=150, nullable=false)
+     * @ORM\Column(name="NOMB_REFDOM_PER", type="string", length=150, nullable=true)
      */
     private $nombRefdomPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUM_RUC_PER", type="string", length=12, nullable=false)
+     * @ORM\Column(name="NUM_RUC_PER", type="string", length=12, nullable=true)
      */
     private $numRucPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NUM_CEL_PER", type="string", length=15, nullable=false)
+     * @ORM\Column(name="NUM_CEL_PER", type="string", length=15, nullable=true)
      */
     private $numCelPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="EMAIL_PER", type="string", length=50, nullable=false)
+     * @ORM\Column(name="EMAIL_PER", type="string", length=50, nullable=true)
      */
     private $emailPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="EMAIL_INSTI", type="string", length=50, nullable=false)
+     * @ORM\Column(name="EMAIL_INSTI", type="string", length=50, nullable=true)
      */
     private $emailInsti;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_FUNC_TCA", type="string", length=8, nullable=false)
+     * @ORM\Column(name="CODI_FUNC_TCA", type="string", length=8, nullable=true)
      */
     private $codiFuncTca;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CARG_ENC_PER", type="string", length=3, nullable=false)
+     * @ORM\Column(name="CARG_ENC_PER", type="string", length=3, nullable=true)
      */
     private $cargEncPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="MARCA", type="string", length=1, nullable=false)
+     * @ORM\Column(name="MARCA", type="string", length=1, nullable=true)
      */
     private $marca;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="FLAG_CUENTA", type="string", length=1, nullable=false)
+     * @ORM\Column(name="FLAG_CUENTA", type="string", length=1, nullable=true)
      */
     private $flagCuenta;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="CODI_UBIC_OFIC", type="string", length=3, nullable=false)
+     * @ORM\Column(name="CODI_UBIC_OFIC", type="string", length=3, nullable=true)
      */
     private $codiUbicOfic;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_PRIM_PER", type="string", length=25, nullable=false)
+     * @ORM\Column(name="NOMB_PRIM_PER", type="string", length=25, nullable=true)
      */
     private $nombPrimPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_SEGU_PER", type="string", length=25, nullable=false)
+     * @ORM\Column(name="NOMB_SEGU_PER", type="string", length=25, nullable=true)
      */
     private $nombSeguPer;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="TIPO_COMISION_AFP", type="string", length=2, nullable=false)
+     * @ORM\Column(name="TIPO_COMISION_AFP", type="string", length=2, nullable=true)
      */
     private $tipoComisionAfp;
 

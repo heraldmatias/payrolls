@@ -22,7 +22,7 @@
                         <th>Nombre</th>
                         <th>Archivo</th>
                         <th>Descripción</th>
-                        <th>Opciones</th>
+                        <th style="width: 300px">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -32,13 +32,15 @@
                         <td>{{ item.title }}</td>
                         <td><a href="{{ asset('upload/tomos/') }}{{item.filename}}">{{ item.filename }}</a></td>
                         <td>{{ item.description }}</td>
-                        <td>
-                            <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" title="Editar">
+                        <td><div style="float:left; width: 25%">
+                            <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>
-                            <a href="javascript: process({{ item.id }})" title="Procesar">
+                            <a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
                                 <i class="icon-refresh"></i> </a>
                             <a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" title="Eliminar">
-                                <i class="icon-trash"></i> </a>
+                                <i class="icon-trash"></i> </a></div>
+                            <div id="message{{ item.id }}" style="float:left; width:75%;">
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}
@@ -56,13 +58,18 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
-
+    
     function process(pk){
-        $.get('{{ path('admin_excel_process') }}', {'pk':pk}, function(data){
+        $('#opt-process'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
+        var error = "<div class='alert alert-error'> <button type='button' class='close' data-dismiss='alert'>&times;</button>msg</div>";
+        var success = "<div class='alert alert-success'> <button type='button' class='close' data-dismiss='alert'>&times;</button>msg</div>";
+        $.get('{{ path('admin_excel_process') }}', {'pk': pk}
+        ).done(function(data){
+            $('#opt-process'+pk).html("<i class='icon-refresh'></i>");
             if(data['success']){
-                alert(data['data']);
+                $('#message'+pk).html(success.replace('msg',data['data']));
             }else{
-                alert(data['error']);
+                $('#message'+pk).html(error.replace('msg',data['error']));
             }
         });
     }

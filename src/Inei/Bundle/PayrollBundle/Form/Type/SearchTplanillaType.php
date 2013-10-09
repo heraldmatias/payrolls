@@ -21,7 +21,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class SearchTplanillaType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('descTipoTpl', 'text', array(
+        $builder->add('tipoPlanTpl', 'text', array(
+                    'label' => 'Codigo',
+                    'required' => false
+                ))
+                ->add('descTipoTpl', 'text', array(
                     'attr' => array(
                         'class' => 'registros',
                         'style' => 'width:100%;'

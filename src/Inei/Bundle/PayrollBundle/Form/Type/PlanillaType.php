@@ -57,11 +57,12 @@ class PlanillaType extends AbstractType {
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
                             'class' => 'monto',
-                            'style' => 'width:98%;'
+                            'style' => 'width:150px;font-size:10px;'
                         );
+                        $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
                         if($value->getCantidad()>1){
                             for ($index = 0; $index < $value->getCantidad(); $index++) {
-                                $form->add('REP'.$index.'_'.$concepto->getCodiConcTco(), 'number', $formOptions);
+                                $form->add($concepto->getCodiConcTco().'_'.$index, 'number', $formOptions);
                             }
                         }else{
                             $form->add($concepto->getCodiConcTco(), 'number', $formOptions);
