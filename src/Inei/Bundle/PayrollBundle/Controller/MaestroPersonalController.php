@@ -97,5 +97,20 @@ class MaestroPersonalController extends Controller {
             'form' => $form->createView()
         );
     }
+    
+    /**
+     * @Route("/ajax/typehead", name="_personal_ajax")
+     * 
+     */
+    public function ajaxTypeHeadFunction(Request $request){
+        $nombres = $request->query->get('query');
+        $em = $this->getDoctrine()
+                ->getRepository('IneiPayrollBundle:MaestroPersonal');
+//        $data = array_map(create_function('$person', 'return array_values($person)[0];'), $em->findByFullname($nombres));
+        $data = $em->findByFullname($nombres);
+        $response = new \Symfony\Component\HttpFoundation\Response(json_encode($data));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
 
 }

@@ -16,6 +16,9 @@
         td.column-item{
             width: 30px;
         }
+        td#col0{
+            width: 200px;
+        }
     </style>
 {% endblock %}
 {% block form %}
@@ -84,15 +87,17 @@
     function loadColumns() {
         var form = $($('#tplanillas tbody').data('prototype'));
         var collectionColumns = $('#tplanillas thead');
+        var columns = $('<tr></tr>');
         var $column = null;
         $.each(form.find('td'), function(index, field) {
             $field = $(field);
-            $column = $('<th></th>');
+            $column = $('<th id="col'+index+'"></th>');
             $column.html($field.find('*').data('title'));
-            collectionColumns.append($column);
+            columns.append($column);
         });
         $column = $('<th>REGISTRO</th>');
-        collectionColumns.prepend($column);
+        columns.prepend($column);
+        collectionColumns.append(columns);
     }
     function indexar() {
         var rows = $('#tplanillas tbody').find('tr');
@@ -116,6 +121,29 @@
         $('#registrar_planilla_tomo').on('change', function(e) {
             loadFolios($(this).val());
         });
+    });
+    
+    $("input[name*='codiEmplPer']").typeahead({
+        minLength: 3,
+        source: function (query, process) {
+            return $.getJSON(
+                '{{ path('_personal_ajax') }}',
+                { query: query },
+                function (data) {
+                    
+                    var newData = [];
+
+                    $.each(data, function(){
+
+                        newData.push(this.fullname);
+
+                    });
+
+                    return process(newData);
+                    //return process(data);
+                });
+        }
+
     });
 
     </script>

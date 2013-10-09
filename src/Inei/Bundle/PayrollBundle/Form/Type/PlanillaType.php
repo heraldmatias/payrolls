@@ -28,7 +28,9 @@ class PlanillaType extends AbstractType {
                     'attr' => array(
                         'data-title' => 'NOMBRES Y APELLIDOS',
                         'class' => 'nombre',
-                        'style' => 'width:98%;'
+                        'style' => 'width:200px;',
+                        'autocomplete' => 'on',
+                        'data-provide' => 'typeahead'
                     ),
                     'max_length' => 100
                 ))
@@ -36,7 +38,7 @@ class PlanillaType extends AbstractType {
                     'attr' => array(
                         'data-title' => 'OBSERVACION',
                         'class' => 'descripcion',
-                        'style' => 'width:98%;'
+                        'style' => 'width:200px;'
                     ),
                     'required' => false
                 ));

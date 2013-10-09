@@ -22,4 +22,14 @@ class MaestroPersonalRepository extends EntityRepository {
         return $query->getResult();
     }
 
+    public function findByFullname($fullname) {
+        $query = $this->getEntityManager()
+                ->createQuery("SELECT t.librElecPer as dni, CONCAT(t.apePatPer,' ',t.apeMatPer, ' ',t.nomEmpPer) as fullname
+                    FROM IneiPayrollBundle:MaestroPersonal t 
+                    Where CONCAT(t.apePatPer,' ',t.apeMatPer, ' ',t.nomEmpPer) like :filtro")
+                ->setParameter('filtro', "%$fullname%")
+                ->setMaxResults(10);
+        
+        return $query->getArrayResult();
+    }    
 }
