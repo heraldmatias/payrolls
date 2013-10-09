@@ -33,6 +33,10 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\SubtplanillaType
         tags:
             - { name: form.type, alias: subtplanilla }
+    inei_payroll.form.type.personal:
+        class: Inei\Bundle\PayrollBundle\Form\Type\MaestroPersonalType
+        tags:
+            - { name: form.type, alias: personal }
     #ONLY ENTITY
     inei_payroll.form.type.tomos:
         class: Inei\Bundle\PayrollBundle\Form\Type\TomosType
@@ -76,3 +80,7 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\SearchConceptoType
         tags:
             - { name: form.type, alias: search_concepto }
+    inei_payroll.form.type.search_personal:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchMaestroPersonalType
+        tags:
+            - { name: form.type, alias: search_personal }

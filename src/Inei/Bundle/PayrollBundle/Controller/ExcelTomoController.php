@@ -22,25 +22,17 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function listAction(Request $request) {
-//        $form = $this->createForm('card_search', null);
-//        $form->handleRequest($request);
-//        $criteria = $form->getData() ? $form->getData() : array();
-//        foreach ($criteria as $key => $value) {
-//            if (!$value) {
-//                unset($criteria[$key]);
-//            }
-//        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:ExcelTomo');
-//        $query = $em->findUsingLike($criteria);
-        $query = $em->findAll();
+        $query = $em->findBy(array(), array(
+            'title' => 'DESC'
+        ));
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 15/* limit per page */
         );
         return array(
             'pagination' => $pagination,
-//            'form' => $form->createView()
         );
     }
 
@@ -223,22 +215,32 @@ class ExcelTomoController extends Controller {
             $data['success'] = true;
             $data['data'] = 'Almacenado con exito';
             $conn->commit();
-            $object->setTomo($tomo);
-            $em = $this->getDoctrine()->getEntityManager();
-            $em->persist($object);
-            $em->flush();
+            $this->updateTomo($object, $tomo, $data['data']);
         } catch (DBALException $e) {
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
             $conn->rollback();
-        } catch (\Exception $e) {
-            $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
+            if(isset($object)){
+                $this->updateTomo($object, null, $data['error']);
+            }
+        } catch (\Exception $e) {            
+            $data['error'] = "Ocurrio un error inesperado ".$e->getMessage()." \nRevise la fila $filaf y la Columna $colc";
+            if(isset($object)){
+                $this->updateTomo($object, null, $data['error']);
+            }
         }
         $conn->close();
-
 
         $response = new Response(json_encode($data));
         $response->headers->set('content-type', 'application/json');
         return $response;
+    }
+    
+    private function updateTomo($object, $tomo, $msg){
+        if(null != $tomo) $object->setTomo($tomo);
+        if(null !== $msg) $object->setDescription($msg);
+        $em = $this->getDoctrine()->getEntityManager();
+        $em->persist($object);
+        $em->flush();
     }
 
 }

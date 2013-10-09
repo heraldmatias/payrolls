@@ -5,8 +5,8 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-//use Symfony\Component\Form\FormEvent;
-//use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 //use Inei\Bundle\PayrollBundle\Form\DataTransformer\ArchivoTransformer;
 
 
@@ -22,9 +22,6 @@ class ExcelTomoType extends AbstractType {
         $builder
                 ->add('title', null, array())
                 ->add('description', null, array())
-                ->add('file', null, array(
-                    'required' => false
-                ))//->addModelTransformer($transformer)
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))
@@ -32,39 +29,38 @@ class ExcelTomoType extends AbstractType {
                     'label' => 'Guardar y Añadir Otro',
                     'attr' => array('class' => 'btn btn-primary')));
         
-//        $builder->addEventListener(
-//                FormEvents::PRE_SET_DATA, function(FormEvent $event) {
-//                    $form = $event->getForm();
-//                    $card = $event->getData();
-//                    if(null === $card->getFullFilePath()){
-//                        $form->add('file', 'file', array());
-//                    }else{
-//                        $form->add('file', 'file', array(
-//                            'required' => false
-//                        ));
-//                    }
-//                }
-//        );
-//        
-//        $builder->addEventListener(
-//                FormEvents::PRE_BIND, function(FormEvent $event) {
-//                    $form = $event->getForm();
-//                    $card = $event->getData();
-//                    if(null === $card | is_array($card) ){
-//                        return;
-//                    }
-//                    if(null === $card->getFullFilePath()){
-//                        $form->add('file', 'file', array());
-//                    }else{
-//                        $form->add('file', 'file', array(
-//                            'required' => false
-//                        ));
-//                    }
-//                    
-//                }
-//        );
+        $builder->addEventListener(
+                FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+                    $form = $event->getForm();
+                    $data = $event->getData();
+                    $this->setFileRequired($form, $data);
+                }
+        );
+        
+        $builder->addEventListener(
+                FormEvents::PRE_BIND, function(FormEvent $event) {
+                    $form = $event->getForm();
+                    $data = $event->getData();
+                    $this->setFileRequired($form, $data);
+                }
+        );
+        
     }
-
+    
+    private function setFileRequired($form, $data){
+        if($data instanceof \Inei\Bundle\PayrollBundle\Entity\ExcelTomo){
+            if(null !== $data->getFilename()){
+                $form->add('file', null, array(
+                    'required' => false
+                ));
+            }else{
+                $form->add('file', null, array(
+                    'required' => true
+                ));
+            }
+        }
+    }
+    
     /**
      * @param OptionsResolverInterface $resolver
      */

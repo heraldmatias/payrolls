@@ -1,0 +1,61 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block form %}
+<div class="span10">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Consultar Personal</h3>
+        </div>
+        <div class="modal-body">
+             {% for flashMessage in app.session.flashbag.get('personal') %}
+            <div class="alert alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+                {{ form_start(form) }}
+            <div class="row-fluid">
+            <div class="span9">
+            <fieldset>
+                <legend>Opciones de Busqueda</legend>
+                <div class="row-fluid">
+                    <div class="span1">{{ form_label(form.apePatPer) }}</div><div class="span2"> {{ form_widget(form.apePatPer) }} </div>
+                    <div class="span1">{{ form_label(form.apeMatPer) }}</div><div class="span2"> {{ form_widget(form.apeMatPer) }} </div>
+                    <div class="span1">{{ form_label(form.nomEmpPer) }}</div><div class="span2"> {{ form_widget(form.nomEmpPer) }} </div>
+                <div class="span1">{{ form_widget(form.search) }} </div>
+                </div>
+            </fieldset>
+            </div></div>{{ form_end(form) }}
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr class="row-black">
+                        <th>Item</th>
+                        <th>Apellido Paterno</th>
+                        <th>Apellido Materno</th>
+                        <th>Nombre Completo</th>
+                        <th>Dirección</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for item in pagination %}
+                    <tr {% if loop.index is odd %}class="info"{% endif %}>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ item.apePatPer }}</td>
+                        <td>{{ item.apeMatPer }}</td>
+                        <td>{{ item.nomEmpPer }}</td>
+                        <td>{{ item.dirEmpPer }}</td>
+                        <td><!--- LINK A LAS PLANILLAS--->
+                            <a href="{{ path('_personal_edit', {'pk': item.codiEmplPer}) }}" 
+                               title="Editar"><i class="icon-edit"></i> </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation">
+                {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

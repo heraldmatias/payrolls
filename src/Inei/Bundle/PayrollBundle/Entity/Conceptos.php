@@ -151,7 +151,9 @@ class Conceptos {
     /**
      * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="folios", fetch="EXTRA_LAZY")
      */
-    private $folios;
+    private $folios;   
+ 
+    
     private static $TIPOS = array(
         0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
     );
@@ -639,6 +641,6 @@ class Conceptos {
         $this->codiConcTco = $codiConcTco;
 
         return $this;
-    }
+    } 
 
 }

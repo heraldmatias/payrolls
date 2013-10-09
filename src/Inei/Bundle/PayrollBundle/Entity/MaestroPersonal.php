@@ -32,7 +32,7 @@ class MaestroPersonal
     /**
      * @var string
      *
-     * @ORM\Column(name="APE_MAT_PER", type="string", length=35, nullable=false)
+     * @ORM\Column(name="APE_MAT_PER", type="string", length=35, nullable=true)
      */
     private $apeMatPer;
 
@@ -46,7 +46,7 @@ class MaestroPersonal
     /**
      * @var string
      *
-     * @ORM\Column(name="NOMB_CORT_PER", type="string", length=70, nullable=false)
+     * @ORM\Column(name="NOMB_CORT_PER", type="string", length=70, nullable=true)
      */
     private $nombCortPer;
 
@@ -756,7 +756,6 @@ class MaestroPersonal
      * @ORM\Column(name="TIPO_COMISION_AFP", type="string", length=2, nullable=true)
      */
     private $tipoComisionAfp;
-
 
 
     /**

@@ -17,4 +17,9 @@ Inei\Bundle\PayrollBundle\Entity\Conceptos:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [codiConcTco]
-            message: 'Ya existe un concepto con este codigo de concepto.'   
+            message: 'Ya existe un concepto con este codigo de concepto.'
+Inei\Bundle\PayrollBundle\Entity\ExcelTomo:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [title]
+            message: 'Ya existe un tomo de excel con el mismo nombre.' 

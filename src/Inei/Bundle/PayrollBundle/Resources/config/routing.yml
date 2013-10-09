@@ -23,3 +23,8 @@ _inei_payroll_excel:
     resource: "@IneiPayrollBundle/Controller/ExcelTomoController.php"
     type:     annotation
     prefix:   /admin/excel
+    
+_inei_payroll_personal:
+    resource: "@IneiPayrollBundle/Controller/MaestroPersonalController.php"
+    type:     annotation
+    prefix:   /admin/personal
