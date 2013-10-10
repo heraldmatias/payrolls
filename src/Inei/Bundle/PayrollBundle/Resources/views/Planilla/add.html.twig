@@ -68,7 +68,8 @@
                 {{ form_widget(planilla) }}
             {% endfor %}</tbody>
                     </table>
-                    <input type ="hidden" value="{% if folio %} {{ folio.folio }} {% endif %}" name ="folio">
+                    {% if folio %}<input type ="hidden" value="{{ folio.folio }}" name ="folio">
+                    <input type ="hidden" value="{{ folio.tomo.codiTomo }}" name ="tomo">{% endif %}
                {% else %}
                     <b>EL FOLIO NO ESTA REGISTRADO</b>
                     {% endif %}

@@ -26,22 +26,26 @@ class PlanillaController extends Controller {
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_PLANILLA")
      */
     public function addAction(Request $request) {
-        $pk = null;
+        $folio = null;
+        $tomo = null;
         $object = null;
         if ($request->request->get('form')) {
-            $pk = $request->request->get('folio');
+            $folio = $request->request->get('folio');
+            $tomo = $request->request->get('tomo');
         } else if ($request->request->get('registrar_planilla')) {
-            $pk = array_key_exists('folio', $request->request->get('registrar_planilla')) ? $request->request->get('registrar_planilla')['folio'] : null;
+            $folio = $request->request->get('registrar_planilla')['folio'];
+            $tomo = $request->request->get('registrar_planilla')['tomo'];
         }
         $form = null;
         $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
         $sform->handleRequest($request);
 
-        if ($pk) {
+        if (null != $folio & null != $tomo) {
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->findOneCustomByNum($pk);
+            $object = $em->findOneCustomByNum($folio, $tomo);
         }
+        
         if ($object) {
 
             $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
