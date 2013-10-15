@@ -82,7 +82,6 @@ class InventarioController extends Controller {
             'form' => $form->createView()
         );
     }
-
    
     /**
      * @Route("/{pk}", name="_inventario_tomo_edit")

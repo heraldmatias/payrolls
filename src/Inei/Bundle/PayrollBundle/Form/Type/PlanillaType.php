@@ -42,13 +42,7 @@ class PlanillaType extends AbstractType {
                     ),
                     'required' => false
                 ));
-        /* ->add('save', 'submit', array(
-          'label' => 'Guardar',
-          'attr' => array('class' => 'btn btn-primary'),))
-          ->add('saveAndAdd', 'submit', array(
-          'label' => 'Guardar y Añadir Otro',
-          'attr' => array('class' => 'btn btn-primary'))); */
-
+        
         $builder->addEventListener(
                 FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($folio) {
                     $form = $event->getForm();

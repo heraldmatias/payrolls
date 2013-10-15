@@ -28,12 +28,6 @@ class ConceptoFoliosType extends AbstractType
                 ->add('codiConcTco', null, array(
                     'attr' => array('class' => 'codiconcepto')
                 ));
-//                ->add('descCortTco', null, array(
-//                    'read_only' => true
-//                ))
-//                ->add('tipoConcTco', null, array(
-//                    'read_only' => true
-//                ));
     }
 
     public function getName() {
