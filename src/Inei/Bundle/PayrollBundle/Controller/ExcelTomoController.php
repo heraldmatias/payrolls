@@ -176,8 +176,10 @@ class ExcelTomoController extends Controller {
             if (!null == $object->getTomo()) {
                 $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
                 $emt = $this->getDoctrine()->getEntityManager();
-                $emt->remove($tomo);
-                $emt->flush();
+                if (null !== $tomo) {
+                    $emt->remove($tomo);
+                    $emt->flush();
+                }
             }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
@@ -185,7 +187,7 @@ class ExcelTomoController extends Controller {
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $conn->insert('tomos', array(
                 'codi_tomo' => $tomo,
-                'per_tomo' =>  ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
+                'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
                 'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
                 'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
                 'desc_tomo' => NULL
@@ -219,12 +221,12 @@ class ExcelTomoController extends Controller {
         } catch (DBALException $e) {
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
             $conn->rollback();
-            if(isset($object)){
+            if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
-        } catch (\Exception $e) {            
-            $data['error'] = "Ocurrio un error inesperado ".$e->getMessage()." \nRevise la fila $filaf y la Columna $colc";
-            if(isset($object)){
+        } catch (\Exception $e) {
+            $data['error'] = "Ocurrio un error inesperado " . $e->getMessage() . " \nRevise la fila $filaf y la Columna $colc";
+            if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
         }
@@ -234,10 +236,12 @@ class ExcelTomoController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
-    private function updateTomo($object, $tomo, $msg){
-        if(null != $tomo) $object->setTomo($tomo);
-        if(null !== $msg) $object->setDescription($msg);
+
+    private function updateTomo($object, $tomo, $msg) {
+        if (null != $tomo)
+            $object->setTomo($tomo);
+        if (null !== $msg)
+            $object->setDescription($msg);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($object);
         $em->flush();

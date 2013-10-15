@@ -147,7 +147,7 @@ class InventarioController extends Controller {
             }
             $em->persist($object);
             $em->flush();
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
+            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
         return array(
@@ -175,7 +175,7 @@ class InventarioController extends Controller {
             'tomo',
             'Registro modificado satisfactoriamente'
             );
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
+            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
         return array(

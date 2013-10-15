@@ -17,12 +17,19 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 
 class SearchTomosType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('anoTomo', 'choice', array(
+        $builder->add('codiTomo', 'number', array(
+                    'attr' => array(
+                        'class' => 'folio',
+                        'style' => 'width:100%;'
+                     ),
+                    'required' => false,                    
+                    'label' => 'Tomo'
+                ))
+                ->add('anoTomo', 'choice', array(
                     'attr' => array(
                         'class' => 'folio',
                         'style' => 'width:100%;'

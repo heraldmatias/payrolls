@@ -46,6 +46,13 @@ class SearchMaestroPersonalType extends AbstractType {
                     'required' => false,
                     'label' => 'Nombres'
                 ))
+                ->add('librElecPer', null, array(
+                    'required' => false,
+                    'max_length' => 8,
+                    'attr' => array(
+                        'style' => 'width: 100%',
+                    )
+                ))
                 ->add('search', 'submit', array(
                     'label' => 'Buscar',
                     'attr' => array('class' => 'btn btn-primary'),));

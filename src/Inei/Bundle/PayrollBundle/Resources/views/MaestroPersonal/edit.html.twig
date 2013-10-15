@@ -40,14 +40,21 @@
                     {{ form_widget(form.nomEmpPer) }}
                 </div>
                 <div class="span1">
+                    {{ form_label(form.librElecPer) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.librElecPer) }}
+                    {{ form_widget(form.librElecPer) }}
+                </div>  
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
                     {{ form_label(form.nombCortPer) }}
                 </div>
                 <div class="span2">
                     {{ form_errors(form.nombCortPer) }}
                     {{ form_widget(form.nombCortPer) }}
-                </div>                
-            </div>
-            <div class="row-fluid">
+                </div>  
                 <div class="span1">
                     {{ form_label(form.dirEmpPer) }}
                 </div>

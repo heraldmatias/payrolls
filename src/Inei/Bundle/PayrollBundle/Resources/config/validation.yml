@@ -23,3 +23,8 @@ Inei\Bundle\PayrollBundle\Entity\ExcelTomo:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [title]
             message: 'Ya existe un tomo de excel con el mismo nombre.' 
+Inei\Bundle\PayrollBundle\Entity\MaestroPersonal:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [apePatPer, apeMatPer, nomEmpPer, librElecPer]
+            message: 'Ya existe un personal con los mismos nombres y DNI.' 

@@ -18,7 +18,7 @@ class MaestroPersonalController extends Controller {
     /**
      * @Route("/", name="_personal_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function listAction(Request $request) {
         $form = $this->createForm('search_personal', null);
@@ -31,7 +31,7 @@ class MaestroPersonalController extends Controller {
         }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:MaestroPersonal');
-        $query = $em->findUsingLike($criteria, 'order by t.apePatPer ASC');
+        $query = $em->findUsingLike($criteria, 'order by t.apePatPer ASC');//$em->findAll();//
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
@@ -45,7 +45,7 @@ class MaestroPersonalController extends Controller {
     /**
      * @Route("/add", name="_personal_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function addAction(Request $request) {
         $object = new MaestroPersonal();
@@ -72,7 +72,7 @@ class MaestroPersonalController extends Controller {
     /**
      * @Route("/{pk}", name="_personal_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
+     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function editAction(Request $request, $pk) {
         $em = $this->getDoctrine()
@@ -102,7 +102,7 @@ class MaestroPersonalController extends Controller {
      * @Route("/ajax/typehead", name="_personal_ajax")
      * 
      */
-    public function ajaxTypeHeadFunction(Request $request){
+    public function ajaxTypeheadFunction(Request $request){
         $nombres = $request->query->get('query');
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:MaestroPersonal');

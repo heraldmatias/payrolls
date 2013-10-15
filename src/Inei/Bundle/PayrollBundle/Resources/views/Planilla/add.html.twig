@@ -123,7 +123,8 @@
             loadFolios($(this).val());
         });
     });
-    
+    var $dni = new Array();
+    var $name = new Array();
     $("input[name*='codiEmplPer']").typeahead({
         items: 5,
         minLength: 3,
@@ -132,18 +133,21 @@
                 '{{ path('_personal_ajax') }}',
                 { query: query },
                 function (data) {
-                    
-                    var newData = [];
-
+                    $dni = new Array();
+                    $name = new Array();
                     $.each(data, function(){
-
-                        newData.push(this.fullname);
+                        $dni[this.fullname] = this;
+                        $name.push(this.fullname);
 
                     });
 
-                    return process(newData);
+                    return process($name);
                     //return process(data);
                 });
+        },
+        updater: function (item) {
+            selectedState = $dni[item].dni;
+            return item;
         }
 
     });

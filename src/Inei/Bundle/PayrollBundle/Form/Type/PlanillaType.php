@@ -56,6 +56,7 @@ class PlanillaType extends AbstractType {
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
                         $formOptions['label'] = $concepto->getCodiConcTco();
+                       // $formOptions['data'] = '0';
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
                             'class' => 'monto',
@@ -64,10 +65,10 @@ class PlanillaType extends AbstractType {
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
                         if($value->getCantidad()>1){
                             for ($index = 0; $index < $value->getCantidad(); $index++) {
-                                $form->add($concepto->getCodiConcTco().'_'.$index, 'number', $formOptions);
+                                $form->add($concepto->getCodiConcTco().'_'.$index, 'text', $formOptions);
                             }
                         }else{
-                            $form->add($concepto->getCodiConcTco(), 'number', $formOptions);
+                            $form->add($concepto->getCodiConcTco(), 'text', $formOptions);
                         }
                         
                     }

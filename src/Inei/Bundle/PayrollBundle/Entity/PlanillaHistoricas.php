@@ -34,7 +34,7 @@ class PlanillaHistoricas
 
     /**
      * @var float
-     * @ORM\Column(name="VALO_CALC_PHI", type="float")
+     * @ORM\Column(name="VALO_CALC_PHI", type="string", length=150)
      */
     private $valoCalcPhi;
 
