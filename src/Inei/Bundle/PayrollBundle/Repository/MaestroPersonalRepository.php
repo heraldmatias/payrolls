@@ -18,8 +18,11 @@ class MaestroPersonalRepository extends EntityRepository {
                 });
         $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
         $query = $this->getEntityManager()
-                ->createQuery('SELECT t FROM IneiPayrollBundle:MaestroPersonal t ' . $filter . ' ' . $orderBy);
-        return $query->getResult();
+                ->createQuery('SELECT partial t.{codiEmplPer, apePatPer, apeMatPer,
+                    nomEmpPer, nombCortPer, dirEmpPer, librElecPer} 
+                    FROM IneiPayrollBundle:MaestroPersonal t ' . $filter . ' ' . $orderBy)
+                ;
+        return $query;
     }
 
     public function findByFullname($fullname) {

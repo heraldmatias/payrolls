@@ -97,6 +97,11 @@ font-weight: bold;}
                             <li class=""><a href="{{ path('_concepto_list') }}">Consultar Conceptos</a></li>
                             {% endif %}
                             {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SEGURIDAD') %}
+                            <li class="nav-header">Personal</li>
+                            <li class=""><a href="{{ path('_personal_add') }}">Registrar Personal</a></li>
+                            <li class=""><a href="{{ path('_personal_list') }}">Consultar Personal</a></li>                            
+                            {% endif %}
+                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SEGURIDAD') %}
                             <li class="nav-header">Seguridad</li>
                             <li class=""><a href="{{ path('_admin_user_add') }}">Registrar Usuarios</a></li>
                             <li class=""><a href="{{ path('_admin_user_list') }}">Consultar Usuarios</a></li>

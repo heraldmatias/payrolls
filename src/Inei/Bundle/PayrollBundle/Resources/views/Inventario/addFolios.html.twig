@@ -95,7 +95,7 @@
             <br>
             <table id="tfolios" class="table-bordered table-condensed">
                 <thead>
-                <th>Orden</th><th>Concepto</th><th>Cantidad</th><th>Opciones</th>
+                <th>Orden</th><th>Concepto</th><th>Opciones</th>
                 </thead>
                 <tbody data-prototype="{{ form_widget(form.conceptos.vars.prototype)|e }}"
                        data-options =''>
@@ -103,7 +103,6 @@
                     <tr>
                         <td>{{ form_errors(concepto.orden) }}{{ form_widget(concepto.orden) }}</td>
                         <td>{{ form_errors(concepto.codiConcTco) }}{{ form_widget(concepto.codiConcTco) }}</td>
-                        <td>{{ form_errors(concepto.cantidad) }}{{ form_widget(concepto.cantidad) }}</td>
                     </tr>
                     {% endfor %}                    
                 </tbody>
@@ -112,7 +111,7 @@
             <div class="modal-footer">
                 {{ form_widget(form.save) }}
                 {{ form_widget(form.saveAndAdd) }}
-                <a href="#" class="btn">Cerrar</a>
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
             </div>            
         </div>
         {{ form_end(form) }}
@@ -158,8 +157,8 @@
 
         }
         function addOptions($newForm) {
-            var $viewopt = $('<a href="#verconcepto" title="Ver Concepto"><i class="icon-edit"></i> </a>');
-            var $newopt = $('<a href="#nuevoconcepoto" title="Nuevo concepto"><i class="icon-plus"></i> </a>');
+//            var $viewopt = $('<a href="#verconcepto" title="Ver Concepto"><i class="icon-edit"></i> </a>');
+//            var $newopt = $('<a href="#nuevoconcepoto" title="Nuevo concepto"><i class="icon-plus"></i> </a>');
             var $deleteopt = $('<a href="#" title="Eliminar concepto"><i class="icon-trash"></i> </a>');
             var $options = $('<td></td>');
             //$options.append($viewopt);
@@ -193,7 +192,10 @@
                 });
             });
         }
-    
+        
+        $('form').on('submit', function(e){
+            return confirm('¿Esta seguro que desea guardar este registro?');
+        });
         
         </script>
 {% endblock %}    

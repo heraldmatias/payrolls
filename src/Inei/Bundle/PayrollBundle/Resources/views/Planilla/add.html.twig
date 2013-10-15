@@ -71,11 +71,12 @@
                     {% if folio %}<input type ="hidden" value="{{ folio.folio }}" name ="folio">
                     <input type ="hidden" value="{{ folio.tomo.codiTomo }}" name ="tomo">{% endif %}
                {% else %}
-                    <b>EL FOLIO NO ESTA REGISTRADO</b>
+                    <br><br>
+                    <b>ES UN FOLIO DE RESUMEN O ES POSIBLE QUE NO ESTE REGISTRADO</b>
                     {% endif %}
                     <div class="modal-footer">
                         {% if form %} {{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
-                        <a href="#" class="btn">Cerrar</a>
+                        <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
                     </div>
                     </div>
                             
@@ -123,8 +124,9 @@
             loadFolios($(this).val());
         });
     });
-    
-    $("input[name*='codiEmplPer']").typeahead({
+    var $dni = new Array();
+    var $name = new Array();
+    /*$("input[name*='codiEmplPer']").typeahead({
         items: 5,
         minLength: 3,
         source: function (query, process) {
@@ -132,20 +134,26 @@
                 '{{ path('_personal_ajax') }}',
                 { query: query },
                 function (data) {
-                    
-                    var newData = [];
-
+                    $dni = new Array();
+                    $name = new Array();
                     $.each(data, function(){
-
-                        newData.push(this.fullname);
+                        $dni[this.fullname] = this;
+                        $name.push(this.fullname);
 
                     });
 
-                    return process(newData);
+                    return process($name);
                     //return process(data);
                 });
+        },
+        updater: function (item) {
+            selectedState = $dni[item].dni;
+            return item;
         }
 
+    });*/
+    $('form:eq(1)').on('submit', function(e){
+        return confirm('¿Esta seguro que desea modificar este registro?');
     });
 
     </script>

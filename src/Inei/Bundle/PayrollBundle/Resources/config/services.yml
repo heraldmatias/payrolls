@@ -84,3 +84,7 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\SearchMaestroPersonalType
         tags:
             - { name: form.type, alias: search_personal }
+    inei_payroll.form.type.search_tomoexcel:
+        class: Inei\Bundle\PayrollBundle\Form\Type\SearchTomoExcelType
+        tags:
+            - { name: form.type, alias: search_tomoexcel }

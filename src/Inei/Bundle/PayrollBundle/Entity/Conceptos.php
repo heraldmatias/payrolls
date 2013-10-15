@@ -149,7 +149,7 @@ class Conceptos {
     private $sedeConcTco;
 
     /**
-     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="folios", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="ConceptosFolios", mappedBy="codiConcTco", fetch="EXTRA_LAZY")
      */
     private $folios;   
  

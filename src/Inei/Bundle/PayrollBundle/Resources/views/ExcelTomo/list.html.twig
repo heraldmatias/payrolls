@@ -14,6 +14,16 @@
             </div>
         {% endfor %}
         <!--FORMUILARIO-->
+        {{ form_start(form) }}
+            <div class="row-fluid"><div class="span7">
+            <fieldset>
+                <legend>Opciones de Busqueda</legend>
+                <div class="row-fluid">
+                <div class="span2">{{ form_label(form.title) }}</div><div class="span3">{{ form_widget(form.title) }} </div>
+                <div class="span1">{{ form_widget(form.search) }} </div>
+                </div>
+            </fieldset>
+            </div></div>{{ form_end(form) }}
             <br>
             <table class="table table-hover table-bordered">
                 <thead>
@@ -37,7 +47,7 @@
                                 <i class="icon-edit"></i> </a>
                             <a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
                                 <i class="icon-refresh"></i> </a>
-                            <a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" title="Eliminar">
+                            <a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
                                 <i class="icon-trash"></i> </a></div>
                         </td>
                     </tr>
@@ -49,7 +59,7 @@
             </div>
         </div>
             <div class="modal-footer">
-                <a href="#" class="btn">Cerrar</a>
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
             </div>            
         </div>
 </div>
@@ -71,7 +81,6 @@
             }
         });
     }
-    
 </script>
 {% endblock %}
               

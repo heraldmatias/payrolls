@@ -16,7 +16,7 @@ class Subtplanilla
     /**
      * @ORM\Id
      * @var \Inei\Bundle\PayrollBundle\Entity\tplanilla
-     * @ORM\ManyToOne(targetEntity="Tplanilla", inversedBy="planillas")
+     * @ORM\ManyToOne(targetEntity="Tplanilla")
      * @ORM\JoinColumn(name="TIPO_PLAN_TPL", referencedColumnName="TIPO_PLAN_TPL", nullable=true)
      */
     private $tipoPlanTpl;

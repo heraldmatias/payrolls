@@ -52,25 +52,35 @@ class PlanillaType extends AbstractType {
         $builder->addEventListener(
                 FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($folio) {
                     $form = $event->getForm();
+                    $campos = array();
                     $formOptions = array();
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
                         $formOptions['label'] = $concepto->getCodiConcTco();
+                       // $formOptions['data'] = '0';
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
                             'class' => 'monto',
                             'style' => 'width:150px;font-size:10px;'
                         );
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
-                        if($value->getCantidad()>1){
-                            for ($index = 0; $index < $value->getCantidad(); $index++) {
-                                $form->add($concepto->getCodiConcTco().'_'.$index, 'number', $formOptions);
-                            }
-                        }else{
-                            $form->add($concepto->getCodiConcTco(), 'number', $formOptions);
+                        //if($value->getCantidad()>1){
+//                            for ($index = 0; $index < $value->getCantidad(); $index++) {
+                        if(array_key_exists($concepto->getCodiConcTco(), $campos)){
+                            $campos[$concepto->getCodiConcTco()] += 1;
+                        } else {
+                            $campos[$concepto->getCodiConcTco()] = 1;
                         }
+                        $index = $campos[$concepto->getCodiConcTco()];
+                        $flag = '_'.$index;//($index>1)?'_'.$index:'';
+                        $form->add($concepto->getCodiConcTco().$flag, 'text', $formOptions);
+//                            }
+//                        }else{
+//                            $form->add($concepto->getCodiConcTco(), 'text', $formOptions);
+//                        }
                         
                     }
+                    
                 }
         );
     }

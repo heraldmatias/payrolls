@@ -7,12 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="ROLES")
- * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\RoleRepository")
+ * @ORM\Table(name="Module")
+ * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\ModuleRepository")
  */
-class Role implements RoleInterface
-{
-    /**
+class Module {
+    
+     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -20,40 +20,24 @@ class Role implements RoleInterface
     private $id;
 
     /**
-     * @ORM\Column(name="name", type="string", length=30)
+     * @ORM\Column(name="name", type="string", length=30, nullable=false)
      */
     private $name;
 
     /**
-     * @ORM\Column(name="role", type="string", length=20, unique=true)
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
-    private $role;
-
+    private $description;
+    
     /**
-     * @ORM\ManyToMany(targetEntity="Usuarios", mappedBy="roles")
-     */
-    private $users;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Permission", mappedBy="role")
+     * @ORM\OneToMany(targetEntity="Permission", mappedBy="module")
      */
     private $permissions;
 
-    public function __construct()
-    {
-        $this->users = new ArrayCollection();
-        $this->permissions = new ArrayCollection();
+    public function __construct() {
+        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    /**
-     * @see RoleInterface
-     */
-    public function getRole()
-    {
-        return $this->role;
-    }
-
-    // ... getters and setters for each property
 
     /**
      * Get id
@@ -69,7 +53,7 @@ class Role implements RoleInterface
      * Set name
      *
      * @param string $name
-     * @return Role
+     * @return Permission
      */
     public function setName($name)
     {
@@ -89,56 +73,89 @@ class Role implements RoleInterface
     }
 
     /**
-     * Set role
+     * Set type
      *
-     * @param string $role
-     * @return Role
+     * @param string $type
+     * @return Permission
      */
-    public function setRole($role)
+    public function setType($type)
     {
-        $this->role = $role;
+        $this->type = $type;
 
         return $this;
     }
 
     /**
-     * Add users
+     * Get type
      *
-     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $users
-     * @return Role
+     * @return string 
      */
-    public function addUser(\Inei\Bundle\AuthBundle\Entity\Usuarios $users)
+    public function getType()
     {
-        $this->users[] = $users;
+        return $this->type;
+    }
+
+    /**
+     * Add roles
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Role $roles
+     * @return Permission
+     */
+    public function addRole(\Inei\Bundle\AuthBundle\Entity\Role $roles)
+    {
+        $this->roles[] = $roles;
 
         return $this;
     }
 
     /**
-     * Remove users
+     * Remove roles
      *
-     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $users
+     * @param \Inei\Bundle\AuthBundle\Entity\Role $roles
      */
-    public function removeUser(\Inei\Bundle\AuthBundle\Entity\Usuarios $users)
+    public function removeRole(\Inei\Bundle\AuthBundle\Entity\Role $roles)
     {
-        $this->users->removeElement($users);
+        $this->roles->removeElement($roles);
     }
 
     /**
-     * Get users
+     * Get roles
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUsers()
+    public function getRoles()
     {
-        return $this->users;
+        return $this->roles;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Module
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string 
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
      * Add permissions
      *
      * @param \Inei\Bundle\AuthBundle\Entity\Permission $permissions
-     * @return Role
+     * @return Module
      */
     public function addPermission(\Inei\Bundle\AuthBundle\Entity\Permission $permissions)
     {

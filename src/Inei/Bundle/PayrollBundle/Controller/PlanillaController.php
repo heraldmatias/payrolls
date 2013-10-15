@@ -46,10 +46,11 @@ class PlanillaController extends Controller {
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
         
-        if ($object) {
-
+        if ($object && $object->getRegistrosFolio()) {
+            
             $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
             $planilla = array();
+            //if(null != $object->getRegistrosFolio())
             $array = array('payrolls' => array_map(
                         create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
             $co = 0;
@@ -65,20 +66,25 @@ class PlanillaController extends Controller {
                                 $value->getCodiConcTco() . '_' . $value->getFlag() :
                                 $value->getCodiConcTco();
                         //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
+                        //echo $value->getValoCalcPhi().'<br>';
                         $planilla[$key] = $value->getValoCalcPhi();
                         continue;
                     }
                     $key = null !== $value->getFlag() ?
                                 $value->getCodiConcTco() . '_' . $value->getFlag() :
                                 $value->getCodiConcTco();
+                    //echo $value->getValoCalcPhi().'<br>';
                     $array['payrolls'][$co] = $planilla;
                     $dni = $value->getCodiEmplPer();
                     $planilla['codiEmplPer'] = $dni;
                     $planilla['descripcion'] = $value->getDescripcion();
                     $planilla[$key] = $value->getValoCalcPhi();
                     $co++;
+                    if($co > $object->getRegistrosFolio()-1)
+                        break;
                 }
-                $array['payrolls'][$co] = $planilla;
+                if($co <= $object->getRegistrosFolio()-1)
+                    $array['payrolls'][$co] = $planilla;
             } else {
                 $array = array('payrolls' => array_map(
                             create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
@@ -113,8 +119,9 @@ class PlanillaController extends Controller {
                     unset($planilla['descripcion']);
                     foreach ($planilla as $key => $valor) {
                         $planillah = new PlanillaHistoricas();
+                        //echo $key.'<br>';
                         $pos = strpos($key, '_');
-                        $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, count($key) - $pos) : $key);
+                        $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
                         $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
                         $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
                         $planillah->setSubtPlanTpl($object->getSubtPlanStp());
@@ -126,9 +133,9 @@ class PlanillaController extends Controller {
                         $planillah->setFolio($object->getCodiFolio());
                         $em->persist($planillah);
                     }
-                    $em->flush();
-                    $em->clear();
                 }
+                $em->flush();
+                $em->clear();
                 $this->get('session')->getFlashBag()->add(
                         'planilla', 'Registro grabado satisfactoriamente'
                 );

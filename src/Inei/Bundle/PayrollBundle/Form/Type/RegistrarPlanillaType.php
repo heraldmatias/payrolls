@@ -71,7 +71,7 @@ class RegistrarPlanillaType extends AbstractType {
         $folios = array();
         if(array_key_exists('tomo', $data))
         {
-            $tomo = $data['tomo'];
+            $tomo = is_numeric($data['tomo'])?$data['tomo']:0;
             $_tomo = $em->getRepository('IneiPayrollBundle:Tomos')->find($tomo);
             if (null === $_tomo){
                 return;

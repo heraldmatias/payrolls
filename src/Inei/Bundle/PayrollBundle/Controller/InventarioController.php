@@ -57,32 +57,6 @@ class InventarioController extends Controller {
     }
 
     /**
-     * @Route("/add", name="_inventario_add")
-     * @Template("")
-     */
-    public function addTomoAction(Request $request) {
-        $object = new Tomos();
-        $form = $this->createForm('tomo', $object, array('em' => $this->getDoctrine()->getManager()));
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'tomo',
-            'Registro grabado satisfactoriamente'
-            );
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
-            return $this->redirect($this->generateUrl($nextAction));
-        }
-        return array(
-            'form' => $form->createView()
-        );
-    }
-
-    /**
      * @Route("/tomos/add", name="_inventario_tomo_add")
      * @Template("")
      * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
@@ -109,52 +83,7 @@ class InventarioController extends Controller {
         );
     }
 
-    /**
-     * @Route("/todo/{pk}", name="_inventario_edit")
-     * @Template("")
-     */
-    public function editTomoAction(Request $request, $pk) {
-        $em = $this->getDoctrine()
-                ->getRepository('IneiPayrollBundle:Tomos');
-        $object = $em->find($pk);
-        /* LIMPIAR LA REFERENCIA ENTRE CONCEPTOS Y FOLIOS */
-        if ($request->getMethod() === 'POST') {
-            foreach ($object->getFolios() as $value) {
-                $value->getConceptos()->clear();
-            }
-            $originalFolios = $object->getFolios()->toArray();
-//            foreach ($object->getFolios() as $folio) {
-//                $originalFolios[] = $folio;
-//            }
-        }
-        $form = $this->createForm('tomo', $object, array('em' => $this->getDoctrine()->getManager()));
-        $form->handleRequest($request);
-        /* VERFICAR SI EL FORMULARIO ES VALIDO */
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            // buscar los folios que ya no estan contenidos en un tomo
-            foreach ($object->getFolios() as $folio) {
-                foreach ($originalFolios as $key => $toDel) {
-                    if ($toDel->getCodiFolio() === $folio->getCodiFolio()) {
-                        unset($originalFolios[$key]);
-                    }
-                }
-            }
-            foreach ($originalFolios as $folio) {
-                // Eliminar los folios del tomo y de la base de datos
-                $object->removeFolio($folio);
-                $em->remove($folio);
-            }
-            $em->persist($object);
-            $em->flush();
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
-            return $this->redirect($this->generateUrl($nextAction));
-        }
-        return array(
-            'form' => $form->createView()
-        );
-    }
-
+    
     /**
      * @Route("/{pk}", name="_inventario_tomo_edit")
      * @Template("")
@@ -175,7 +104,7 @@ class InventarioController extends Controller {
             'tomo',
             'Registro modificado satisfactoriamente'
             );
-            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_add' : '_inventario_list';
+            $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
         return array(
@@ -291,6 +220,11 @@ class InventarioController extends Controller {
             //$object->getConceptos()->clear();
             $em->persist($object);
             $em->flush();
+            if($object->getRmconceptos()){
+            foreach ($object->getRmconceptos() as $conc) {
+                $em->remove($conc);
+            }
+            $em->flush();}
             $this->get('session')->getFlashBag()->add(
             'folio',
             'Registro modificado satisfactoriamente'

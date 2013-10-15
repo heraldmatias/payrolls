@@ -152,9 +152,16 @@
         <div class="modal-footer">
             {{ form_widget(form.save) }}
             {{ form_widget(form.saveAndAdd) }}
-            <a href="#" class="btn">Cerrar</a>
+            <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
         </div>        
     </div>
         {{ form_end(form) }}
 </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('form').on('submit', function(e){
+            return confirm('¿Esta seguro que desea guardar este registro?');
+        });
+    </script>
 {% endblock %}

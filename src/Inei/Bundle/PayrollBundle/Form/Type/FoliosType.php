@@ -17,7 +17,6 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Inei\Bundle\PayrollBundle\Form\DataTransformer\ValidateConceptTransformer;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
@@ -25,7 +24,6 @@ class FoliosType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
-        $transformer = new ValidateConceptTransformer($entityManager);
         $builder->add('tomo', null, array(
                     'attr' => array('class' => 'tomo'),
                     'empty_value' => '---SELECCIONE---',
@@ -168,7 +166,7 @@ class FoliosType extends AbstractType {
             'csrf_field_name' => '_token',
             'method' => 'post',
             // a unique key to help generate the secret token
-            'intention' => 'task_item',
+            'intention' => 'task_item'
         ));
 
         $resolver->setRequired(array(

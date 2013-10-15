@@ -68,7 +68,7 @@ class Folios {
      * @ORM\OrderBy({"orden" = "ASC"})
      */
     private $conceptos;
-
+    private $rmconceptos;
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas
      * 
@@ -88,6 +88,7 @@ class Folios {
     
     public function __construct() {
         $this->conceptos = new ArrayCollection();
+        $this->rmconceptos = array();
         //$this->planillas = new ArrayCollection();
     }
 
@@ -226,7 +227,9 @@ class Folios {
      * @param \Inei\Bundle\PayrollBundle\Entity\Conceptos $conceptos
      */
     public function removeConcepto(\Inei\Bundle\PayrollBundle\Entity\ConceptosFolios $conceptos) {
-        $this->conceptos->removeElement($conceptos);
+        //$this->conceptos->removeElement($conceptos);
+        //echo $this->rmconceptos;
+        $this->rmconceptos[] = $conceptos;
     }
 
     /**
@@ -250,6 +253,15 @@ class Folios {
      */
     public function getConceptos() {
         return $this->conceptos;
+    }
+    
+    /**
+     * Get conceptos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRmconceptos() {
+        return $this->rmconceptos;
     }
 
     /**

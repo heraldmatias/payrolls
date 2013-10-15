@@ -14,13 +14,14 @@
         {% endfor %}
                 {{ form_start(form) }}
             <div class="row-fluid">
-            <div class="span9">
+            <div class="span10">
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
                     <div class="span1">{{ form_label(form.apePatPer) }}</div><div class="span2"> {{ form_widget(form.apePatPer) }} </div>
                     <div class="span1">{{ form_label(form.apeMatPer) }}</div><div class="span2"> {{ form_widget(form.apeMatPer) }} </div>
                     <div class="span1">{{ form_label(form.nomEmpPer) }}</div><div class="span2"> {{ form_widget(form.nomEmpPer) }} </div>
+                    <div class="span1">{{ form_label(form.librElecPer) }}</div><div class="span1"> {{ form_widget(form.librElecPer) }} </div>
                 <div class="span1">{{ form_widget(form.search) }} </div>
                 </div>
             </fieldset>
@@ -32,6 +33,7 @@
                         <th>Apellido Paterno</th>
                         <th>Apellido Materno</th>
                         <th>Nombre Completo</th>
+                        <th>DNI</th>
                         <th>Dirección</th>
                         <th>Opciones</th>
                     </tr>
@@ -43,6 +45,7 @@
                         <td>{{ item.apePatPer }}</td>
                         <td>{{ item.apeMatPer }}</td>
                         <td>{{ item.nomEmpPer }}</td>
+                        <td>{{ item.librElecPer }}</td>
                         <td>{{ item.dirEmpPer }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
                             <a href="{{ path('_personal_edit', {'pk': item.codiEmplPer}) }}" 
@@ -55,6 +58,9 @@
             <div class="navigation">
                 {{ knp_pagination_render(pagination) }}
                 </div>
+            </div>
+            <div class="modal-footer">
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
             </div>
         </div>
     </div>

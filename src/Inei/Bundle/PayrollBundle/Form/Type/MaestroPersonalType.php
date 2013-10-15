@@ -44,6 +44,9 @@ class MaestroPersonalType extends AbstractType {
                         'rows' => '5'
                     )
                 ))
+                ->add('librElecPer', null, array(
+                    'required' => false
+                ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',
                     'attr' => array('class' => 'btn btn-primary'),))

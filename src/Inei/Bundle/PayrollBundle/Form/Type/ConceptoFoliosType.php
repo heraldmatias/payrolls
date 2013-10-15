@@ -23,13 +23,10 @@ class ConceptoFoliosType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('orden', 'choice', array(
                     'attr' => array('class' => 'ordenconcepto'),
-                    'choices' => array_combine(range(1, 20), range(1, 20))
+                    'choices' => array_combine(range(1, 50), range(1, 50))
                 ))
                 ->add('codiConcTco', null, array(
                     'attr' => array('class' => 'codiconcepto')
-                ))
-                ->add('cantidad', null, array(
-                    'attr' => array('class' => 'cantidad')
                 ));
 //                ->add('descCortTco', null, array(
 //                    'read_only' => true

@@ -13,8 +13,15 @@ class ConceptosFolios
 {       
     /**
      * @var integer
-     * @ORM\ManyToOne(targetEntity="Folios", inversedBy="conceptos", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     */
+    private $id;
+    
+    /**
+     * @var integer
+     * @ORM\ManyToOne(targetEntity="Folios", inversedBy="conceptos", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\JoinColumn(name="CODI_FOLIO", referencedColumnName="CODI_FOLIO", nullable=true)
      */
     private $codiFolio;
@@ -22,7 +29,6 @@ class ConceptosFolios
     /**
      * @var integer
      * @ORM\ManyToOne(targetEntity="Conceptos", inversedBy="folios", cascade={"persist"}, fetch="EXTRA_LAZY")
-     * @ORM\Id
      * @ORM\JoinColumn(name="CODI_CONC_TCO", referencedColumnName="CODI_CONC_TCO", nullable=true)
      */
     private $codiConcTco;
@@ -33,13 +39,6 @@ class ConceptosFolios
      * @ORM\Column(name="ORDEN_CONC_FOLIO", type="integer", nullable=false)
      */
     private $orden;
-    
-    /**
-     * @var integer
-     * 
-     * @ORM\Column(name="CANTIDAD_CONC", type="integer", nullable=false)
-     */
-    private $cantidad;
     
     public function __toString() {
         return $this->getCodiConcTco();
@@ -122,28 +121,5 @@ class ConceptosFolios
     public function getCodiConcTco()
     {
         return $this->codiConcTco;
-    }
-
-    /**
-     * Set cantidad
-     *
-     * @param integer $cantidad
-     * @return ConceptosFolios
-     */
-    public function setCantidad($cantidad)
-    {
-        $this->cantidad = $cantidad;
-
-        return $this;
-    }
-
-    /**
-     * Get cantidad
-     *
-     * @return integer 
-     */
-    public function getCantidad()
-    {
-        return $this->cantidad;
-    }
+    }    
 }

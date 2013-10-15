@@ -43,6 +43,8 @@ class FoliosRepository extends EntityRepository {
             'pk' => $pk,
         ));
         $re = $qb->getResult();
+        if(!$re)
+            return null;
         $folio = $re[0];
 
         /*         * *CONCEPTOS*** */
@@ -55,6 +57,9 @@ class FoliosRepository extends EntityRepository {
             'pk' => $pk,
         ));
         $folio->setConceptos($qbc->getResult());
+//        foreach ($qbc as $key => $conc){
+//            $folio->getConceptos()->set($key, $conc);
+//        }
         return $folio;
     }
 
@@ -65,12 +70,13 @@ class FoliosRepository extends EntityRepository {
             LEFT JOIN f.tipoPlanTpl pla WHERE f.folio = :folio AND f.tomo = :tomo";
         $qb = $this->getEntityManager()->createQuery($DQL)
                 ->setParameters(array(
-            'folio' => $folio,
-            'tomo' => $tomo
+            'folio' => is_numeric($folio)?$folio:0,
+            'tomo' => is_numeric($tomo)?$tomo:0
         ));
         $re = $qb->getResult();
+        if(!$re)
+            return null;
         $folio = $re[0];
-
         /*         * *CONCEPTOS*** */
         $DQL = "SELECT cf, c
             FROM IneiPayrollBundle:ConceptosFolios cf
@@ -81,6 +87,9 @@ class FoliosRepository extends EntityRepository {
             'pk' => $folio->getCodiFolio(),
         ));
         $folio->setConceptos($qbc->getResult());
+//        foreach ($qbc as $key => $conc){
+//            $folio->getConceptos()->set($key, $conc);
+//        }
         return $folio;
     }
 

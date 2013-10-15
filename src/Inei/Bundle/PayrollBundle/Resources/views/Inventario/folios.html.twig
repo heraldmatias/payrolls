@@ -60,6 +60,28 @@
                 {{ knp_pagination_render(pagination) }}
                 </div>
             </div>
+            <div class="modal-footer">
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
+            </div>
         </div>
     </div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    function loadFolios(tomo) {
+        var $folios = $('#search_folios_folio');
+        $folios.empty();
+        $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json) {
+            $.each(json, function(k, v) {
+                $folios.append($('<option value=' + k + '>' + v + '</option>'));
+            });
+        });
+    }
+    $(document).ready(function() {
+        $('#search_folios_tomo').on('change', function(e) {
+            loadFolios($(this).val());
+        });
+        loadFolios($('#search_folios_tomo').val());
+    });
+</script>
 {% endblock %}

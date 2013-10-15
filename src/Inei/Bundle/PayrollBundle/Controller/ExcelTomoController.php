@@ -22,9 +22,17 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function listAction(Request $request) {
+        $form = $this->createForm('search_tomoexcel', null);
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:ExcelTomo');
-        $query = $em->findBy(array(), array(
+        $query = $em->findBy($criteria, array(
             'title' => 'DESC'
         ));
         $paginator = $this->get('knp_paginator');
@@ -33,6 +41,7 @@ class ExcelTomoController extends Controller {
         );
         return array(
             'pagination' => $pagination,
+            'form' => $form->createView()
         );
     }
 
@@ -121,17 +130,18 @@ class ExcelTomoController extends Controller {
             $conc = $sheet->getCellByColumnAndRow($colc, $filaf)->getValue();
             if (null === $conc | '' === trim($conc))
                 break;
-            $data[] = str_replace(' ', '', strtoupper($conc));
+            $_conc = str_replace(' ', '', strtoupper($conc));
+            $data[] = sprintf("(%s, %s, '%s')", $colc-3, $folio, $_conc);
             $colc++;
         }
-        $_conceptos = array_count_values($data);
-        $colc = 1;
-        $conceptos = array();
-        foreach ($_conceptos as $key => $value) {
-            $conceptos[] = sprintf("(%s, %s, '%s', %s)", $colc, $folio, $key, $value);
-            $colc++;
-        }
-        return implode(',', $conceptos);
+//        $_conceptos = array_count_values($data);
+//        $colc = 1;
+//        $conceptos = array();
+//        foreach ($_conceptos as $key => $value) {
+//            $conceptos[] = sprintf("(%s, %s, '%s', %s)", $colc, $folio, $key, $value);
+//            $colc++;
+//        }
+        return implode(',', $data);
     }
 
     /**
@@ -170,14 +180,16 @@ class ExcelTomoController extends Controller {
             per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, 
             num_folio) VALUES ( ?, ?, ?, ?, ?, ?) returning codi_folio;';
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
-            codi_folio, codi_conc_tco, cantidad_conc) values ';
+            codi_folio, codi_conc_tco) values ';
         try {
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
             if (!null == $object->getTomo()) {
                 $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
                 $emt = $this->getDoctrine()->getEntityManager();
-                $emt->remove($tomo);
-                $emt->flush();
+                if (null !== $tomo) {
+                    $emt->remove($tomo);
+                    $emt->flush();
+                }
             }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
@@ -185,7 +197,7 @@ class ExcelTomoController extends Controller {
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $conn->insert('tomos', array(
                 'codi_tomo' => $tomo,
-                'per_tomo' =>  ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
+                'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
                 'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
                 'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
                 'desc_tomo' => NULL
@@ -219,12 +231,12 @@ class ExcelTomoController extends Controller {
         } catch (DBALException $e) {
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
             $conn->rollback();
-            if(isset($object)){
+            if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
-        } catch (\Exception $e) {            
-            $data['error'] = "Ocurrio un error inesperado ".$e->getMessage()." \nRevise la fila $filaf y la Columna $colc";
-            if(isset($object)){
+        } catch (\Exception $e) {
+            $data['error'] = "Ocurrio un error inesperado " . $e->getMessage() . " \nRevise la fila $filaf y la Columna $colc";
+            if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
         }
@@ -234,10 +246,12 @@ class ExcelTomoController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
-    private function updateTomo($object, $tomo, $msg){
-        if(null != $tomo) $object->setTomo($tomo);
-        if(null !== $msg) $object->setDescription($msg);
+
+    private function updateTomo($object, $tomo, $msg) {
+        if (null != $tomo)
+            $object->setTomo($tomo);
+        if (null !== $msg)
+            $object->setDescription($msg);
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($object);
         $em->flush();

@@ -40,14 +40,21 @@
                     {{ form_widget(form.nomEmpPer) }}
                 </div>
                 <div class="span1">
+                    {{ form_label(form.librElecPer) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.librElecPer) }}
+                    {{ form_widget(form.librElecPer) }}
+                </div>  
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
                     {{ form_label(form.nombCortPer) }}
                 </div>
                 <div class="span2">
                     {{ form_errors(form.nombCortPer) }}
                     {{ form_widget(form.nombCortPer) }}
-                </div>                
-            </div>
-            <div class="row-fluid">
+                </div>  
                 <div class="span1">
                     {{ form_label(form.dirEmpPer) }}
                 </div>
@@ -60,9 +67,16 @@
         <div class="modal-footer">
             {{ form_widget(form.save) }}
             {{ form_widget(form.saveAndAdd) }}
-            <a href="#" class="btn">Cerrar</a>
+            <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
         </div>        
     </div>
         {{ form_end(form) }}
 </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('form').on('submit', function(e){
+            return confirm('¿Esta seguro que desea guardar este registro?');
+        });
+    </script>
 {% endblock %}
