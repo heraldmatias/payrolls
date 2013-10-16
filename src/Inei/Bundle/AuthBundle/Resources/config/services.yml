@@ -25,4 +25,3 @@ services:
         arguments: ["@security.encoder_factory", "@security.context", "@doctrine.orm.entity_manager"]
         tags:
             - { name: service, alias: usuario_service }
-        
