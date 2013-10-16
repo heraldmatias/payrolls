@@ -1,4 +1,5 @@
 {% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% form_theme form.permissions 'IneiPayrollBundle:Form:form_table_horizontal_layout.html.twig' %}
 {% block form %}
 <div class="span10">
     {{ form_start(form) }}
@@ -31,7 +32,22 @@
                     {{ form_widget(form.role) }}
                 </div>
             </div>
-            
+          <div class="folio-options"></div>
+            <br>
+            <table id="tfolios" class="table-bordered table-condensed">
+                <thead>
+                <th>Modulo</th><th>Permisos</th>
+                </thead>
+                <tbody data-prototype="{{ form_widget(form.permissions.vars.prototype)|e }}"
+                       data-options =''>
+                    {% for item in form.permissions %}
+                    <tr>
+                        <td>{{ form_errors(item.module) }}{{ form_widget(item.module) }}</td>
+                        <td>{{ form_errors(item.type) }}{{ form_widget(item.type) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>  
           </div>
             <div class="modal-footer">
                 {{ form_widget(form.save) }}
@@ -47,5 +63,46 @@
         $('form').on('submit', function(e){
             return confirm('¿Esta seguro que desea guardar este registro?');
         });
+        var collectionHolder = $('#tfolios tbody');
+        var options = $('div.folio-options');
+        var $addTagLink = $('<a href="#" class="btn btn-primary">Agregar Modulo</a>');
+
+        jQuery(document).ready(function() {
+            // add the "add a tag" anchor and li to the tags ul
+            collectionHolder.find('tr').each(function() {
+                addOptions($(this));
+            });    
+            options.append($addTagLink);
+            
+            collectionHolder.data('index', collectionHolder.find('tr').length);            
+            $addTagLink.on('click', function(e) {
+                e.preventDefault();
+                addForm(collectionHolder);
+            });
+        });
+        
+        function addForm(collectionHolder) {
+            var prototype = collectionHolder.data('prototype');
+            var index = collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+            var $newForm = $(newForm);
+            addOptions($newForm);
+            collectionHolder.data('index', index + 1);
+            collectionHolder.append($newForm);
+        }
+        
+        function addOptions($newForm) {
+            var $deleteopt = $('<a href="#" title="Eliminar Modulo"><i class="icon-trash"></i> </a>');
+            var $options = $('<td></td>');            
+            $options.append($deleteopt);
+            $newForm.append($options);
+            $deleteopt.on('click', function(e) {
+                // prevent the link from creating a "#" on the URL
+                e.preventDefault();
+                // remove the li for the tag form
+                $newForm.remove();
+            });
+        }
+        
     </script>
 {% endblock %}

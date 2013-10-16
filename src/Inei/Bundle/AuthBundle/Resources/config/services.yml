@@ -14,10 +14,15 @@ services:
         class: Inei\Bundle\AuthBundle\Form\Type\RoleType
         tags:
             - { name: form.type, alias: role }
-            
+
+    inei_auth.form.type.permission:
+        class: Inei\Bundle\AuthBundle\Form\Type\PermissionType
+        tags:
+            - { name: form.type, alias: permission }
+
     usuario_service:
         class: Inei\Bundle\AuthBundle\Service\UsuarioService
-        arguments: ["@security.encoder_factory"]
+        arguments: ["@security.encoder_factory", "@security.context", "@doctrine.orm.entity_manager"]
         tags:
             - { name: service, alias: usuario_service }
         

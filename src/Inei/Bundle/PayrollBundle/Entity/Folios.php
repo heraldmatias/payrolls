@@ -330,7 +330,7 @@ class Folios {
             $qb->select('c')
                 ->from('IneiPayrollBundle:PlanillaHistoricas', 'c')
                 ->where('c.folio = :folio')
-                ->orderBy('c.codiEmplPer', 'DESC')
+                ->orderBy('c.id', 'ASC')
                 ->setParameter('folio', $this->codiFolio);
             $this->planillas = $qb->getQuery()->getResult();
         }

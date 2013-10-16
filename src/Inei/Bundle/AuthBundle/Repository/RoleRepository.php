@@ -12,4 +12,20 @@ use Doctrine\ORM\EntityRepository;
  */
 class RoleRepository extends EntityRepository
 {
+    public function findOneCustomBy($pk) {
+        $DQL = "SELECT r,p,m
+            FROM IneiAuthBundle:Role r
+            LEFT JOIN r.permissions p
+            LEFT JOIN p.module m
+            WHERE r.id = :pk";
+        $qb = $this->getEntityManager()->createQuery($DQL)
+                ->setParameters(array(
+            'pk' => is_numeric($pk)?$pk:0,
+        ));
+        $re = $qb->getResult();
+        if(!$re)
+            return null;
+        $object = $re[0];
+        return $object;
+    }
 }

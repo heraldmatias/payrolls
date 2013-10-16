@@ -12,30 +12,35 @@
  */
 // src/Inei/Bundle/PayrollBundle/Form/Type/TomoType.php
 
-namespace Inei\Bundle\PayrollBundle\Form\Type;
+namespace Inei\Bundle\AuthBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class ConceptoFolioType extends AbstractType
+class PermissionType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder->add('codiConcTco', null, array(
-                    'attr' => array('class' => 'codiconcepto')
+        $builder->add('module', null, array(
+                    'attr' => array('class' => 'module')
+                ))
+                ->add('type', 'choice', array(
+                    'attr' => array('class' => 'row-fluid'),
+                    'multiple' => true,
+                    'expanded' => true,
+                    'choices' => \Inei\Bundle\AuthBundle\Entity\Permission::$PERMISSION_TYPE
                 ));
     }
 
     public function getName() {
-        return 'conceptofolio';
+        return 'permission';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'Inei\Bundle\PayrollBundle\Entity\Conceptos',
+            'data_class' => 'Inei\Bundle\AuthBundle\Entity\Permission',
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
-            // a unique key to help generate the secret token
             'intention' => 'task_item'            
         ));
     }

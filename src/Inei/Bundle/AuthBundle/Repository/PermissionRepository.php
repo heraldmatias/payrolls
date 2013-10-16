@@ -12,4 +12,38 @@ use Doctrine\ORM\EntityRepository;
  */
 class PermissionRepository extends EntityRepository
 {
+    public function getByUser($pk, $module, $perm){
+        $DQL = "SELECT p
+            FROM IneiAuthBundle:Permission p
+            JOIN p.module m
+            JOIN p.role r
+            JOIN r.users u
+            WHERE u.id = :pk AND p.module=:module AND p.type LIKE :perm";//AND :perm in p.type 
+        $qb = $this->getEntityManager()->createQuery($DQL)
+                ->setParameters(array(
+            'pk' => is_numeric($pk)?$pk:0,
+            'perm' => '%'.$perm.'%',
+            'module' => $module
+        ));
+        $re = $qb->getResult();
+        return $re;
+    }
 }
+//public function getByUser($pk, $module, $perm){
+//        $DQL = "SELECT u
+//            FROM IneiAuthBundle:Usuarios u
+//            JOIN u.roles r
+//            JOIN r.permissions p
+//            WHERE u.id = :pk and p.module=:module";//AND :perm in p.type 
+//        $qb = $this->getEntityManager()->createQuery($DQL)
+//                ->setParameters(array(
+//            'pk' => $pk,
+//            //'perm' => $perm,
+//            'module' => $module
+//        ));
+//        echo $pk;
+//        echo $qb->getSQL();
+//        $re = $qb->getResult();
+//        //print_r($re);
+//        return $re;
+//    }

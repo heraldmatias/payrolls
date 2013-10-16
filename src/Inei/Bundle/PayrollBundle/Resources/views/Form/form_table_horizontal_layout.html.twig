@@ -43,3 +43,13 @@
     {{ form_rest(form) }}    
 {% endspaceless %}
 {% endblock form_widget_compound %}
+
+{% block choice_widget_expanded %}
+{% spaceless %}
+    <div {{ block('widget_container_attributes') }}>
+    {% for child in form %}
+        <div class="span4"><div class="span3">{{ form_widget(child) }}</div><div class="span9">{{ form_label(child) }}</div></div>
+    {% endfor %}
+    </div>
+{% endspaceless %}
+{% endblock choice_widget_expanded %}

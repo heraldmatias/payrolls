@@ -63,17 +63,19 @@ class PlanillaController extends Controller {
                         $dni = $value->getCodiEmplPer();
                         $planilla['codiEmplPer'] = $dni;
                         $planilla['descripcion'] = $value->getDescripcion();
-                        $key = null !== $value->getFlag() ?
-                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-                                $value->getCodiConcTco();
+//                        $key = null !== $value->getFlag() ?
+//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
+//                                $value->getCodiConcTco();
+                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
                         //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
                         //echo $value->getValoCalcPhi().'<br>';
                         $planilla[$key] = $value->getValoCalcPhi();
                         continue;
                     }
-                    $key = null !== $value->getFlag() ?
-                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-                                $value->getCodiConcTco();
+//                    $key = null !== $value->getFlag() ?
+//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
+//                                $value->getCodiConcTco();
+                    $key = $value->getCodiConcTco() . '_' . $value->getFlag();
                     //echo $value->getValoCalcPhi().'<br>';
                     $array['payrolls'][$co] = $planilla;
                     $dni = $value->getCodiEmplPer();

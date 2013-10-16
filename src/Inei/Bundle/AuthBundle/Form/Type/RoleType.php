@@ -5,6 +5,7 @@ namespace Inei\Bundle\AuthBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Inei\Bundle\AuthBundle\Form\Type\PermissionType;
 /**
  * Description of UsuarioType
  *
@@ -20,6 +21,13 @@ class RoleType extends AbstractType {
                 ->add('role', null, array(
                     'label' => 'Rol',
                     //'data' => 'ROLE_'
+                ))
+                ->add('permissions', 'collection', array(
+                    'type' => new PermissionType(),
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'by_reference' => false
+                    //'prototype_name' => '____'
                 ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

@@ -253,7 +253,7 @@ class InventarioController extends Controller {
                 //NADA
             } else {
                 foreach (range(1, $_tomo->getFoliosTomo()) as $value) {
-                    $folios[$value] = 'FOLIO - ' . $value;
+                    $folios[$value] = $value;
                 }
             }
         }

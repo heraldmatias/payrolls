@@ -29,44 +29,20 @@ class Permission
     private $module;
 
     /**
-     * @var integer
+     * @var array
      * 
-     * @ORM\Column(name="type", type="integer", nullable=false)
+     * @ORM\Column(name="type", type="array", nullable=false)
      */
     private $type;
     
     public static $PERMISSION_TYPE = array(
-        1 => 'Agregar',
-        2 => 'Modificar',
-        3 => 'Consultar',
-        4 => 'Eliminar',
-        5 => 'Otro'
+        'add' => 'Agregar',
+        'edit' => 'Modificar',
+        'query' => 'Consultar',
+        'del' => 'Eliminar',
+        'other' => 'Otro'
     );
     
-
-
-    /**
-     * Set type
-     *
-     * @param integer $type
-     * @return Permission
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get type
-     *
-     * @return integer 
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
 
     /**
      * Set role
@@ -112,5 +88,28 @@ class Permission
     public function getModule()
     {
         return $this->module;
+    }
+
+    /**
+     * Set type
+     *
+     * @param array $type
+     * @return Permission
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return array 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

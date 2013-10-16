@@ -1,0 +1,8 @@
+1.- Reporte de Registros digitados por digitador sobre un rango de fechas
+2.- Cantidad de folios digitados por tomo
+3.- Reporte de folios completos e incompletos por folio y tomo
+4.- numeros en consulta de folios
+5.- Asignacion de id fecha de registro (pistas de auditoria)
+6.- Asginacion de Tomos a usuario
+
+

@@ -35,14 +35,16 @@ class Role implements RoleInterface
     private $users;
 
     /**
-     * @ORM\OneToMany(targetEntity="Permission", mappedBy="role")
+     * @ORM\OneToMany(targetEntity="Permission", mappedBy="role", cascade={"persist","remove"})
      */
     private $permissions;
-
+    private $rmpermissions;
+    
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->permissions = new ArrayCollection();
+        $this->rmpermissions = array();
     }
 
     /**
@@ -142,6 +144,7 @@ class Role implements RoleInterface
      */
     public function addPermission(\Inei\Bundle\AuthBundle\Entity\Permission $permissions)
     {
+        $permissions->setRole($this);
         $this->permissions[] = $permissions;
 
         return $this;
@@ -154,6 +157,7 @@ class Role implements RoleInterface
      */
     public function removePermission(\Inei\Bundle\AuthBundle\Entity\Permission $permissions)
     {
+        $this->rmpermissions[] = $permissions;
         $this->permissions->removeElement($permissions);
     }
 
@@ -165,5 +169,15 @@ class Role implements RoleInterface
     public function getPermissions()
     {
         return $this->permissions;
+    }
+    
+    public function getRmpermissions()
+    {
+        return $this->rmpermissions;
+    }
+    
+    public function setPermissions($permissions)
+    {
+        $this->permissions = $permissions;
     }
 }
