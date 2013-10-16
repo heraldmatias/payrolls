@@ -33,8 +33,9 @@ class PlanillaController extends Controller {
             $folio = $request->request->get('folio');
             $tomo = $request->request->get('tomo');
         } else if ($request->request->get('registrar_planilla')) {
-            $folio = $request->request->get('registrar_planilla')['folio'];
-            $tomo = $request->request->get('registrar_planilla')['tomo'];
+            $aplanilla = $request->request->get('registrar_planilla');
+            $folio = array_key_exists('folio', $aplanilla)?$aplanilla['folio']:null;
+            $tomo = array_key_exists('tomo', $aplanilla)?$aplanilla['tomo']:null;
         }
         $form = null;
         $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
