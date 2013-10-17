@@ -41,17 +41,20 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('tomo', 'edit') %}
+                {% set delete = usuario_service.hasPermission('tomo', 'del') %}
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ tomo.codiTomo }}</td>
                         <td>{{ tomo.periodoTomo }}</td>
                         <td>{{ tomo.anoTomo }}</td>                        
                         <td>{{ tomo.foliosTomo }}</td>                        
-                        <td>
+                        <td>{% if edit %}
                             <a href="{{ path('_inventario_tomo_edit', {'pk': tomo.codiTomo}) }}" title="Editar Tomo">
-                                <i class="icon-edit"></i> </a>
+                                <i class="icon-edit"></i> </a>{% endif %}
+                            {% if delete %}
                             <a href="{{ path('_inventario_tomo_delete', {'pk': tomo.codiTomo}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar Tomo">
-                                <i class="icon-trash"></i> </a>
+                                <i class="icon-trash"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}

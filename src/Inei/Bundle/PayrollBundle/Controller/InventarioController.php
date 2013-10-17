@@ -9,7 +9,7 @@ use Inei\Bundle\PayrollBundle\Entity\Tomos;
 use Inei\Bundle\PayrollBundle\Entity\Folios;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use JMS\SecurityExtraBundle\Annotation\Secure;
+
 /**
  * Description of InventarioController
  *
@@ -20,9 +20,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/", name="_inventario_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function tomosAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tomo','query')){
+            throw $this->createNotFoundException();
+        }
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
                         'SELECT distinct t.periodoTomo FROM IneiPayrollBundle:Tomos t'
                 )->getResult();
@@ -59,9 +61,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/tomos/add", name="_inventario_tomo_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function addTomosAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tomo','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Tomos();
         $form = $this->createForm('tomos', $object);
         $form->handleRequest($request);
@@ -86,9 +90,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/{pk}", name="_inventario_tomo_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TOMO")
      */
     public function editTomosAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('tomo','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tomos');
         $object = $em->find($pk);
@@ -114,9 +120,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/", name="_inventario_folio_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function foliosAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('folio','query')){
+            throw $this->createNotFoundException();
+        }
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
                         'SELECT distinct f.periodoFolio FROM IneiPayrollBundle:Folios f'
                 )->getResult();
@@ -155,9 +163,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/add/", name="_inventario_folio_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function addFoliosAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('folio','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Folios();
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tomos');
@@ -204,9 +214,11 @@ class InventarioController extends Controller {
     /**
      * @Route("/folios/edit/{pk}/", name="_inventario_folio_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_FOLIO")
      */
     public function editFoliosAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('folio','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
         $object = $em->findOneCustomBy($pk);
@@ -267,6 +279,9 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function deleteAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('tomo','del')){
+            throw $this->createNotFoundException();
+        }
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($pk);
 
         $em = $this->getDoctrine()->getEntityManager();

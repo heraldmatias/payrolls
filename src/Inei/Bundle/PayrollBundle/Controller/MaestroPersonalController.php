@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\MaestroPersonal;
 use Symfony\Component\HttpFoundation\Request;
-use JMS\SecurityExtraBundle\Annotation\Secure;
+
 /**
  * Description of InventarioController
  *
@@ -17,10 +17,12 @@ class MaestroPersonalController extends Controller {
 
     /**
      * @Route("/", name="_personal_list")
-     * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
+     * @Template("")     
      */
     public function listAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('personal','query')){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('search_personal', null);
         $form->handleRequest($request);
         $criteria = $form->getData() ? $form->getData() : array();
@@ -45,9 +47,11 @@ class MaestroPersonalController extends Controller {
     /**
      * @Route("/add", name="_personal_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function addAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('personal','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new MaestroPersonal();
         $form = $this->createForm('personal', $object);
         $form->handleRequest($request);
@@ -72,9 +76,11 @@ class MaestroPersonalController extends Controller {
     /**
      * @Route("/{pk}", name="_personal_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function editAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('personal','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:MaestroPersonal');
         $object = $em->find($pk);

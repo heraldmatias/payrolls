@@ -8,8 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Inei\Bundle\AuthBundle\Entity\Usuarios;
 use Inei\Bundle\AuthBundle\Entity\Role;
-//use JMS\SecurityExtraBundle\Annotation\Secure;
-use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * Description of SecurityCrudController
@@ -20,10 +18,12 @@ class SecurityCrudController extends Controller {
 
     /**
      * @Route("/user", name="_admin_user_list")
-     * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
+     * @Template("")     
      */
     public function listUserAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('usuario','query')){
+            throw $this->createNotFoundException();
+        }
         $criteria = array();
 //        $criteria = $form->getData() ? $form->getData() : array();
 //        foreach ($criteria as $key => $value) {
@@ -49,9 +49,11 @@ class SecurityCrudController extends Controller {
     /**
      * @Route("/user/add", name="_admin_user_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function addUserAction(Request $request) {
+         if(!$this->get('usuario_service')->hasPermission('usuario','add')){
+            throw $this->createNotFoundException();
+        }
         $usuario = new Usuarios();
         $form = $this->createForm('usuario', $usuario);
         $form->handleRequest($request);
@@ -79,10 +81,9 @@ class SecurityCrudController extends Controller {
     /**
      * @Route("/user/{pk}", name="_admin_user_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function editUserAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission(8,'edit')){
+        if(!$this->get('usuario_service')->hasPermission('usuario','edit')){
             throw $this->createNotFoundException();
         }
         $usuario = $this->getDoctrine()
@@ -111,9 +112,11 @@ class SecurityCrudController extends Controller {
     /**
      * @Route("/role", name="_admin_role_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function listRoleAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('rol','query')){
+            throw $this->createNotFoundException();
+        }
         $criteria = array();
 //        $criteria = $form->getData() ? $form->getData() : array();
 //        foreach ($criteria as $key => $value) {
@@ -138,10 +141,12 @@ class SecurityCrudController extends Controller {
 
     /**
      * @Route("/role/add", name="_admin_role_add")
-     * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
+     * @Template("")     
      */
     public function addRoleAction(Request $request) {
+         if(!$this->get('usuario_service')->hasPermission('rol','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Role();
         $form = $this->createForm('role', $object);
         $form->handleRequest($request);
@@ -178,9 +183,11 @@ class SecurityCrudController extends Controller {
     /**
      * @Route("/role/{pk}", name="_admin_role_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SEGURIDAD")
      */
     public function editRoleAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('rol','edit')){
+            throw $this->createNotFoundException();
+        }
         $object = $this->getDoctrine()
                         ->getRepository('IneiAuthBundle:Role')->findOneCustomBy($pk);
         $form = $this->createForm('role', $object);

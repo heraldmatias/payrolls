@@ -2,7 +2,6 @@
 
 namespace Inei\Bundle\AuthBundle\Entity;
 
-use Symfony\Component\Security\Core\Role\RoleInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,17 +9,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="Module")
  * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\ModuleRepository")
  */
-class Module {
+class Module implements \Serializable {
     
-     /**
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="IDENTITY")
-     */
-    private $id;
-
     /**
-     * @ORM\Column(name="name", type="string", length=30, nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(name="name", type="string", length=15, nullable=false)
      */
     private $name;
 
@@ -35,45 +29,13 @@ class Module {
     private $permissions;
 
     public function __construct() {
-        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roles = ArrayCollection();
     }
 
     public function __toString() {
-        return $this->getName();
+        return $this->getDescription();
     }
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return Permission
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
+    
     /**
      * Set type
      *
@@ -185,4 +147,41 @@ class Module {
     {
         return $this->permissions;
     }
+    
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return Module
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    public function serialize() {
+        return serialize(array(
+            $this->name,
+        ));
+    }
+
+    public function unserialize($serialized) {
+        list (
+                $this->name,
+                ) = unserialize($serialized);
+    }
+    
+    
 }

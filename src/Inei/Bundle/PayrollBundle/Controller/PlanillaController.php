@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 use Inei\Bundle\PayrollBundle\Entity\Tplanilla;
 use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
-use JMS\SecurityExtraBundle\Annotation\Secure;
 use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
 
 /**
@@ -23,9 +22,11 @@ class PlanillaController extends Controller {
     /**
      * @Route("/add/", name="_planilla_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_PLANILLA")
      */
     public function addAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
+            throw $this->createNotFoundException();
+        }
         $folio = null;
         $tomo = null;
         $object = null;
@@ -110,6 +111,9 @@ class PlanillaController extends Controller {
                     ->getForm();
             $_form->handleRequest($request);
             if ($_form->isValid()) {
+                if(!$this->get('usuario_service')->hasPermission('planilla','add%edit')){
+                    throw $this->createNotFoundException();
+                }
                 /**                 * *GUARDAR** */
                 $em = $this->getDoctrine()->getManager();
                 $data = $_form->getData()['payrolls'];
@@ -175,10 +179,12 @@ class PlanillaController extends Controller {
 
     /**
      * @Route("/tplanilla/", name="_planilla_tplanilla_list")
-     * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
+     * @Template("")     
      */
     public function tplanillaAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tplanilla','query')){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('search_tplanilla', null);
         $form->handleRequest($request);
         $criteria = $form->getData() ? $form->getData() : array();
@@ -206,9 +212,11 @@ class PlanillaController extends Controller {
     /**
      * @Route("/tplanilla/add/", name="_planilla_tplanilla_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
      */
     public function addTplanillaAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tplanilla','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Tplanilla();
         $form = $this->createForm('tplanilla', $object);
         $form->handleRequest($request);
@@ -231,10 +239,12 @@ class PlanillaController extends Controller {
 
     /**
      * @Route("/tplanilla/{pk}", name="_planilla_tplanilla_edit")
-     * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_TIPO_PLANILLA")
+     * @Template("")     
      */
     public function editTplanillaAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('tplanilla','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tplanilla');
         $object = $em->find($pk);
@@ -260,9 +270,11 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/", name="_planilla_subtplanilla_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function subtplanillaAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('subtplanilla','query')){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('search_subtplanilla', null, array(
             'method' => 'GET',
         ));
@@ -292,9 +304,11 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/add/", name="_planilla_subtplanilla_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function addSubtplanillaAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('subtplanilla','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Subtplanilla();
         $form = $this->createForm('subtplanilla', $object);
         $form->handleRequest($request);
@@ -318,9 +332,11 @@ class PlanillaController extends Controller {
     /**
      * @Route("/subtplanilla/{planilla}/{pk}", name="_planilla_subtplanilla_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_SUBTPLANILLA")
      */
     public function editSubtplanillaAction(Request $request, $planilla, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('subtplanilla','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Subtplanilla');
         $object = $em->findOneBy(array(

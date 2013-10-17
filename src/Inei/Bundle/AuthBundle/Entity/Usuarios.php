@@ -60,7 +60,9 @@ class Usuarios implements AdvancedUserInterface, \Serializable {
     private $roles;
 
     public function getRoles() {
-        return $this->roles->toArray();
+        $roles = $this->roles->toArray();
+        $roles[] = 'ROLE_USER';
+        return $roles;
     }
 
     public function __construct() {

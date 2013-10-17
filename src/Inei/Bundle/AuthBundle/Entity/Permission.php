@@ -24,7 +24,7 @@ class Permission
      * @var integer
      * @ORM\ManyToOne(targetEntity="Module", inversedBy="permissions", cascade={"persist"}, fetch="EXTRA_LAZY")
      * @ORM\Id
-     * @ORM\JoinColumn(name="module_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="module_id", referencedColumnName="name", nullable=true)
      */
     private $module;
 

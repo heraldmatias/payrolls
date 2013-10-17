@@ -7,7 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\Conceptos;
 use Symfony\Component\HttpFoundation\Request;
-use JMS\SecurityExtraBundle\Annotation\Secure;
+
 /**
  * Description of InventarioController
  *
@@ -18,9 +18,11 @@ class ConceptoController extends Controller {
     /**
      * @Route("/", name="_concepto_list")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function listAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('concepto','query')){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('search_concepto', null);
         $form->handleRequest($request);
         $criteria = $form->getData() ? $form->getData() : array();
@@ -45,9 +47,11 @@ class ConceptoController extends Controller {
     /**
      * @Route("/add", name="_concepto_add")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function addAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('concepto','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new Conceptos();
         $form = $this->createForm('concepto', $object);
         $form->handleRequest($request);
@@ -72,9 +76,11 @@ class ConceptoController extends Controller {
     /**
      * @Route("/{pk}", name="_concepto_edit")
      * @Template("")
-     * @Secure(roles="ROLE_ADMINISTRADOR, ROLE_CONCEPTO")
      */
     public function editAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('concepto','edit')){
+            throw $this->createNotFoundException();
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Conceptos');
         $object = $em->find($pk);

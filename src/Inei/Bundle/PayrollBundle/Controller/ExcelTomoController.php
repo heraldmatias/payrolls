@@ -22,6 +22,9 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function listAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tomo_excel','query')){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('search_tomoexcel', null);
         $form->handleRequest($request);
         $criteria = $form->getData() ? $form->getData() : array();
@@ -50,6 +53,9 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function newAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tomo_excel','add')){
+            throw $this->createNotFoundException();
+        }
         $object = new ExcelTomo();
         $object->setCreatedAt(new \DateTime("now"));
         $form = $this->createForm('exceltomo', $object);
@@ -76,7 +82,9 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function editAction(Request $request, $pk) {
-
+        if(!$this->get('usuario_service')->hasPermission('tomo_excel','edit')){
+            throw $this->createNotFoundException();
+        }
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
         if (!$object) {
             throw $this->createNotFoundException('Archivo no encontrado ' . $pk);
@@ -105,6 +113,9 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function deleteAction(Request $request, $pk) {
+        if(!$this->get('usuario_service')->hasPermission('tomo_excel','del')){
+            throw $this->createNotFoundException();
+        }
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
         if (!null == $object->getTomo()) {
             $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
@@ -149,6 +160,9 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function processAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('tomo_excel','other')){
+            throw $this->createNotFoundException();
+        }
         $pk = $request->query->get('pk');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
