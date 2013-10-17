@@ -38,6 +38,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('tplanilla', 'edit') %}
                 {% for object in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
@@ -46,9 +47,8 @@
                         <td>{{ object.cantPeriTpl }}</td>                        
                         <td>{{ object.abrevTipoTpl }}</td>                        
                         <td>
-                            <a href="{{ path('_planilla_tplanilla_edit', {'pk': object.tipoPlanTpl}) }}" title="Editar Tomo">
-                                <i class="icon-edit"></i> </a>
-                            
+                            {% if edit %}<a href="{{ path('_planilla_tplanilla_edit', {'pk': object.tipoPlanTpl}) }}" title="Editar Tomo">
+                                <i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}

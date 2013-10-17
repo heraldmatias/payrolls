@@ -20,6 +20,97 @@ use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
 class PlanillaController extends Controller {
 
     /**
+     * @Route("/add2222/", name="_planilla_query")
+     * @Template("IneiPayrollBundle:Planilla:add.html.twig")
+     */
+    public function queryAction(Request $request) {
+        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
+            throw $this->createNotFoundException();
+        }
+        $folio = null;
+        $tomo = null;
+        $object = null;
+        $form = null;
+        if ($request->request->get('form')) {
+            $folio = $request->request->get('folio');
+            $tomo = $request->request->get('tomo');
+        }        
+        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
+        $sform->handleRequest($request);
+
+        if (null != $folio & null != $tomo) {
+            $em = $this->getDoctrine()
+                    ->getRepository('IneiPayrollBundle:Folios');
+            $object = $em->findOneCustomByNum($folio, $tomo);
+        }
+        
+        if ($object && $object->getRegistrosFolio()) {
+            
+            $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
+            $planilla = array();
+
+            $array = array('payrolls' => array_map(
+                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+            $co = 0;
+            if ($_planillas) {
+                //$array = array('payrolls' => null);
+                $dni = $_planillas[0]->getCodiEmplPer();
+                foreach ($_planillas as $key => $value) {
+                    if ($dni == $value->getCodiEmplPer()) {
+                        $dni = $value->getCodiEmplPer();
+                        $planilla['codiEmplPer'] = $dni;
+                        $planilla['descripcion'] = $value->getDescripcion();
+
+                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
+                        
+                        $planilla[$key] = $value->getValoCalcPhi();
+                        continue;
+                    }
+
+                    $key = $value->getCodiConcTco() . '_' . $value->getFlag();
+                    //echo $value->getValoCalcPhi().'<br>';
+                    $array['payrolls'][$co] = $planilla;
+                    $dni = $value->getCodiEmplPer();
+                    $planilla['codiEmplPer'] = $dni;
+                    $planilla['descripcion'] = $value->getDescripcion();
+                    $planilla[$key] = $value->getValoCalcPhi();
+                    $co++;
+                    if($co > $object->getRegistrosFolio()-1)
+                        break;
+                }
+                if($co <= $object->getRegistrosFolio()-1)
+                    $array['payrolls'][$co] = $planilla;
+            } else {
+                $array = array('payrolls' => array_map(
+                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+            }
+
+            $_form = $this->createFormBuilder($array)
+                    ->add('payrolls', 'collection', array(
+                        'required' => true,
+                        'allow_delete' => true,
+                        'allow_add' => true,
+                        'prototype' => true,
+                        'type' => new PlanillaType(),
+                        'options' => array(
+                            'folio' => $object
+                        )
+                    ))
+                    ->add('save', 'submit', array(
+                        'label' => 'Guardar',
+                        'attr' => array('class' => 'btn btn-primary'),))
+                    ->getForm();
+            $_form->handleRequest($request);
+            $form = $_form->createView();
+        }
+        return array(
+            'form' => $form,
+            'sform' => $sform->createView(),
+            'folio' => $object
+        );
+    }
+    
+    /**
      * @Route("/add/", name="_planilla_add")
      * @Template("")
      */

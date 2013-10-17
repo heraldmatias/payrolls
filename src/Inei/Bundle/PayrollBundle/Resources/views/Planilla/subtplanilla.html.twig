@@ -37,6 +37,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('subtplanilla', 'edit') %}
                 {% for object in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
@@ -45,10 +46,10 @@
                         <td>{{ object.descSubtStp }}</td>
                         <td>{{ object.tituSubtStp }}</td>                                           
                         <td>
-                            <a href="{{ path('_planilla_subtplanilla_edit', {
+                            {% if edit %}<a href="{{ path('_planilla_subtplanilla_edit', {
                                 'planilla': object.tipoPlanTpl.tipoPlanTpl,
                                 'pk': object.subtPlanStp}) }}" title="Editar">
-                                <i class="icon-edit"></i> </a>
+                                <i class="icon-edit"></i> </a>{% endif %}
                             
                         </td>
                     </tr>

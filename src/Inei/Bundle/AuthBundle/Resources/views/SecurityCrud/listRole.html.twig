@@ -35,14 +35,15 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('rol', 'edit') %}
                 {% for item in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ item.name }}</td>
                         <td>{{ item.role }}</td>
                         <td>
-                            <a href="{{ path('_admin_role_edit', {'pk': item.id}) }}" title="Editar Tomo">
-                                <i class="icon-edit"></i> </a>
+                            {% if edit %}<a href="{{ path('_admin_role_edit', {'pk': item.id}) }}" title="Editar Tomo">
+                                <i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}

@@ -39,6 +39,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('personal', 'edit') %}
                 {% for item in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
@@ -48,8 +49,8 @@
                         <td>{{ item.librElecPer }}</td>
                         <td>{{ item.dirEmpPer }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            <a href="{{ path('_personal_edit', {'pk': item.codiEmplPer}) }}" 
-                               title="Editar"><i class="icon-edit"></i> </a>
+                            {% if edit %}<a href="{{ path('_personal_edit', {'pk': item.codiEmplPer}) }}" 
+                               title="Editar"><i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}

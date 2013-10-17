@@ -36,19 +36,22 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('tomo_excel', 'edit') %}
+                {% set del = usuario_service.hasPermission('tomo_excel', 'del') %}
+                {% set process = usuario_service.hasPermission('tomo_excel', 'other') %}
                 {% for item in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
                         <td>{{ item.title }}</td>
                         <td><a href="{{ asset('upload/tomos/') }}{{item.filename}}">{{ item.filename }}</a></td>
                         <td id="message{{ item.id }}">{{ item.description }}</td>
-                        <td><div style="float:left;">
+                        <td><div style="float:left;">{% if edit %}
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
-                                <i class="icon-edit"></i> </a>
-                            <a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
-                                <i class="icon-refresh"></i> </a>
-                            <a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
-                                <i class="icon-trash"></i> </a></div>
+                                <i class="icon-edit"></i> </a>{% endif %}
+                            {% if process %}<a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
+                                <i class="icon-refresh"></i> </a>{% endif %}
+                            {% if del %}<a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
+                                <i class="icon-trash"></i> </a>{% endif %}</div>
                         </td>
                     </tr>
                 {% endfor %}

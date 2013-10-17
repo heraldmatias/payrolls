@@ -40,6 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set edit = usuario_service.hasPermission('folio', 'edit') %}
                 {% for folio in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ folio.tomo }}</td>
@@ -49,8 +50,8 @@
                         <td>{{ folio.descTipoTpl }}</td>
                         <td>{{ folio.subtPlanStp }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            <a href="{{ path('_inventario_folio_edit', {'pk': folio.codiFolio}) }}" 
-                               title="Editar Folio"><i class="icon-edit"></i> </a>
+                            {% if edit %}<a href="{{ path('_inventario_folio_edit', {'pk': folio.codiFolio}) }}" 
+                               title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}

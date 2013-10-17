@@ -41,6 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                {% set perm = usuario_service.hasPermission('concepto', 'edit') %}
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
@@ -54,8 +55,8 @@
                         <td>{{ tomo.getFlagPagoTco_display }}</td>
                         <td>{{ tomo.getSedeConcTco_display }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            <a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}" 
-                               title="Editar Folio"><i class="icon-edit"></i> </a>
+                            {% if perm %}<a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}" 
+                               title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}
