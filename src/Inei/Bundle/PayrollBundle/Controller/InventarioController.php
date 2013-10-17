@@ -9,6 +9,7 @@ use Inei\Bundle\PayrollBundle\Entity\Tomos;
 use Inei\Bundle\PayrollBundle\Entity\Folios;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Doctrine\DBAL\DBALException;
 
 /**
  * Description of InventarioController
@@ -22,7 +23,7 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function tomosAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tomo','query')){
+        if (!$this->get('usuario_service')->hasPermission('tomo', 'query')) {
             throw $this->createNotFoundException();
         }
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
@@ -63,7 +64,7 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function addTomosAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tomo','add')){
+        if (!$this->get('usuario_service')->hasPermission('tomo', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Tomos();
@@ -72,13 +73,18 @@ class InventarioController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'tomo',
-            'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'tomo', 'Registro grabado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'tomo', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -86,29 +92,37 @@ class InventarioController extends Controller {
             'form' => $form->createView()
         );
     }
-   
+
     /**
      * @Route("/{pk}", name="_inventario_tomo_edit")
      * @Template("")
      */
     public function editTomosAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('tomo','edit')){
+        if (!$this->get('usuario_service')->hasPermission('tomo', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Tomos');
-        $object = $em->find($pk);
+        $object = $em->find(is_numeric($pk)?$pk:-1);
+        if(!$object){
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('tomos', $object);
         $form->handleRequest($request);
         /* VERFICAR SI EL FORMULARIO ES VALIDO */
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'tomo',
-            'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'tomo', 'Registro modificado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'tomo', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_tomo_add' : '_inventario_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -122,7 +136,7 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function foliosAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('folio','query')){
+        if (!$this->get('usuario_service')->hasPermission('folio', 'query')) {
             throw $this->createNotFoundException();
         }
         $_periodos = $this->getDoctrine()->getManager()->createQuery(
@@ -142,7 +156,7 @@ class InventarioController extends Controller {
             if (!$value) {
                 unset($criteria[$key]);
             }
-        }        
+        }
         $fem = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
 //        $query = $fem->findBy($criteria, array(
@@ -165,7 +179,7 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function addFoliosAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('folio','add')){
+        if (!$this->get('usuario_service')->hasPermission('folio', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Folios();
@@ -179,28 +193,33 @@ class InventarioController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $conceptos = $object->getConceptos()->toArray();
-            $object->getConceptos()->clear();
-            $_pks = array_unique(array_map(
-                            create_function('$concept', 'return $concept->getcodiConcTco();'), $conceptos
-            ));
-            $em->persist($object);
-            $em->flush();
-            foreach ($_pks as $pk) {
-                foreach ($conceptos as $concepto) {
-                    if ($concepto->getCodiConcTco() === $pk) {
-                        $concepto->setCodiFolio($object);
-                        $em->persist($concepto);
-                        break;
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $conceptos = $object->getConceptos()->toArray();
+                $object->getConceptos()->clear();
+                $_pks = array_unique(array_map(
+                                create_function('$concept', 'return $concept->getcodiConcTco();'), $conceptos
+                ));
+                $em->persist($object);
+                $em->flush();
+                foreach ($_pks as $pk) {
+                    foreach ($conceptos as $concepto) {
+                        if ($concepto->getCodiConcTco() === $pk) {
+                            $concepto->setCodiFolio($object);
+                            $em->persist($concepto);
+                            break;
+                        }
                     }
                 }
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'folio', 'Registro grabado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'folio', 'Ocurrio un error al grabar el registro'
+                );
             }
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'folio',
-            'Registro grabado satisfactoriamente'
-            );
             $tomo = $object->getTomo()->getCodiTomo();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
             $parameters = $form->get('saveAndAdd')->isClicked() ? array('tomo' => $tomo) : array();
@@ -209,14 +228,14 @@ class InventarioController extends Controller {
         return array(
             'form' => $form->createView()
         );
-    }    
+    }
 
     /**
      * @Route("/folios/edit/{pk}/", name="_inventario_folio_edit")
      * @Template("")
      */
     public function editFoliosAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('folio','edit')){
+        if (!$this->get('usuario_service')->hasPermission('folio', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
@@ -226,20 +245,24 @@ class InventarioController extends Controller {
         $form->handleRequest($request);
         /* VERFICAR SI EL FORMULARIO ES VALIDO */
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            //$em->flush();
-            //$object->getConceptos()->clear();
-            $em->persist($object);
-            $em->flush();
-            if($object->getRmconceptos()){
-            foreach ($object->getRmconceptos() as $conc) {
-                $em->remove($conc);
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                if ($object->getRmconceptos()) {
+                    foreach ($object->getRmconceptos() as $conc) {
+                        $em->remove($conc);
+                    }
+                    $em->flush();
+                }
+                $this->get('session')->getFlashBag()->add(
+                        'folio', 'Registro modificado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'folio', 'Ocurrio un error al modificar el registro'
+                );
             }
-            $em->flush();}
-            $this->get('session')->getFlashBag()->add(
-            'folio',
-            'Registro modificado satisfactoriamente'
-            );
             $tomo = $object->getTomo()->getCodiTomo();
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_inventario_folio_add' : '_inventario_folio_list';
             $parameters = $form->get('saveAndAdd')->isClicked() ? array() : array('tomo' => $tomo);
@@ -273,23 +296,29 @@ class InventarioController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/delete/{pk}", name="_inventario_tomo_delete")
      * @Template("")
      */
     public function deleteAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('tomo','del')){
+        if (!$this->get('usuario_service')->hasPermission('tomo', 'del')) {
             throw $this->createNotFoundException();
         }
-        $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($pk);
+        try {
+            $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($pk);
 
-        $em = $this->getDoctrine()->getEntityManager();
-        $em->remove($object);
-        $em->flush();
-        $this->get('session')->getFlashBag()->add(
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($object);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add(
                     'tomo', 'Registro eliminado satisfactoriamente'
             );
+        } catch (DBALException $e) {
+            $this->get('session')->getFlashBag()->add(
+                    'tomo', 'Ocurrio un error al grabar el registro'
+            );
+        }
         $nextAction = '_inventario_list';
         return $this->redirect($this->generateUrl($nextAction));
     }

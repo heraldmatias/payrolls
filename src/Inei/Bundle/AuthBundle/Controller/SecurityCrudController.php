@@ -60,16 +60,18 @@ class SecurityCrudController extends Controller {
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-//            $factory = $this->get('security.encoder_factory');
-//            $encoder = $factory->getEncoder($usuario);
-//            $password = $encoder->encodePassword($usuario->getPassword(), $usuario->getSalt());
-//            $usuario->setPassword($password);
-            $this->get('usuario_service')->encodePassword($usuario);
-            $em->persist($usuario);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'usuario', 'Registro grabado satisfactoriamente'
-            );
+            try {
+                $this->get('usuario_service')->encodePassword($usuario);
+                $em->persist($usuario);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'usuario', 'Registro grabado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'usuario', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_admin_user_add' : '_admin_user_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -92,6 +94,7 @@ class SecurityCrudController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            try{
             $em = $this->getDoctrine()->getManager();
             $this->get('usuario_service')->encodePassword($usuario);
             $em->persist($usuario);
@@ -99,6 +102,11 @@ class SecurityCrudController extends Controller {
             $this->get('session')->getFlashBag()->add(
                     'usuario', 'Registro modificado satisfactoriamente'
             );
+            }catch(Doctrine\DBAL\DBALException $e){
+                $this->get('session')->getFlashBag()->add(
+                        'usuario', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_admin_user_add' : '_admin_user_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -170,6 +178,9 @@ class SecurityCrudController extends Controller {
                 );
                 $conn->commit();
             } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'role', 'Ocurrio un error al grabar el registro'
+                );
                 $conn->rollback();
             }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_admin_role_add' : '_admin_role_list';
@@ -194,6 +205,7 @@ class SecurityCrudController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            try{
             $em = $this->getDoctrine()->getManager();
             $em->persist($object);
             $em->flush();
@@ -206,6 +218,11 @@ class SecurityCrudController extends Controller {
             $this->get('session')->getFlashBag()->add(
                     'role', 'Registro modificado satisfactoriamente'
             );
+            }catch(Doctrine\DBAL\DBALException $e){
+                $this->get('session')->getFlashBag()->add(
+                        'role', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_admin_role_add' : '_admin_role_list';
             return $this->redirect($this->generateUrl($nextAction));
         }

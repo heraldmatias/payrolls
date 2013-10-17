@@ -22,7 +22,7 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function listAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tomo_excel','query')){
+        if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('search_tomoexcel', null);
@@ -53,7 +53,7 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function newAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tomo_excel','add')){
+        if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new ExcelTomo();
@@ -62,13 +62,19 @@ class ExcelTomoController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            //$object->setRootDir( str_replace('/cards/app', $this->getRequest()->getBasePath(),  $this->get('kernel')->getRootDir()).'/' );
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'exceltomo', 'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                //$object->setRootDir( str_replace('/cards/app', $this->getRequest()->getBasePath(),  $this->get('kernel')->getRootDir()).'/' );
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'exceltomo', 'Registro grabado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'exceltomo', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? 'admin_excel_add' : 'admin_excel_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -82,7 +88,7 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function editAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('tomo_excel','edit')){
+        if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'edit')) {
             throw $this->createNotFoundException();
         }
         $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
@@ -93,13 +99,19 @@ class ExcelTomoController extends Controller {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $object->uploadFile();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'exceltomo', 'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $object->uploadFile();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'exceltomo', 'Registro modificado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'exceltomo', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? 'admin_excel_add' : 'admin_excel_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -113,24 +125,30 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function deleteAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('tomo_excel','del')){
+        if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'del')) {
             throw $this->createNotFoundException();
         }
-        $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
-        if (!null == $object->getTomo()) {
-            $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
+        try {
+            $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
+            if (!null == $object->getTomo()) {
+                $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
 
-            $emt = $this->getDoctrine()->getEntityManager();
-            $emt->remove($tomo);
-            $emt->flush();
+                $emt = $this->getDoctrine()->getEntityManager();
+                $emt->remove($tomo);
+                $emt->flush();
+            }
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($object);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                    'exceltomo', 'Registro eliminado satisfactoriamente'
+            );
+        } catch (DBALException $e) {
+            $this->get('session')->getFlashBag()->add(
+                    'exceltomo', 'Ocurrio un error al eliminar el registro'
+            );
         }
-        $em = $this->getDoctrine()->getEntityManager();
-        $em->remove($object);
-        $em->flush();
-
-        $this->get('session')->getFlashBag()->add(
-                'exceltomo', 'Registro eliminado satisfactoriamente'
-        );
         $nextAction = 'admin_excel_list';
         return $this->redirect($this->generateUrl($nextAction));
     }
@@ -142,7 +160,7 @@ class ExcelTomoController extends Controller {
             if (null === $conc | '' === trim($conc))
                 break;
             $_conc = str_replace(' ', '', strtoupper($conc));
-            $data[] = sprintf("(%s, %s, '%s')", $colc-3, $folio, $_conc);
+            $data[] = sprintf("(%s, %s, '%s')", $colc - 3, $folio, $_conc);
             $colc++;
         }
 //        $_conceptos = array_count_values($data);
@@ -160,7 +178,7 @@ class ExcelTomoController extends Controller {
      * @Template("")
      */
     public function processAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tomo_excel','other')){
+        if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'other')) {
             throw $this->createNotFoundException();
         }
         $pk = $request->query->get('pk');

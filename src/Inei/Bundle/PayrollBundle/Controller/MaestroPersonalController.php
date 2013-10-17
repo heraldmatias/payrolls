@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\MaestroPersonal;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\DBAL\DBALException;
 
 /**
  * Description of InventarioController
@@ -20,7 +21,7 @@ class MaestroPersonalController extends Controller {
      * @Template("")     
      */
     public function listAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('personal','query')){
+        if (!$this->get('usuario_service')->hasPermission('personal', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('search_personal', null);
@@ -33,7 +34,7 @@ class MaestroPersonalController extends Controller {
         }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:MaestroPersonal');
-        $query = $em->findUsingLike($criteria, 'order by t.apePatPer ASC');//$em->findAll();//
+        $query = $em->findUsingLike($criteria, 'order by t.apePatPer ASC'); //$em->findAll();//
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 10/* limit per page */
@@ -49,7 +50,7 @@ class MaestroPersonalController extends Controller {
      * @Template("")
      */
     public function addAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('personal','add')){
+        if (!$this->get('usuario_service')->hasPermission('personal', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new MaestroPersonal();
@@ -58,13 +59,18 @@ class MaestroPersonalController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'personal',
-            'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'personal', 'Registro grabado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'personal', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_personal_add' : '_personal_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -78,7 +84,7 @@ class MaestroPersonalController extends Controller {
      * @Template("")
      */
     public function editAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('personal','edit')){
+        if (!$this->get('usuario_service')->hasPermission('personal', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
@@ -89,13 +95,18 @@ class MaestroPersonalController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'personal',
-            'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'personal', 'Registro modificado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'personal', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_personal_add' : '_personal_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -103,12 +114,12 @@ class MaestroPersonalController extends Controller {
             'form' => $form->createView()
         );
     }
-    
+
     /**
      * @Route("/ajax/typehead", name="_personal_ajax")
      * 
      */
-    public function ajaxTypeheadFunction(Request $request){
+    public function ajaxTypeheadFunction(Request $request) {
         $nombres = $request->query->get('query');
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:MaestroPersonal');

@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\Conceptos;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\DBAL\DBALException;
 
 /**
  * Description of InventarioController
@@ -20,7 +21,7 @@ class ConceptoController extends Controller {
      * @Template("")
      */
     public function listAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('concepto','query')){
+        if (!$this->get('usuario_service')->hasPermission('concepto', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('search_concepto', null);
@@ -49,7 +50,7 @@ class ConceptoController extends Controller {
      * @Template("")
      */
     public function addAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('concepto','add')){
+        if (!$this->get('usuario_service')->hasPermission('concepto', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Conceptos();
@@ -58,13 +59,18 @@ class ConceptoController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'concepto',
-            'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'concepto', 'Registro grabado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'concepto', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_concepto_add' : '_concepto_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -78,24 +84,32 @@ class ConceptoController extends Controller {
      * @Template("")
      */
     public function editAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('concepto','edit')){
+        if (!$this->get('usuario_service')->hasPermission('concepto', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Conceptos');
         $object = $em->find($pk);
+        if (!$object) {
+            throw $this->createNotFoundException();
+        }
         $form = $this->createForm('concepto', $object);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-            'concepto',
-            'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'concepto', 'Registro modificado satisfactoriamente'
+                );
+            } catch (DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'concepto', 'Ocurrio un error al actualizar'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_concepto_add' : '_concepto_list';
             return $this->redirect($this->generateUrl($nextAction));
         }

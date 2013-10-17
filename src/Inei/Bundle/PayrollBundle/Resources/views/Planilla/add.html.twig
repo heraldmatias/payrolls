@@ -31,7 +31,7 @@
             </div>
             <div class="modal-body">
                 {% for flashMessage in app.session.flashbag.get('planilla') %}
-            <div class="alert alert-success">
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ flashMessage }}
             </div>
@@ -123,9 +123,40 @@
         $('#registrar_planilla_tomo').on('change', function(e) {
             loadFolios($(this).val());
         });
+        $('#registrar_planilla_folio').keypress(function(e) {
+            if(e.which === 13) {
+                $('#registrar_planilla_buscar').click();
+            }
+        });
+        /*$("input[type='text']").keypress(function(e) {
+            if(e.which === 13) {
+                var rows = $('#tplanillas tbody tr');
+                console.log( rows.index($(this).parent().parent()));
+                return false;
+            }
+        });*/
+        activateNextRow();
     });
-    var $dni = new Array();
-    var $name = new Array();
+
+    function activateNextRow(){
+        var rows = $('#tplanillas tbody tr');
+        var c_rows = rows.length-1;
+        $.each(rows, function(k, v){
+           var $lastcol = $(v).find('td:last');
+           var $txt = $lastcol.find('input[type="text"]');
+           if(k<c_rows){
+                $txt.keypress(function(e) {
+                    if(e.which === 13) {
+                        $(v).next().find('input[type="text"]:eq(0)').focus();
+                        var iScroll = $(window).scrollTop();
+                        iScroll = iScroll + 40;
+                        $('html, body').animate({  scrollTop: iScroll }, 200);
+                        return false;
+                    }
+                });
+           }
+        });
+    }
 
     $('form:eq(1)').on('submit', function(e){
         return confirm('¿Esta seguro que desea modificar este registro?');

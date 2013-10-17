@@ -7,7 +7,7 @@
         </div>
         <div class="modal-body">
              {% for flashMessage in app.session.flashbag.get('concepto') %}
-            <div class="alert alert-success">
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 {{ flashMessage }}
             </div>

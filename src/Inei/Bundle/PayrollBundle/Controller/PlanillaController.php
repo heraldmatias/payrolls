@@ -20,102 +20,11 @@ use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
 class PlanillaController extends Controller {
 
     /**
-     * @Route("/add2222/", name="_planilla_query")
-     * @Template("IneiPayrollBundle:Planilla:add.html.twig")
-     */
-    public function queryAction(Request $request) {
-//        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
-//            throw $this->createNotFoundException();
-//        }
-        $folio = null;
-        $tomo = null;
-        $object = null;
-        $form = null;
-        if ($request->request->get('form')) {
-            $folio = $request->request->get('folio');
-            $tomo = $request->request->get('tomo');
-        }        
-        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
-        $sform->handleRequest($request);
-
-        if (null != $folio & null != $tomo) {
-            $em = $this->getDoctrine()
-                    ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->findOneCustomByNum($folio, $tomo);
-        }
-        
-        if ($object && $object->getRegistrosFolio()) {
-            
-            $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
-            $planilla = array();
-
-            $array = array('payrolls' => array_map(
-                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-            $co = 0;
-            if ($_planillas) {
-                //$array = array('payrolls' => null);
-                $dni = $_planillas[0]->getCodiEmplPer();
-                foreach ($_planillas as $key => $value) {
-                    if ($dni == $value->getCodiEmplPer()) {
-                        $dni = $value->getCodiEmplPer();
-                        $planilla['codiEmplPer'] = $dni;
-                        $planilla['descripcion'] = $value->getDescripcion();
-
-                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                        
-                        $planilla[$key] = $value->getValoCalcPhi();
-                        continue;
-                    }
-
-                    $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                    //echo $value->getValoCalcPhi().'<br>';
-                    $array['payrolls'][$co] = $planilla;
-                    $dni = $value->getCodiEmplPer();
-                    $planilla['codiEmplPer'] = $dni;
-                    $planilla['descripcion'] = $value->getDescripcion();
-                    $planilla[$key] = $value->getValoCalcPhi();
-                    $co++;
-                    if($co > $object->getRegistrosFolio()-1)
-                        break;
-                }
-                if($co <= $object->getRegistrosFolio()-1)
-                    $array['payrolls'][$co] = $planilla;
-            } else {
-                $array = array('payrolls' => array_map(
-                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-            }
-
-            $_form = $this->createFormBuilder($array)
-                    ->add('payrolls', 'collection', array(
-                        'required' => true,
-                        'allow_delete' => true,
-                        'allow_add' => true,
-                        'prototype' => true,
-                        'type' => new PlanillaType(),
-                        'options' => array(
-                            'folio' => $object
-                        )
-                    ))
-                    ->add('save', 'submit', array(
-                        'label' => 'Guardar',
-                        'attr' => array('class' => 'btn btn-primary'),))
-                    ->getForm();
-            $_form->handleRequest($request);
-            $form = $_form->createView();
-        }
-        return array(
-            'form' => $form,
-            'sform' => $sform->createView(),
-            'folio' => $object
-        );
-    }
-    
-    /**
      * @Route("/add/", name="_planilla_add")
      * @Template("")
      */
     public function addAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
+        if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
             throw $this->createNotFoundException();
         }
         $folio = null;
@@ -126,8 +35,8 @@ class PlanillaController extends Controller {
             $tomo = $request->request->get('tomo');
         } else if ($request->request->get('registrar_planilla')) {
             $aplanilla = $request->request->get('registrar_planilla');
-            $folio = array_key_exists('folio', $aplanilla)?$aplanilla['folio']:null;
-            $tomo = array_key_exists('tomo', $aplanilla)?$aplanilla['tomo']:null;
+            $folio = array_key_exists('folio', $aplanilla) ? $aplanilla['folio'] : null;
+            $tomo = array_key_exists('tomo', $aplanilla) ? $aplanilla['tomo'] : null;
         }
         $form = null;
         $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
@@ -138,9 +47,9 @@ class PlanillaController extends Controller {
                     ->getRepository('IneiPayrollBundle:Folios');
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
-        
+
         if ($object && $object->getRegistrosFolio()) {
-            
+
             $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
             $planilla = array();
             //if(null != $object->getRegistrosFolio())
@@ -175,10 +84,10 @@ class PlanillaController extends Controller {
                     $planilla['descripcion'] = $value->getDescripcion();
                     $planilla[$key] = $value->getValoCalcPhi();
                     $co++;
-                    if($co > $object->getRegistrosFolio()-1)
+                    if ($co > $object->getRegistrosFolio() - 1)
                         break;
                 }
-                if($co <= $object->getRegistrosFolio()-1)
+                if ($co <= $object->getRegistrosFolio() - 1)
                     $array['payrolls'][$co] = $planilla;
             } else {
                 $array = array('payrolls' => array_map(
@@ -206,37 +115,43 @@ class PlanillaController extends Controller {
 //                    throw $this->createNotFoundException();
 //                }
                 /**                 * *GUARDAR** */
-                $em = $this->getDoctrine()->getManager();
-                $data = $_form->getData()['payrolls'];
-                $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
-                $q->execute();
-                foreach ($data as $key => $planilla) {
-                    $dni = $planilla['codiEmplPer'];
-                    $descripcion = $planilla['descripcion'];
-                    unset($planilla['codiEmplPer']);
-                    unset($planilla['descripcion']);
-                    foreach ($planilla as $key => $valor) {
-                        $planillah = new PlanillaHistoricas();
-                        //echo $key.'<br>';
-                        $pos = strpos($key, '_');
-                        $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
-                        $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
-                        $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
-                        $planillah->setSubtPlanTpl($object->getSubtPlanStp());
-                        $planillah->setNumePeriTpe(01);
-                        $planillah->setDescripcion($descripcion);
-                        $planillah->setValoCalcPhi($valor);
-                        $planillah->setCodiEmplPer($dni);
-                        $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
-                        $planillah->setFolio($object->getCodiFolio());
-                        $em->persist($planillah);
+                try {
+                    $em = $this->getDoctrine()->getManager();
+                    $data = $_form->getData()['payrolls'];
+                    $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
+                    $q->execute();
+                    foreach ($data as $key => $planilla) {
+                        $dni = $planilla['codiEmplPer'];
+                        $descripcion = $planilla['descripcion'];
+                        unset($planilla['codiEmplPer']);
+                        unset($planilla['descripcion']);
+                        foreach ($planilla as $key => $valor) {
+                            $planillah = new PlanillaHistoricas();
+                            //echo $key.'<br>';
+                            $pos = strpos($key, '_');
+                            $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
+                            $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
+                            $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
+                            $planillah->setSubtPlanTpl($object->getSubtPlanStp());
+                            $planillah->setNumePeriTpe(01);
+                            $planillah->setDescripcion($descripcion);
+                            $planillah->setValoCalcPhi($valor);
+                            $planillah->setCodiEmplPer($dni);
+                            $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
+                            $planillah->setFolio($object->getCodiFolio());
+                            $em->persist($planillah);
+                        }
                     }
+                    $em->flush();
+                    $em->clear();
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Registro grabado satisfactoriamente'
+                    );
+                } catch (Doctrine\DBAL\DBALException $e) {
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Ocurrio un erro al grabar la planilla'
+                    );
                 }
-                $em->flush();
-                $em->clear();
-                $this->get('session')->getFlashBag()->add(
-                        'planilla', 'Registro grabado satisfactoriamente'
-                );
                 $nextAction = '_planilla_add';
                 return $this->redirect($this->generateUrl($nextAction));
                 $object = null;
@@ -273,7 +188,7 @@ class PlanillaController extends Controller {
      * @Template("")     
      */
     public function tplanillaAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tplanilla','query')){
+        if (!$this->get('usuario_service')->hasPermission('tplanilla', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('search_tplanilla', null);
@@ -305,7 +220,7 @@ class PlanillaController extends Controller {
      * @Template("")
      */
     public function addTplanillaAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('tplanilla','add')){
+        if (!$this->get('usuario_service')->hasPermission('tplanilla', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Tplanilla();
@@ -314,12 +229,18 @@ class PlanillaController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'tplanilla', 'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'tplanilla', 'Registro grabado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'tplanilla', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_tplanilla_add' : '_planilla_tplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -333,7 +254,7 @@ class PlanillaController extends Controller {
      * @Template("")     
      */
     public function editTplanillaAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('tplanilla','edit')){
+        if (!$this->get('usuario_service')->hasPermission('tplanilla', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
@@ -344,12 +265,18 @@ class PlanillaController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'tplanilla', 'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'tplanilla', 'Registro modificado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'tplanilla', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_tplanilla_add' : '_planilla_tplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -363,7 +290,7 @@ class PlanillaController extends Controller {
      * @Template("")
      */
     public function subtplanillaAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('subtplanilla','query')){
+        if (!$this->get('usuario_service')->hasPermission('subtplanilla', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('search_subtplanilla', null, array(
@@ -397,7 +324,7 @@ class PlanillaController extends Controller {
      * @Template("")
      */
     public function addSubtplanillaAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('subtplanilla','add')){
+        if (!$this->get('usuario_service')->hasPermission('subtplanilla', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Subtplanilla();
@@ -406,12 +333,18 @@ class PlanillaController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'subtplanilla', 'Registro grabado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'subtplanilla', 'Registro grabado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'subtplanilla', 'Ocurrio un error al grabar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_subtplanilla_add' : '_planilla_subtplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
@@ -425,7 +358,7 @@ class PlanillaController extends Controller {
      * @Template("")
      */
     public function editSubtplanillaAction(Request $request, $planilla, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('subtplanilla','edit')){
+        if (!$this->get('usuario_service')->hasPermission('subtplanilla', 'edit')) {
             throw $this->createNotFoundException();
         }
         $em = $this->getDoctrine()
@@ -439,12 +372,18 @@ class PlanillaController extends Controller {
 
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($object);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add(
-                    'subtplanilla', 'Registro modificado satisfactoriamente'
-            );
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($object);
+                $em->flush();
+                $this->get('session')->getFlashBag()->add(
+                        'subtplanilla', 'Registro modificado satisfactoriamente'
+                );
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->get('session')->getFlashBag()->add(
+                        'subtplanilla', 'Ocurrio un error al modificar el registro'
+                );
+            }
             $nextAction = $form->get('saveAndAdd')->isClicked() ? '_planilla_subtplanilla_add' : '_planilla_subtplanilla_list';
             return $this->redirect($this->generateUrl($nextAction));
         }
