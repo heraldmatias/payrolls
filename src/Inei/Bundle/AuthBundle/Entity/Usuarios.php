@@ -58,6 +58,8 @@ class Usuarios implements AdvancedUserInterface, \Serializable {
      *
      */
     private $roles;
+    
+    private $permissions;
 
     public function getRoles() {
         $roles = $this->roles->toArray();
@@ -269,6 +271,16 @@ class Usuarios implements AdvancedUserInterface, \Serializable {
     
     public function getActiveDisplay(){
         return $this->isActive ? 'ACTIVO' : 'INACTIVO';
+    }
+    
+    public function setPermissions(array $permissions){
+        $this->permissions = $permissions;
+        
+        return $this;
+    }
+    
+    public function getPermissions(){
+        return $this->permissions;
     }
 
 }

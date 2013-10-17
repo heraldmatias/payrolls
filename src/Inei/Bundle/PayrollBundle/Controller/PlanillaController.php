@@ -24,9 +24,9 @@ class PlanillaController extends Controller {
      * @Template("IneiPayrollBundle:Planilla:add.html.twig")
      */
     public function queryAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
-            throw $this->createNotFoundException();
-        }
+//        if(!$this->get('usuario_service')->hasPermission('planilla','query')){
+//            throw $this->createNotFoundException();
+//        }
         $folio = null;
         $tomo = null;
         $object = null;
@@ -202,9 +202,9 @@ class PlanillaController extends Controller {
                     ->getForm();
             $_form->handleRequest($request);
             if ($_form->isValid()) {
-                if(!$this->get('usuario_service')->hasPermission('planilla','add%edit')){
-                    throw $this->createNotFoundException();
-                }
+//                if(!$this->get('usuario_service')->hasPermission('planilla','add%edit')){
+//                    throw $this->createNotFoundException();
+//                }
                 /**                 * *GUARDAR** */
                 $em = $this->getDoctrine()->getManager();
                 $data = $_form->getData()['payrolls'];

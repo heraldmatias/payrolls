@@ -36,13 +36,31 @@ class UsuariosRepository extends EntityRepository implements UserProviderInterfa
             ->where('u.id = :id')            
             ->setParameter('id', $pk)
             ->getQuery();
-        //print_r($q->getResult()[0]);
-        return $q->getResult()[0];
+        $result = $q->getResult();
+        $user = null;
+        if(count($result)){
+            $user = $result[0];
+            $user->setPermissions($this->getPermissions($user->getId()));
+        }
+        return $user;
+    }
+    
+    public function getPermissions($pk){
+        $DQL = "SELECT p,m
+            FROM IneiAuthBundle:Permission p
+            JOIN p.module m
+            JOIN p.role r
+            JOIN r.users u
+            WHERE u.id = :pk ORDER BY m.order ASC";//AND :perm in p.type 
+        $qb = $this->getEntityManager()->createQuery($DQL)
+                ->setParameters(array(
+            'pk' => is_numeric($pk)?$pk:0,
+        ));
+        $re = $qb->getArrayResult();
+        return $re;
     }
 
     public function refreshUser(\Symfony\Component\Security\Core\User\UserInterface $user) {
-        //print_r($user);
-        //echo $user->getUsername();
         $user = $this->findOneByPk($user->getId());
         return $user;
     }

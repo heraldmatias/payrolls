@@ -21,7 +21,7 @@ class SecurityCrudController extends Controller {
      * @Template("")     
      */
     public function listUserAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('usuario','query')){
+        if (!$this->get('usuario_service')->hasPermission('usuario', 'query')) {
             throw $this->createNotFoundException();
         }
         $criteria = array();
@@ -51,7 +51,7 @@ class SecurityCrudController extends Controller {
      * @Template("")
      */
     public function addUserAction(Request $request) {
-         if(!$this->get('usuario_service')->hasPermission('usuario','add')){
+        if (!$this->get('usuario_service')->hasPermission('usuario', 'add')) {
             throw $this->createNotFoundException();
         }
         $usuario = new Usuarios();
@@ -83,7 +83,7 @@ class SecurityCrudController extends Controller {
      * @Template("")
      */
     public function editUserAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('usuario','edit')){
+        if (!$this->get('usuario_service')->hasPermission('usuario', 'edit')) {
             throw $this->createNotFoundException();
         }
         $usuario = $this->getDoctrine()
@@ -114,7 +114,7 @@ class SecurityCrudController extends Controller {
      * @Template("")
      */
     public function listRoleAction(Request $request) {
-        if(!$this->get('usuario_service')->hasPermission('rol','query')){
+        if (!$this->get('usuario_service')->hasPermission('rol', 'query')) {
             throw $this->createNotFoundException();
         }
         $criteria = array();
@@ -144,7 +144,7 @@ class SecurityCrudController extends Controller {
      * @Template("")     
      */
     public function addRoleAction(Request $request) {
-         if(!$this->get('usuario_service')->hasPermission('rol','add')){
+        if (!$this->get('usuario_service')->hasPermission('rol', 'add')) {
             throw $this->createNotFoundException();
         }
         $object = new Role();
@@ -185,7 +185,7 @@ class SecurityCrudController extends Controller {
      * @Template("")
      */
     public function editRoleAction(Request $request, $pk) {
-        if(!$this->get('usuario_service')->hasPermission('rol','edit')){
+        if (!$this->get('usuario_service')->hasPermission('rol', 'edit')) {
             throw $this->createNotFoundException();
         }
         $object = $this->getDoctrine()

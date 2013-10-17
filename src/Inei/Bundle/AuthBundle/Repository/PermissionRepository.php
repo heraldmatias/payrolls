@@ -29,21 +29,3 @@ class PermissionRepository extends EntityRepository
         return $re;
     }
 }
-//public function getByUser($pk, $module, $perm){
-//        $DQL = "SELECT u
-//            FROM IneiAuthBundle:Usuarios u
-//            JOIN u.roles r
-//            JOIN r.permissions p
-//            WHERE u.id = :pk and p.module=:module";//AND :perm in p.type 
-//        $qb = $this->getEntityManager()->createQuery($DQL)
-//                ->setParameters(array(
-//            'pk' => $pk,
-//            //'perm' => $perm,
-//            'module' => $module
-//        ));
-//        echo $pk;
-//        echo $qb->getSQL();
-//        $re = $qb->getResult();
-//        //print_r($re);
-//        return $re;
-//    }

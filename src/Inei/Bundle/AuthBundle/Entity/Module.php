@@ -19,9 +19,24 @@ class Module implements \Serializable {
     private $name;
 
     /**
-     * @ORM\Column(name="description", type="text", nullable=true)
+     * @ORM\Column(name="description", type="string", length=70, nullable=false)
      */
     private $description;
+    
+    /**
+     * @ORM\Column(name="query_path", type="string", length=30, nullable=true)
+     */
+    private $queryPath;
+    
+    /**
+     * @ORM\Column(name="add_path", type="string", length=30, nullable=true)
+     */
+    private $addPath;
+    
+    /**
+     * @ORM\Column(name="order", type="integer", nullable=true)
+     */
+    private $order;
     
     /**
      * @ORM\OneToMany(targetEntity="Permission", mappedBy="module")
@@ -184,4 +199,73 @@ class Module implements \Serializable {
     }
     
     
+
+    /**
+     * Set queryPath
+     *
+     * @param string $queryPath
+     * @return Module
+     */
+    public function setQueryPath($queryPath)
+    {
+        $this->queryPath = $queryPath;
+
+        return $this;
+    }
+
+    /**
+     * Get queryPath
+     *
+     * @return string 
+     */
+    public function getQueryPath()
+    {
+        return $this->queryPath;
+    }
+
+    /**
+     * Set addPath
+     *
+     * @param string $addPath
+     * @return Module
+     */
+    public function setAddPath($addPath)
+    {
+        $this->addPath = $addPath;
+
+        return $this;
+    }
+
+    /**
+     * Get addPath
+     *
+     * @return string 
+     */
+    public function getAddPath()
+    {
+        return $this->addPath;
+    }
+
+    /**
+     * Set order
+     *
+     * @param integer $order
+     * @return Module
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get order
+     *
+     * @return integer 
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
 }

@@ -61,53 +61,14 @@ font-weight: bold;}
                 <div class="span2">
                     <div class="sidebar-nav" id="menu-principal">
                         <ul class="nav nav-list">
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TOMO') %}
-                            <li class="nav-header">Tomos</li>
-                            <li class=""><a href="{{ path('_inventario_tomo_add') }}">Registrar Tomo</a></li>
-                            <li class=""><a href="{{ path('_inventario_list') }}">Consultar Tomos</a></li>
-                            
-                            
-                            <li class="nav-header">Tomos en Excel</li>
-                            <li class=""><a href="{{ path('admin_excel_add') }}">Registrar Tomo en Excel</a></li>
-                            <li class=""><a href="{{ path('admin_excel_list') }}">Consultar Tomos en Excel</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_FOLIO') %}
-                            <li class="nav-header">Folios</li>
-                            <li class=""><a href="{{ path('_inventario_folio_add') }}">Registrar Folio</a></li>
-                            <li class=""><a href="{{ path('_inventario_folio_list') }}">Consultar Folios</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TIPO_PLANILLA')
-                                 or is_granted('ROLE_SUBTPLANILLA') or is_granted('ROLE_PLANILLA') %}
-                            <li class="nav-header">Planillas</li>
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_TIPO_PLANILLA') %}
-                            <li class=""><a href="{{ path('_planilla_tplanilla_add') }}">Registrar Tipo de Planilla</a></li>
-                            <li class=""><a href="{{ path('_planilla_tplanilla_list') }}">Consultar Tipo de Planilla</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SUBTPLANILLA') %}
-                            <li class=""><a href="{{ path('_planilla_subtplanilla_add') }}">Registrar SubTipo de Planilla</a></li>
-                            <li class=""><a href="{{ path('_planilla_subtplanilla_list') }}">Consultar SubTipo de Planilla</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_PLANILLA') %}
-                            <li class=""><a href="{{ path('_planilla_add') }}">Registrar Planillas</a></li>
-                            {% endif %}
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_CONCEPTO') %}
-                            <li class="nav-header">Conceptos</li>
-                            <li class=""><a href="{{ path('_concepto_add') }}">Registrar Conceptos</a></li>
-                            <li class=""><a href="{{ path('_concepto_list') }}">Consultar Conceptos</a></li>
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SEGURIDAD') %}
-                            <li class="nav-header">Personal</li>
-                            <li class=""><a href="{{ path('_personal_add') }}">Registrar Personal</a></li>
-                            <li class=""><a href="{{ path('_personal_list') }}">Consultar Personal</a></li>                            
-                            {% endif %}
-                            {% if is_granted('ROLE_ADMINISTRADOR') or is_granted('ROLE_SEGURIDAD') %}
-                            <li class="nav-header">Seguridad</li>
-                            <li class=""><a href="{{ path('_admin_user_add') }}">Registrar Usuarios</a></li>
-                            <li class=""><a href="{{ path('_admin_user_list') }}">Consultar Usuarios</a></li>
-                            <li class=""><a href="{{ path('_admin_role_add') }}">Registrar Roles</a></li>
-                            <li class=""><a href="{{ path('_admin_role_list') }}">Consultar Roles</a></li>
-                            {% endif %}
+                        {% for perm in app.user.permissions %}
+                            {% set addpath = perm.module.addPath %}
+                            {% set querypath = perm.module.queryPath %}
+                            {% set name = perm.module.name|capitalize %}
+                            <li class="nav-header">{{ perm.module.description }}</li>
+                            {% if 'add' in perm.type %} <li class=""><a href="{% if addpath %}{{ path(addpath) }}{% endif %}">Registrar {{ name }}</a></li>{% endif %}
+                            {% if 'query' in perm.type %} <li class=""><a href="{% if querypath %}{{ path(querypath) }}{% endif %}">Consultar {{ name }}</a></li>{% endif %}
+                        {% endfor %}
                         </ul>
                     </div><!--/.well -->
                 </div><!--/span-->
