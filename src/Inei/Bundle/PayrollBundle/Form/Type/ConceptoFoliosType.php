@@ -26,7 +26,7 @@ class ConceptoFoliosType extends AbstractType
                     'choices' => array_combine(range(1, 50), range(1, 50))
                 ))
                 ->add('codiConcTco', null, array(
-                    'attr' => array('class' => 'codiconcepto')
+                    'attr' => array('class' => 'chosen-select')
                 ));
     }
 

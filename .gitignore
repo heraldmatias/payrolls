@@ -1,4 +1,8 @@
-/web/bundles/
+/web/bundles/acmedemo
+/web/bundles/framework
+/web/bundles/ineiauth
+/web/bundles/ineipayroll
+/web/bundles/sensiodistribution
 /web/upload/
 /app/bootstrap*
 /app/cache/*

@@ -7,3 +7,7 @@ QUE SCROLLE CON ENTER
 4.- numeros en consulta de folios
 5.- Asignacion de id fecha de registro (pistas de auditoria)
 6.- Asginacion de Tomos a usuario
+
+<script src="{{ asset('bundles/inei/chosen.jquery.min.js') }}" type="text/javascript"></script>
+
+<link href="{{ asset('bundles/inei/chosen.min.css') }}" rel="text/css" />
