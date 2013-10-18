@@ -76,7 +76,7 @@
                     <b>ES UN FOLIO DE RESUMEN O ES POSIBLE QUE NO ESTE REGISTRADO</b>
                     {% endif %}
                     <div class="modal-footer">
-                        {% if form %} {{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
+                        {% if form %} <b id="feedback"></b>{{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
                         <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
                     </div>
                     </div>
@@ -86,60 +86,52 @@
             </div>
 {% endblock %}
 {% block js %}
+<script src="{{ asset('bundles/inei/prototype.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
-    function doAjax() {
-    /*var data = $('form:eq(1)').serialize();
-    $.ajax({
-      type: 'POST',
-      url: '{{ path('_planilla_autosave') }}',
-      data: data,   
-      complete: function(data) {
-          $('#mensaje').html(data);
-          //setInterval(doAjax,20000); //now that the request is complete, do it again in 1 second
-      }
-      });*/
-  }
-  
+    jQuery.noConflict();
+// $j is now an alias to the jQuery function; creating the new alias is optional.
+    
+    
     function loadColumns() {
-        var form = $($('#tplanillas tbody').data('prototype'));
-        var collectionColumns = $('#tplanillas thead');
-        var columns = $('<tr></tr>');
-        var $column = null;
-        $.each(form.find('td'), function(index, field) {
-            $field = $(field);
-            $column = $('<th id="col'+index+'"></th>');
-            $column.html($field.find('*').data('title'));
-            columns.append($column);
+        var form = jQuery(jQuery('#tplanillas tbody').data('prototype'));
+        var collectionColumns = jQuery('#tplanillas thead');
+        var columns = jQuery('<tr></tr>');
+        var column = null;
+        jQuery.each(form.find('td'), function(index, field) {
+            field = jQuery(field);
+            column = jQuery('<th id="col'+index+'"></th>');
+            column.html(field.find('*').data('title'));
+            columns.append(column);
         });
-        $column = $('<th>REGISTRO</th>');
-        columns.prepend($column);
+        column = jQuery('<th>REGISTRO</th>');
+        columns.prepend(column);
         collectionColumns.append(columns);
     }
     function indexar() {
-        var rows = $('#tplanillas tbody').find('tr');
-        $.each(rows, function(i, v){
-           var $td = $('<td class="column-item">'+(i+1)+'</td>');
-           $(v).prepend($td);
+        var rows = jQuery('#tplanillas tbody').find('tr');
+        jQuery.each(rows, function(i, v){
+           var $td = jQuery('<td class="column-item">'+(i+1)+'</td>');
+           jQuery(v).prepend($td);
         });
     }
     function loadFolios(tomo) {
-        var $folios = $('#registrar_planilla_folio');
+        var $folios = jQuery('#registrar_planilla_folio');
         $folios.empty();
-        $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json) {
-            $.each(json, function(k, v) {
-                $folios.append($('<option value=' + k + '>' + v + '</option>'));
+        jQuery.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json) {
+            jQuery.each(json, function(k, v) {
+                $folios.append(jQuery('<option value=' + k + '>' + v + '</option>'));
             });
         });
     }
-    $(document).ready(function() {
+    jQuery(document).ready(function() {
         loadColumns();
         indexar();
-        $('#registrar_planilla_tomo').on('change', function(e) {
-            loadFolios($(this).val());
+        jQuery('#registrar_planilla_tomo').on('change', function(e) {
+            loadFolios(jQuery(this).val());
         });
-        $('#registrar_planilla_folio').keypress(function(e) {
+        jQuery('#registrar_planilla_folio').keypress(function(e) {
             if(e.which === 13) {
-                $('#registrar_planilla_buscar').click();
+                jQuery('#registrar_planilla_buscar').click();
             }
         });
         /*$("input[type='text']").keypress(function(e) {
@@ -149,23 +141,23 @@
                 return false;
             }
         });*/
-        {% if form %} doAjax(); {% endif %}
+        
         activateNextRow();
     });
 
     function activateNextRow(){
-        var rows = $('#tplanillas tbody tr');
+        var rows = jQuery('#tplanillas tbody tr');
         var c_rows = rows.length-1;
-        $.each(rows, function(k, v){
-           var $lastcol = $(v).find('td:last');
+        jQuery.each(rows, function(k, v){
+           var $lastcol = jQuery(v).find('td:last');
            var $txt = $lastcol.find('input[type="text"]');
            if(k<c_rows){
                 $txt.keypress(function(e) {
                     if(e.which === 13) {
-                        $(v).next().find('input[type="text"]:eq(0)').focus();
-                        var iScroll = $(window).scrollTop();
+                        jQuery(v).next().find('input[type="text"]:eq(0)').focus();
+                        var iScroll = jQuery(window).scrollTop();
                         iScroll = iScroll + 40;
-                        $('html, body').animate({  scrollTop: iScroll }, 200);
+                        jQuery('html, body').animate({  scrollTop: iScroll }, 200);
                         return false;
                     }
                 });
@@ -173,8 +165,38 @@
         });
     }
 
-    $('form:eq(1)').on('submit', function(e){
+    jQuery('form:eq(1)').on('submit', function(e){
         return confirm('¿Esta seguro que desea modificar este registro?');
+    });
+    
+    function sendForm(){
+        //Event.stop(event);
+        var data = Form.serialize("form_planilla");
+        var oOptions = {  
+            method: "POST",  
+            parameters: data,  
+            asynchronous: true,
+            //frequency: 15,
+            //decay: 1,
+            onFailure: function (oXHR) {  
+                $('feedback').update(oXHR.statusText);  
+            },  
+            onLoading: function (oXHR) {  
+                $('feedback').update('Guardando ...');  
+            },                            
+            onSuccess: function(oXHR) {  
+               $('feedback').update(oXHR.responseText);
+               data = Form.serialize("form_planilla");
+            }                 
+        };  
+        new Ajax.Updater('feedback', "{{ path('_planilla_autosave') }}", oOptions);
+    }
+    /*document.observe('dom:loaded', function() {
+        //Event.observe('form_save', 'click', sendForm, false);  
+        sendForm();
+    });*/
+    document.observe('dom:loaded', function() {
+        new Form.Observer('form_planilla', 20, sendForm);
     });
     </script>
 {% endblock %}

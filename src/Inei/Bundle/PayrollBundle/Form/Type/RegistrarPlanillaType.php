@@ -92,6 +92,9 @@ class RegistrarPlanillaType extends AbstractType {
         $resolver->setDefaults(array(
             'csrf_protection' => false,
             'method' => 'post',
+            'attr' => array(
+                'id' => 'form_consulta'
+            )
             // a unique key to help generate the secret token
             
         ));
