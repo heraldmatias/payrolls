@@ -122,4 +122,14 @@ class ConceptosFolios
     {
         return $this->codiConcTco;
     }    
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

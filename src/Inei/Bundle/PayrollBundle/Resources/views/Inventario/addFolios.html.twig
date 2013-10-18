@@ -124,7 +124,9 @@
         var collectionHolder = $('#tfolios tbody');
         var options = $('div.folio-options');
         var $addTagLink = $('<a href="#" class="btn btn-primary">Agregar Concepto</a>');
-
+        $('.codiconcepto').chosen(
+            {no_results_text: "No hay coincidencias para"}
+        );
         jQuery(document).ready(function() {
             // add the "add a tag" anchor and li to the tags ul
             collectionHolder.find('tr').each(function() {
@@ -152,9 +154,11 @@
             var $newForm = $(newForm);
             addOptions($newForm);
             collectionHolder.data('index', index + 1);
-
+            
             collectionHolder.append($newForm);
-
+            $('.codiconcepto').chosen(
+                {no_results_text: "No hay coincidencias para"}
+            );
         }
         function addOptions($newForm) {
 //            var $viewopt = $('<a href="#verconcepto" title="Ver Concepto"><i class="icon-edit"></i> </a>');
@@ -179,6 +183,7 @@
                 $.each(json, function(k, v){
                     $folios.append($('<option value='+k+'>'+v+'</option>'));
                 });
+                $("#folios_folio").trigger("chosen:updated");
             });
         }
 

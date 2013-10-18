@@ -60,6 +60,7 @@
                     {% endif %}
 
          {% if form %}
+                    <b id="mensaje" ></b>
              {{ form_start(form) }}
                     <table id="tplanillas" class="table table-bordered">
                         <thead></thead>
@@ -86,6 +87,19 @@
 {% endblock %}
 {% block js %}
 <script type="text/javascript">
+    function doAjax() {
+    var data = $('form:eq(1)').serialize();
+    $.ajax({
+      type: 'POST',
+      url: '{{ path('_planilla_autosave') }}',
+      data: data,   
+      complete: function(data) {
+          $('#mensaje').html(data);
+          setInterval(doAjax,20000); //now that the request is complete, do it again in 1 second
+      }
+      });
+  }
+  
     function loadColumns() {
         var form = $($('#tplanillas tbody').data('prototype'));
         var collectionColumns = $('#tplanillas thead');
@@ -135,6 +149,7 @@
                 return false;
             }
         });*/
+        {% if form %} doAjax(); {% endif %}
         activateNextRow();
     });
 

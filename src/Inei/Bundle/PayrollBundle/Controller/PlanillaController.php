@@ -20,6 +20,25 @@ use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
 class PlanillaController extends Controller {
 
     /**
+     * @Route("/autosave/", name="_planilla_autosave")
+     * @Template("")
+     */
+    public function autoSaveAction(Request $request) {
+        
+        $_data = $request->request->get('form');
+        //echo json_encode($_data);
+        //echo $_data;
+        $data = json_encode($_data);
+        //echo $request;
+        $fp = __DIR__ . '/../../../../../web/data.txt';
+        
+        file_put_contents($fp, $data);
+        
+        $response = new Response('ok');
+        //$response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    /**
      * @Route("/add/", name="_planilla_add")
      * @Template("")
      */

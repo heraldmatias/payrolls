@@ -83,6 +83,30 @@ class PlanillaHistoricas
     private $flag;
     
     /**
+     * @var integer
+     * @ORM\Column(name="USU_CREA_ID", type="integer", nullable=true)
+     */
+    private $creador;
+    
+    /**
+     * @var integer
+     * @ORM\Column(name="USU_MOD_ID", type="integer", nullable=true)
+     */
+    private $modificador;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_CREAC", type="datetime", nullable=true)
+     */
+    private $fec_creac;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_MOD", type="datetime", nullable=true)
+     */
+    private $fec_mod;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -320,5 +344,97 @@ class PlanillaHistoricas
     public function getFlag()
     {
         return $this->flag;
+    }
+
+    /**
+     * Set creador
+     *
+     * @param integer $creador
+     * @return PlanillaHistoricas
+     */
+    public function setCreador($creador)
+    {
+        $this->creador = $creador;
+
+        return $this;
+    }
+
+    /**
+     * Get creador
+     *
+     * @return integer 
+     */
+    public function getCreador()
+    {
+        return $this->creador;
+    }
+
+    /**
+     * Set modificador
+     *
+     * @param integer $modificador
+     * @return PlanillaHistoricas
+     */
+    public function setModificador($modificador)
+    {
+        $this->modificador = $modificador;
+
+        return $this;
+    }
+
+    /**
+     * Get modificador
+     *
+     * @return integer 
+     */
+    public function getModificador()
+    {
+        return $this->modificador;
+    }
+
+    /**
+     * Set fec_creac
+     *
+     * @param \DateTime $fecCreac
+     * @return PlanillaHistoricas
+     */
+    public function setFecCreac($fecCreac)
+    {
+        $this->fec_creac = $fecCreac;
+
+        return $this;
+    }
+
+    /**
+     * Get fec_creac
+     *
+     * @return \DateTime 
+     */
+    public function getFecCreac()
+    {
+        return $this->fec_creac;
+    }
+
+    /**
+     * Set fec_mod
+     *
+     * @param \DateTime $fecMod
+     * @return PlanillaHistoricas
+     */
+    public function setFecMod($fecMod)
+    {
+        $this->fec_mod = $fecMod;
+
+        return $this;
+    }
+
+    /**
+     * Get fec_mod
+     *
+     * @return \DateTime 
+     */
+    public function getFecMod()
+    {
+        return $this->fec_mod;
     }
 }
