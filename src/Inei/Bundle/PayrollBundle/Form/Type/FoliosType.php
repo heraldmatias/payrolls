@@ -24,21 +24,22 @@ class FoliosType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
+        $self = $this;
         $builder->add('tomo', null, array(
-                    'attr' => array('class' => 'tomo'),
+                    'attr' => array('style' => 'width: 100%'),
                     'empty_value' => '---SELECCIONE---',
                     'label' => 'Tomo'
                 ))
                 ->add('periodoFolio', null, array(
-                    'attr' => array('class' => 'periodo'),
+                    'attr' => array('style' => 'width: 100%'),
                     'label' => 'Periodo'
                 ))
                 ->add('registrosFolio', null, array(
-                    'attr' => array('class' => 'registros',),
+                    'attr' => array('style' => 'width: 100%'),
                     'label' => 'Registros'
                 ))
                 ->add('tipoPlanTpl', null, array(
-                    'attr' => array('class' => 'planilla'),
+                    'attr' => array('style' => 'width: 100%'),
                     'label' => 'Planilla',
                     'empty_value' => '---SELECCIONE---',
                     'required' => false
@@ -61,34 +62,34 @@ class FoliosType extends AbstractType {
                     'attr' => array('class' => 'btn btn-primary')));
 
         $builder->addEventListener(
-                FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($entityManager) {
+                FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($entityManager, $self) {
                     $form = $event->getForm();
 
                     $formOptions = array(
                     'attr' => array('class' => 'num_folio'),
-                    'choices' => $this->getFolios($event->getData(), $entityManager),
+                    'choices' => $self->getFolios($event->getData(), $entityManager),
                     );
                     $form->add('folio', 'choice', $formOptions)
                             ->add('subtPlanStp', 'choice', array(
                                 'label' => 'Sub Tipo Planilla',
-                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'choices' => $self->getSubPlanilla($event->getData(), $entityManager),
                                 'empty_value' => '---SELECCIONE---',
                                 'required' => false
                     ));
                 }
         );
         $builder->addEventListener(
-                FormEvents::PRE_BIND, function(FormEvent $event) use ($entityManager) {
+                FormEvents::PRE_BIND, function(FormEvent $event) use ($entityManager, $self) {
                     $form = $event->getForm();
 
                     $formOptions = array(
                     'attr' => array('class' => 'num_folio'),
-                    'choices' => $this->getFolios($event->getData(), $entityManager),
+                    'choices' => $self->getFolios($event->getData(), $entityManager),
                     );
                     $form->add('folio', 'choice', $formOptions)
                             ->add('subtPlanStp', 'choice', array(
                                 'label' => 'Sub Tipo Planilla',
-                                'choices' => $this->getSubPlanilla($event->getData(), $entityManager),
+                                'choices' => $self->getSubPlanilla($event->getData(), $entityManager),
                                 'empty_value' => '---SELECCIONE---',
                                 'required' => false
                     ));
@@ -96,7 +97,7 @@ class FoliosType extends AbstractType {
         );
     }
     
-    private function getSubPlanilla($data, $em) {
+    public function getSubPlanilla($data, $em) {
         if (null === $data) {
             return;
         }
@@ -129,7 +130,7 @@ class FoliosType extends AbstractType {
         return $_subt;
     }
 
-    private function getFolios($data, $em) {
+    public function getFolios($data, $em) {
         if (null === $data) {
             return;
         }

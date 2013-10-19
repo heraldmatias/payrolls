@@ -18,7 +18,7 @@ class ExcelTomoType extends AbstractType {
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
 
-        
+        $self = $this;
         $builder
                 ->add('title', null, array())
                 ->add('description', null, array())
@@ -30,24 +30,24 @@ class ExcelTomoType extends AbstractType {
                     'attr' => array('class' => 'btn btn-primary')));
         
         $builder->addEventListener(
-                FormEvents::PRE_SET_DATA, function(FormEvent $event) {
+                FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($self) {
                     $form = $event->getForm();
                     $data = $event->getData();
-                    $this->setFileRequired($form, $data);
+                    $self->setFileRequired($form, $data);
                 }
         );
         
         $builder->addEventListener(
-                FormEvents::PRE_BIND, function(FormEvent $event) {
+                FormEvents::PRE_BIND, function(FormEvent $event) use ($self){
                     $form = $event->getForm();
                     $data = $event->getData();
-                    $this->setFileRequired($form, $data);
+                    $self->setFileRequired($form, $data);
                 }
         );
         
     }
     
-    private function setFileRequired($form, $data){
+    public function setFileRequired($form, $data){
         if($data instanceof \Inei\Bundle\PayrollBundle\Entity\ExcelTomo){
             if(null !== $data->getFilename()){
                 $form->add('file', null, array(

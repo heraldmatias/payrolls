@@ -22,23 +22,41 @@ class TplanillaType extends AbstractType {
         
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('tipoPlanTpl', null, array(
-                    'label' => 'Codigo'
+                    'label' => 'Codigo',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('descTipoTpl', null, array(
-                    'label' => 'Descripción'
+                    'label' => 'Descripción',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('tarjInicTpl', null, array(
-                    'label' => 'Inicio'
+                    'label' => 'Inicio',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('tarjFinaTpl', null, array(
-                    'label' => 'Final'
+                    'label' => 'Final',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('cantPeriTpl', null, array(
-                    'label' => 'Total de meses por año'
+                    'label' => 'Total de meses por año',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 //->add('codiOperOpe', null, array())
                 ->add('abrevTipoTpl', null, array(
-                    'label' => 'Abreviatura'
+                    'label' => 'Abreviatura',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

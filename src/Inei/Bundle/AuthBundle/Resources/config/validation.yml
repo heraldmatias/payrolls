@@ -1,5 +1,5 @@
 Inei\Bundle\AuthBundle\Entity\Usuarios:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: [email]
-            message: 'Ya existe un usuario con ese email.'
+            fields: [username]
+            message: 'Ya existe un usuario con el mismo usuario.'

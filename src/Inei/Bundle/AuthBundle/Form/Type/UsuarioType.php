@@ -19,7 +19,9 @@ class UsuarioType extends AbstractType {
                 ->add('password', 'password', array(
                     'trim' => true
                 ))
-                ->add('email', 'email', array())
+                ->add('email', 'email', array(
+                    'required' => false
+                ))
                 ->add('isActive', null, array(
                     'required' => false,
                     'label' => 'Activo'

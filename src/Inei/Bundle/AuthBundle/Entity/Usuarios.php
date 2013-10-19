@@ -44,7 +44,7 @@ class Usuarios implements AdvancedUserInterface, \Serializable {
     private $password;
 
     /**
-     * @ORM\Column(name="EMAIL_USU", type="string", length=60, unique=true)
+     * @ORM\Column(name="EMAIL_USU", type="string", length=60, nullable=true)
      */
     private $email;
 

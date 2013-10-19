@@ -24,6 +24,7 @@ class RegistrarPlanillaType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
+        $self = $this;
         $builder->add('tomo', 'choice', array(
                     'attr' => array('style' => 'width:100%'),
                     'empty_value' => 'SELECCIONE',
@@ -36,26 +37,28 @@ class RegistrarPlanillaType extends AbstractType {
                     'attr' => array('class' => 'btn btn-primary'),));
 
         $builder->addEventListener(
-                FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($entityManager) {
+                FormEvents::PRE_SET_DATA, function(FormEvent $event) 
+                    use ($entityManager, $self) {
                     $form = $event->getForm();
 
                     $formOptions = array(
                         'attr' => array('style' => 'width:100%'),
                         'empty_value' => 'SELECCIONE',
-                        'choices' => $this->getFolios($event->getData(), $entityManager),
+                        'choices' => $self->getFolios($event->getData(), $entityManager),
                         'required' => false
                     );
                     $form->add('folio', 'choice', $formOptions);
                 }
         );
         $builder->addEventListener(
-                FormEvents::PRE_BIND, function(FormEvent $event) use ($entityManager) {
+                FormEvents::PRE_BIND, function(FormEvent $event)
+                use ($entityManager, $self) {
                     $form = $event->getForm();
 
                     $formOptions = array(
                         'attr' => array('style' => 'width:100%'),
                         'empty_value' => 'SELECCIONE',
-                        'choices' => $this->getFolios($event->getData(), $entityManager),
+                        'choices' => $self->getFolios($event->getData(), $entityManager),
                         'required' => false,                        
                     );
                     $form->add('folio', 'choice', $formOptions);
@@ -64,7 +67,7 @@ class RegistrarPlanillaType extends AbstractType {
         
     }
     
-    private function getFolios($data, $em) {
+    public function getFolios($data, $em) {
         if (null === $data) {
             return;
         }        
@@ -78,7 +81,7 @@ class RegistrarPlanillaType extends AbstractType {
             }
             $nfolios = $_tomo->getFoliosTomo();
             foreach (range(1, $nfolios) as $value) {
-                $folios[$value] = 'FOLIO - ' . $value;
+                $folios[$value] = $value;
             }
         }
         return $folios;

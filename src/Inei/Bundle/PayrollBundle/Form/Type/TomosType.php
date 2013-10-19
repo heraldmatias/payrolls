@@ -39,17 +39,28 @@ class TomosType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('codiTomo', 'choice', array(
                     'label' => 'Tomo',
-                    'choices' => $this->generateCodes()
+                    'choices' => $this->generateCodes(),
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('anoTomo', null, array(
                     'label' => 'Año',
-                    //'choices' => $this->getAnos()
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('periodoTomo', null, array(
-                    'label' => 'Periodo'
+                    'label' => 'Periodo',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('foliosTomo', null, array(
-                    'label' => 'Folios'
+                    'label' => 'Folios',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('descTomo', null, array(
                     'label' => 'Descripción',

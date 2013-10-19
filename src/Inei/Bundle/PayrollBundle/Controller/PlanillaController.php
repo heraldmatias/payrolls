@@ -159,7 +159,8 @@ class PlanillaController extends Controller {
                 /**                 * *GUARDAR** */
                 try {
                     $em = $this->getDoctrine()->getManager();
-                    $data = $_form->getData()['payrolls'];
+                    $_data = $_form->getData();
+                    $data = $_data['payrolls'];
                     $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
                     $q->execute();
                     foreach ($data as $key => $planilla) {
@@ -309,7 +310,8 @@ class PlanillaController extends Controller {
                 /**                 * *GUARDAR** */
                 try {
                     $em = $this->getDoctrine()->getManager();
-                    $data = $_form->getData()['payrolls'];
+                    $_data = $_form->getData();
+                    $data = $_data['payrolls'];
                     $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
                     $q->execute();
                     foreach ($data as $key => $planilla) {

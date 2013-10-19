@@ -72,6 +72,7 @@
     function loadFolios(tomo) {
         var $folios = $('#search_folios_folio');
         $folios.empty();
+        $folios.append($('<option value="">---Seleccione---</option>'));
         $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json) {
             $.each(json, function(k, v) {
                 $folios.append($('<option value=' + k + '>' + v + '</option>'));

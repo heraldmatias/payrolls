@@ -248,7 +248,8 @@ class ExcelTomoController extends Controller {
                 $stmt->bindValue(5, $tplanilla ? str_replace(' ', '', strtoupper($tplanilla)) : NULL);
                 $stmt->bindValue(6, $nfolio);
                 $stmt->execute();
-                $folio = $stmt->fetch()['codi_folio'];
+                $_folio = $stmt->fetch();
+                $folio = $_folio['codi_folio'];
                 $conceptos = $this->getUniqueConceptos($sheet, $colc, $filaf, $folio);
                 if ($conceptos) {
                     $stmt2 = $conn->prepare($insertConceptos . $conceptos);

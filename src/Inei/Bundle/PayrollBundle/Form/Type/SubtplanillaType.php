@@ -22,16 +22,28 @@ class SubtplanillaType extends AbstractType {
         
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('tipoPlanTpl', null, array(
-                    'label' => 'Tipo Planilla'
+                    'label' => 'Tipo Planilla',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('subtPlanStp', null, array(
-                    'label' => 'Codigo Sub Tipo'
+                    'label' => 'Codigo Sub Tipo',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('descSubtStp', null, array(
-                    'label' => 'Descripción'
+                    'label' => 'Descripción',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('tituSubtStp', null, array(
-                    'label' => 'Descripción en Planilla'
+                    'label' => 'Descripción en Planilla',
+                    'attr' => array(
+                        'style' => 'width: 100%'
+                    )
                 ))
                 ->add('observ', null, array(
                     'label' => 'Observación'
