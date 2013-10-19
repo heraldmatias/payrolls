@@ -29,28 +29,32 @@ class PlanillaController extends Controller {
         //echo json_encode($_data);
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('folio');
-        $filename = 'planilla' .$tomo.'_'.$folio.'.json';
-        $date = new \DateTime();        
+        $filename = 'planilla' . $tomo . '_' . $folio . '.json';
+        $date = new \DateTime();
         $data = json_encode($_data);
         //echo $request;
-        $fp = __DIR__ . '/../../../../../web/'.$filename;
+        $fp = __DIR__ . '/../../../../../web/' . $filename;
 
         file_put_contents($fp, $data);
 
-        $response = new Response($date->format('Y-m-d H:i:s'));
+        $response = new Response('El documento se guardo por ultima vez '.$date->format('Y-m-d H:i:s'));
         //$response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
-    public function loadAutoSave($tomo, $folio){
-        $filename = 'planilla' .$tomo.'_'.$folio.'.json';
-        $fp = __DIR__ . '/../../../../../web/'.$filename;
-        $data = file_get_contents($fp);
-        return json_decode($data);
+
+    public function loadAutoSave($filename) {
+        //$filename = 'planilla' . $tomo . '_' . $folio . '.json';
+        //$fp = __DIR__ . '/../../../../../web/' . $filename;
+        $result = null;
+        if (file_exists($filename)) {
+            $data = file_get_contents($filename);
+            $result = json_decode($data, true);
+        }
+        return $result;
     }
 
     /**
-     * @Route("/add/update", name="_planilla_add_update")
+     * @Route("/add", name="_planilla_add")
      * @Template("")
      */
     public function addUpdateAction(Request $request) {
@@ -60,6 +64,7 @@ class PlanillaController extends Controller {
         $folio = null;
         $tomo = null;
         $object = null;
+        $filename = null;
         if ($request->request->get('form')) {
             $folio = $request->request->get('folio');
             $tomo = $request->request->get('tomo');
@@ -79,51 +84,53 @@ class PlanillaController extends Controller {
         }
 
         if ($object && $object->getRegistrosFolio()) {
-            $array = $this->loadAutoSave($tomo, $folio);
-            if(!$array){
-            $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
-            $planilla = array();
-            //if(null != $object->getRegistrosFolio())
-            $array = array('payrolls' => array_map(
-                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-            $co = 0;
-            if ($_planillas) {
-                //$array = array('payrolls' => null);
-                $dni = $_planillas[0]->getCodiEmplPer();
-                foreach ($_planillas as $key => $value) {
-                    if ($dni == $value->getCodiEmplPer()) {
-                        $dni = $value->getCodiEmplPer();
-                        $planilla['codiEmplPer'] = $dni;
-                        $planilla['descripcion'] = $value->getDescripcion();
+            $filename = __DIR__ . '/../../../../../web/planilla' . $tomo . '_' . $folio . '.json';
+            $array = $this->loadAutoSave($filename);
+            if (!$array) {
+                $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
+                $planilla = array();
+                //if(null != $object->getRegistrosFolio())
+                $array = array('payrolls' => array_map(
+                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+                $co = 0;
+                if ($_planillas) {
+                    //$array = array('payrolls' => null);
+                    $dni = $_planillas[0]->getCodiEmplPer();
+                    foreach ($_planillas as $key => $value) {
+                        if ($dni == $value->getCodiEmplPer()) {
+                            $dni = $value->getCodiEmplPer();
+                            $planilla['codiEmplPer'] = $dni;
+                            $planilla['descripcion'] = $value->getDescripcion();
 //                        $key = null !== $value->getFlag() ?
 //                                $value->getCodiConcTco() . '_' . $value->getFlag() :
 //                                $value->getCodiConcTco();
-                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                        //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
-                        //echo $value->getValoCalcPhi().'<br>';
-                        $planilla[$key] = $value->getValoCalcPhi();
-                        continue;
-                    }
+                            $key = $value->getCodiConcTco() . '_' . $value->getFlag();
+                            //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
+                            //echo $value->getValoCalcPhi().'<br>';
+                            $planilla[$key] = $value->getValoCalcPhi();
+                            continue;
+                        }
 //                    $key = null !== $value->getFlag() ?
 //                                $value->getCodiConcTco() . '_' . $value->getFlag() :
 //                                $value->getCodiConcTco();
-                    $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                    //echo $value->getValoCalcPhi().'<br>';
-                    $array['payrolls'][$co] = $planilla;
-                    $dni = $value->getCodiEmplPer();
-                    $planilla['codiEmplPer'] = strtoupper($dni);
-                    $planilla['descripcion'] = $value->getDescripcion();
-                    $planilla[$key] = $value->getValoCalcPhi();
-                    $co++;
-                    if ($co > $object->getRegistrosFolio() - 1)
-                        break;
+                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
+                        //echo $value->getValoCalcPhi().'<br>';
+                        $array['payrolls'][$co] = $planilla;
+                        $dni = $value->getCodiEmplPer();
+                        $planilla['codiEmplPer'] = strtoupper($dni);
+                        $planilla['descripcion'] = $value->getDescripcion();
+                        $planilla[$key] = $value->getValoCalcPhi();
+                        $co++;
+                        if ($co > $object->getRegistrosFolio() - 1)
+                            break;
+                    }
+                    if ($co <= $object->getRegistrosFolio() - 1)
+                        $array['payrolls'][$co] = $planilla;
+                } else {
+                    $array = array('payrolls' => array_map(
+                                create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
                 }
-                if ($co <= $object->getRegistrosFolio() - 1)
-                    $array['payrolls'][$co] = $planilla;
-            } else {
-                $array = array('payrolls' => array_map(
-                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-        }}
+            }
 
             $_form = $this->createFormBuilder($array, array(
                         'attr' => array(
@@ -182,6 +189,10 @@ class PlanillaController extends Controller {
                     $this->get('session')->getFlashBag()->add(
                             'planilla', 'Registro grabado satisfactoriamente'
                     );
+                    /**********borra el autoguardado*********/
+                    if (file_exists($filename)) {
+                        unlink($filename);
+                    }
                 } catch (Doctrine\DBAL\DBALException $e) {
                     $this->get('session')->getFlashBag()->add(
                             'planilla', 'Ocurrio un erro al grabar la planilla'
@@ -201,10 +212,10 @@ class PlanillaController extends Controller {
     }
 
     /**
-     * @Route("/add/", name="_planilla_add")
+     * @Route("/add/old", name="_planilla_add_old")
      * @Template("")
      */
-    public function addAction(Request $request) {
+    public function addOldAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
             throw $this->createNotFoundException();
         }

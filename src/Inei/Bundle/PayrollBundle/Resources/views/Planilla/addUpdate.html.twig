@@ -15,6 +15,7 @@
         }
         td.column-item{
             width: 30px;
+            font-size: 26px;
         }
         td#col0{
             width: 200px;
@@ -49,12 +50,11 @@
                 </div>{% if folio %}
                 <div class="row-fluid">
                     <div class="span12"><h4>Información del Folio</h4></div></div>
-                    <div class="row-fluid"><div class="span12">
-                    <div class="span1"> <h4>Tomo:</h4> </div><div class="span1"> <h4>{{ folio.tomo }}</h4> </div>
-                    <div class="span1"> <h4>Año:</h4> </div><div class="span1"> <h4>{{ folio.tomo.anoTomo }}</h4> </div>
-                    <div class="span1"> <h4>Registros:</h4> </div><div class="span1"> <h4>{{ folio.registrosFolio }}</h4> </div>
-                    <div class="span1"> <h4>Periodo:</h4> </div><div class="span2"> <h4>{{ folio.periodoFolio }}</h4> </div>
-                    <div class="span1"> <h4>Planilla:</h4> </div><div class="span2"> <h4>{{ folio.tipoPlanTpl }} - {{ folio.descSubtStp }}</h4> </div>
+                    <div class="row-fluid"><div class="span12">                            
+                    <div class="span2"> <h2>{{ folio.tomo }}</h2> </div>
+                    <div class="span2"> <h2>FOLIO - {{ folio.folio }}</h2> </div>
+                    <div class="span2"> <h2>REGISTROS:</h4> </div><div class="span1"> <h2>{{ folio.registrosFolio }}</h2> </div>
+                    <div class="span4"><b id="feedback"></b></div>
                     </div></div>
                 
                     {% endif %}
@@ -76,7 +76,7 @@
                     <b>ES UN FOLIO DE RESUMEN O ES POSIBLE QUE NO ESTE REGISTRADO</b>
                     {% endif %}
                     <div class="modal-footer">
-                        {% if form %} <b id="feedback"></b>{{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
+                        {% if form %} {{ form_widget(form.save) }}{{ form_end(form) }}{% endif %}
                         <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
                     </div>
                     </div>
