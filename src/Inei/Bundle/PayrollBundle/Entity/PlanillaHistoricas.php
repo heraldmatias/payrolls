@@ -107,6 +107,12 @@ class PlanillaHistoricas
     private $fec_mod;
     
     /**
+     * @var integer
+     * @ORM\Column(name="NUM_REG", type="integer", nullable=true)
+     */
+    private $registro;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -436,5 +442,28 @@ class PlanillaHistoricas
     public function getFecMod()
     {
         return $this->fec_mod;
+    }
+
+    /**
+     * Set registro
+     *
+     * @param integer $registro
+     * @return PlanillaHistoricas
+     */
+    public function setRegistro($registro)
+    {
+        $this->registro = $registro;
+
+        return $this;
+    }
+
+    /**
+     * Get registro
+     *
+     * @return integer 
+     */
+    public function getRegistro()
+    {
+        return $this->registro;
     }
 }

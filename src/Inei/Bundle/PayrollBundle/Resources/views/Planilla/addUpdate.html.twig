@@ -110,8 +110,10 @@
     function indexar() {
         var rows = jQuery('#tplanillas tbody').find('tr');
         jQuery.each(rows, function(i, v){
-           var $td = jQuery('<td class="column-item">'+(i+1)+'</td>');
-           jQuery(v).prepend($td);
+            var reg = jQuery(v).find('input[type="hidden"]');
+            reg.val(i);
+            var $td = jQuery('<td class="column-item">'+(i+1)+'</td>');
+            jQuery(v).prepend($td);
         });
     }
     function loadFolios(tomo) {
@@ -134,14 +136,6 @@
                 jQuery('#registrar_planilla_buscar').click();
             }
         });
-        /*$("input[type='text']").keypress(function(e) {
-            if(e.which === 13) {
-                var rows = $('#tplanillas tbody tr');
-                console.log( rows.index($(this).parent().parent()));
-                return false;
-            }
-        });*/
-        
         activateNextRow();
     });
 

@@ -19,12 +19,8 @@
 {% endblock button_row %}
 
 {% block hidden_row %}
-{% spaceless %}
-    
-    <td colspan="2" style="display: none">
-        {{ form_widget(form) }}
-    </td>
-    
+{% spaceless %}    
+    {{ form_widget(form) }}
 {% endspaceless %}
 {% endblock hidden_row %}
 

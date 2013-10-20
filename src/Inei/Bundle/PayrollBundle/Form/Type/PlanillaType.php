@@ -34,6 +34,8 @@ class PlanillaType extends AbstractType {
                     ),
                     'max_length' => 100
                 ))
+                ->add('registro', 'hidden', array(
+                ))
                 ->add('descripcion', 'textarea', array(
                     'attr' => array(
                         'data-title' => 'OBSERVACION',

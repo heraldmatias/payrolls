@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 use Inei\Bundle\PayrollBundle\Entity\Tplanilla;
 use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
-use Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas;
+
 
 /**
  * Description of InventarioController
@@ -24,33 +24,75 @@ class PlanillaController extends Controller {
      * @Template("")
      */
     public function autoSaveAction(Request $request) {
-
-        $_data = $request->request->get('form');
-        //echo json_encode($_data);
+        $data = $request->request->get('form');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('folio');
-        $filename = 'planilla' . $tomo . '_' . $folio . '.json';
-        $date = new \DateTime();
-        $data = json_encode($_data);
-        //echo $request;
-        $fp = __DIR__ . '/../../../../../web/' . $filename;
-
-        file_put_contents($fp, $data);
-
-        $response = new Response('El documento se guardo por ultima vez '.$date->format('Y-m-d H:i:s'));
-        //$response->headers->set('content-type', 'application/json');
+        $msg = $this->get('planilla_service')->autoSave($tomo, $folio, $data);
+        $response = new Response($msg);
         return $response;
     }
 
-    public function loadAutoSave($filename) {
-        //$filename = 'planilla' . $tomo . '_' . $folio . '.json';
-        //$fp = __DIR__ . '/../../../../../web/' . $filename;
-        $result = null;
-        if (file_exists($filename)) {
-            $data = file_get_contents($filename);
-            $result = json_decode($data, true);
+    public function loadAutoSave($tomo, $folio) {
+        return $this->get('planilla_service')->loadAutoSave($tomo, $folio);
+    }
+
+    public function createPlanillaForm($array, $object) {
+        return $this->createFormBuilder($array, array(
+                            'attr' => array(
+                                'id' => 'form_planilla'
+                            ),
+                            'action' => $this->generateUrl('_planilla_save')
+                        ))
+                        ->add('payrolls', 'collection', array(
+                            'required' => true,
+                            'allow_delete' => true,
+                            'allow_add' => true,
+                            'prototype' => true,
+                            'type' => new PlanillaType(),
+                            'options' => array(
+                                'folio' => $object
+                            )
+                        ))
+                        ->add('save', 'submit', array(
+                            'label' => 'Guardar',
+                            'attr' => array('class' => 'btn btn-primary'),))
+                        ->getForm();
+    }
+
+    /**
+     * @Route("/save", name="_planilla_save")
+     * @Template("")
+     */
+    public function saveAction(Request $request) {        
+        $object = null;
+        $folio = $request->request->get('folio');
+        $tomo = $request->request->get('tomo');
+        if (null != $folio & null != $tomo) {
+            $em = $this->getDoctrine()
+                    ->getRepository('IneiPayrollBundle:Folios');
+            $object = $em->findOneCustomByNum($folio, $tomo);
         }
-        return $result;
+        $service = $this->get('planilla_service');
+        if ($object && $object->getRegistrosFolio()) {
+            $_form = $this->createPlanillaForm(array(), $object);
+            $_form->handleRequest($request);
+            if ($_form->isValid()) {
+                /**                 * *GUARDAR** */
+                $_data = $_form->getData();
+                $data = $_data['payrolls'];
+                if ($service->saveMatrix($object, $data)) {
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Registro grabado satisfactoriamente'
+                    );
+                } else {
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Ocurrio un error al grabar la planilla'
+                    );
+                }
+            }
+        }
+        $nextAction = '_planilla_add';
+        return $this->redirect($this->generateUrl($nextAction));
     }
 
     /**
@@ -64,7 +106,6 @@ class PlanillaController extends Controller {
         $folio = null;
         $tomo = null;
         $object = null;
-        $filename = null;
         if ($request->request->get('form')) {
             $folio = $request->request->get('folio');
             $tomo = $request->request->get('tomo');
@@ -76,280 +117,15 @@ class PlanillaController extends Controller {
         $form = null;
         $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
         $sform->handleRequest($request);
-
         if (null != $folio & null != $tomo) {
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
-
+        $service = $this->get('planilla_service');
         if ($object && $object->getRegistrosFolio()) {
-            $filename = __DIR__ . '/../../../../../web/planilla' . $tomo . '_' . $folio . '.json';
-            $array = $this->loadAutoSave($filename);
-            if (!$array) {
-                $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
-                $planilla = array();
-                //if(null != $object->getRegistrosFolio())
-                $array = array('payrolls' => array_map(
-                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-                $co = 0;
-                if ($_planillas) {
-                    //$array = array('payrolls' => null);
-                    $dni = $_planillas[0]->getCodiEmplPer();
-                    foreach ($_planillas as $key => $value) {
-                        if ($dni == $value->getCodiEmplPer()) {
-                            $dni = $value->getCodiEmplPer();
-                            $planilla['codiEmplPer'] = $dni;
-                            $planilla['descripcion'] = $value->getDescripcion();
-//                        $key = null !== $value->getFlag() ?
-//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-//                                $value->getCodiConcTco();
-                            $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                            //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
-                            //echo $value->getValoCalcPhi().'<br>';
-                            $planilla[$key] = $value->getValoCalcPhi();
-                            continue;
-                        }
-//                    $key = null !== $value->getFlag() ?
-//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-//                                $value->getCodiConcTco();
-                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                        //echo $value->getValoCalcPhi().'<br>';
-                        $array['payrolls'][$co] = $planilla;
-                        $dni = $value->getCodiEmplPer();
-                        $planilla['codiEmplPer'] = strtoupper($dni);
-                        $planilla['descripcion'] = $value->getDescripcion();
-                        $planilla[$key] = $value->getValoCalcPhi();
-                        $co++;
-                        if ($co > $object->getRegistrosFolio() - 1)
-                            break;
-                    }
-                    if ($co <= $object->getRegistrosFolio() - 1)
-                        $array['payrolls'][$co] = $planilla;
-                } else {
-                    $array = array('payrolls' => array_map(
-                                create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-                }
-            }
-
-            $_form = $this->createFormBuilder($array, array(
-                        'attr' => array(
-                            'id' => 'form_planilla'
-                        )
-                    ))
-                    ->add('payrolls', 'collection', array(
-                        'required' => true,
-                        'allow_delete' => true,
-                        'allow_add' => true,
-                        'prototype' => true,
-                        'type' => new PlanillaType(),
-                        'options' => array(
-                            'folio' => $object
-                        )
-                    ))
-                    ->add('save', 'submit', array(
-                        'label' => 'Guardar',
-                        'attr' => array('class' => 'btn btn-primary'),))
-                    ->getForm();
-            $_form->handleRequest($request);
-            if ($_form->isValid()) {
-//                if(!$this->get('usuario_service')->hasPermission('planilla','add%edit')){
-//                    throw $this->createNotFoundException();
-//                }
-                /**                 * *GUARDAR** */
-                try {
-                    $em = $this->getDoctrine()->getManager();
-                    $_data = $_form->getData();
-                    $data = $_data['payrolls'];
-                    $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
-                    $q->execute();
-                    foreach ($data as $key => $planilla) {
-                        $dni = $planilla['codiEmplPer'];
-                        $descripcion = $planilla['descripcion'];
-                        unset($planilla['codiEmplPer']);
-                        unset($planilla['descripcion']);
-                        foreach ($planilla as $key => $valor) {
-                            $planillah = new PlanillaHistoricas();
-                            //echo $key.'<br>';
-                            $pos = strpos($key, '_');
-                            $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
-                            $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
-                            $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
-                            $planillah->setSubtPlanTpl($object->getSubtPlanStp());
-                            $planillah->setNumePeriTpe(01);
-                            $planillah->setDescripcion($descripcion);
-                            $planillah->setValoCalcPhi($valor);
-                            $planillah->setCodiEmplPer($dni);
-                            $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
-                            $planillah->setFolio($object->getCodiFolio());
-                            $em->persist($planillah);
-                        }
-                    }
-                    $em->flush();
-                    $em->clear();
-                    $this->get('session')->getFlashBag()->add(
-                            'planilla', 'Registro grabado satisfactoriamente'
-                    );
-                    /**********borra el autoguardado*********/
-                    if (file_exists($filename)) {
-                        unlink($filename);
-                    }
-                } catch (Doctrine\DBAL\DBALException $e) {
-                    $this->get('session')->getFlashBag()->add(
-                            'planilla', 'Ocurrio un erro al grabar la planilla'
-                    );
-                }
-                $nextAction = '_planilla_add';
-                return $this->redirect($this->generateUrl($nextAction));
-                $object = null;
-            }
-            $form = $_form->createView();
-        }
-        return array(
-            'form' => $form,
-            'sform' => $sform->createView(),
-            'folio' => $object
-        );
-    }
-
-    /**
-     * @Route("/add/old", name="_planilla_add_old")
-     * @Template("")
-     */
-    public function addOldAction(Request $request) {
-        if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
-            throw $this->createNotFoundException();
-        }
-        $folio = null;
-        $tomo = null;
-        $object = null;
-        if ($request->request->get('form')) {
-            $folio = $request->request->get('folio');
-            $tomo = $request->request->get('tomo');
-        } else if ($request->request->get('registrar_planilla')) {
-            $aplanilla = $request->request->get('registrar_planilla');
-            $folio = array_key_exists('folio', $aplanilla) ? $aplanilla['folio'] : null;
-            $tomo = array_key_exists('tomo', $aplanilla) ? $aplanilla['tomo'] : null;
-        }
-        $form = null;
-        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
-        $sform->handleRequest($request);
-
-        if (null != $folio & null != $tomo) {
-            $em = $this->getDoctrine()
-                    ->getRepository('IneiPayrollBundle:Folios');
-            $object = $em->findOneCustomByNum($folio, $tomo);
-        }
-
-        if ($object && $object->getRegistrosFolio()) {
-
-            $_planillas = $object->getPlanillas($this->getDoctrine()->getManager());
-            $planilla = array();
-            //if(null != $object->getRegistrosFolio())
-            $array = array('payrolls' => array_map(
-                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-            $co = 0;
-            if ($_planillas) {
-                //$array = array('payrolls' => null);
-                $dni = $_planillas[0]->getCodiEmplPer();
-                foreach ($_planillas as $key => $value) {
-                    if ($dni == $value->getCodiEmplPer()) {
-                        $dni = $value->getCodiEmplPer();
-                        $planilla['codiEmplPer'] = $dni;
-                        $planilla['descripcion'] = $value->getDescripcion();
-//                        $key = null !== $value->getFlag() ?
-//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-//                                $value->getCodiConcTco();
-                        $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                        //$planilla->setCodiConcTco(false !== $pos? substr($key, 0, count($key)-$pos) :$key);
-                        //echo $value->getValoCalcPhi().'<br>';
-                        $planilla[$key] = $value->getValoCalcPhi();
-                        continue;
-                    }
-//                    $key = null !== $value->getFlag() ?
-//                                $value->getCodiConcTco() . '_' . $value->getFlag() :
-//                                $value->getCodiConcTco();
-                    $key = $value->getCodiConcTco() . '_' . $value->getFlag();
-                    //echo $value->getValoCalcPhi().'<br>';
-                    $array['payrolls'][$co] = $planilla;
-                    $dni = $value->getCodiEmplPer();
-                    $planilla['codiEmplPer'] = strtoupper($dni);
-                    $planilla['descripcion'] = $value->getDescripcion();
-                    $planilla[$key] = $value->getValoCalcPhi();
-                    $co++;
-                    if ($co > $object->getRegistrosFolio() - 1)
-                        break;
-                }
-                if ($co <= $object->getRegistrosFolio() - 1)
-                    $array['payrolls'][$co] = $planilla;
-            } else {
-                $array = array('payrolls' => array_map(
-                            create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-            }
-
-            $_form = $this->createFormBuilder($array)
-                    ->add('payrolls', 'collection', array(
-                        'required' => true,
-                        'allow_delete' => true,
-                        'allow_add' => true,
-                        'prototype' => true,
-                        'type' => new PlanillaType(),
-                        'options' => array(
-                            'folio' => $object
-                        )
-                    ))
-                    ->add('save', 'submit', array(
-                        'label' => 'Guardar',
-                        'attr' => array('class' => 'btn btn-primary'),))
-                    ->getForm();
-            $_form->handleRequest($request);
-            if ($_form->isValid()) {
-//                if(!$this->get('usuario_service')->hasPermission('planilla','add%edit')){
-//                    throw $this->createNotFoundException();
-//                }
-                /**                 * *GUARDAR** */
-                try {
-                    $em = $this->getDoctrine()->getManager();
-                    $_data = $_form->getData();
-                    $data = $_data['payrolls'];
-                    $q = $em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
-                    $q->execute();
-                    foreach ($data as $key => $planilla) {
-                        $dni = $planilla['codiEmplPer'];
-                        $descripcion = $planilla['descripcion'];
-                        unset($planilla['codiEmplPer']);
-                        unset($planilla['descripcion']);
-                        foreach ($planilla as $key => $valor) {
-                            $planillah = new PlanillaHistoricas();
-                            //echo $key.'<br>';
-                            $pos = strpos($key, '_');
-                            $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
-                            $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
-                            $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
-                            $planillah->setSubtPlanTpl($object->getSubtPlanStp());
-                            $planillah->setNumePeriTpe(01);
-                            $planillah->setDescripcion($descripcion);
-                            $planillah->setValoCalcPhi($valor);
-                            $planillah->setCodiEmplPer($dni);
-                            $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
-                            $planillah->setFolio($object->getCodiFolio());
-                            $em->persist($planillah);
-                        }
-                    }
-                    $em->flush();
-                    $em->clear();
-                    $this->get('session')->getFlashBag()->add(
-                            'planilla', 'Registro grabado satisfactoriamente'
-                    );
-                } catch (Doctrine\DBAL\DBALException $e) {
-                    $this->get('session')->getFlashBag()->add(
-                            'planilla', 'Ocurrio un erro al grabar la planilla'
-                    );
-                }
-                $nextAction = '_planilla_add';
-                return $this->redirect($this->generateUrl($nextAction));
-                $object = null;
-            }
+            $array = $service->generateMatrix($object, true);
+            $_form = $this->createPlanillaForm($array, $object);
             $form = $_form->createView();
         }
         return array(
