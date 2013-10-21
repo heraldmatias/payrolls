@@ -49,6 +49,7 @@ class SearchMaestroPersonalType extends AbstractType {
                 ->add('librElecPer', null, array(
                     'required' => false,
                     'max_length' => 8,
+                    'label' => 'DNI',
                     'attr' => array(
                         'style' => 'width: 100%',
                     )

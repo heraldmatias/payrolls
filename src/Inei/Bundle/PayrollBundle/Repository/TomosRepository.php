@@ -12,4 +12,37 @@ use Doctrine\ORM\EntityRepository;
  */
 class TomosRepository extends EntityRepository
 {
+    public function findIncompletos(){
+        $sql = "select * from lv_datos_tomo where completo = false 
+            and digitados>0;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function findNoDigitados(){
+        $sql = "select * from lv_datos_tomo where completo = false 
+            and digitdos=0;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function findDigitados(){
+        $sql = "select * from lv_datos_tomo where completo = true;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+    
+    public function findResumenFolios(array $filtro=null){
+        $sql = "select * from lv_datos_tomo;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

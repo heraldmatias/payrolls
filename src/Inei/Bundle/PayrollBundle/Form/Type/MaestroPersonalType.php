@@ -45,7 +45,8 @@ class MaestroPersonalType extends AbstractType {
                     )
                 ))
                 ->add('librElecPer', null, array(
-                    'required' => false
+                    'required' => false,
+                    'label' => 'DNI'
                 ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

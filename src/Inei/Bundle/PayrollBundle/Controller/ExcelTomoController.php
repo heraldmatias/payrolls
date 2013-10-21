@@ -238,10 +238,11 @@ class ExcelTomoController extends Controller {
                 $nfolio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
-                if (null === $nfolio)
+                $periodo = ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
+                if ((null === $nfolio | trim($nfolio) === '') )
                     break;
                 $stmt = $conn->prepare($insertFolio);
-                $stmt->bindValue(1, ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue()));
+                $stmt->bindValue(1, $periodo);
                 $stmt->bindValue(2, $registros ? $registros : NULL);
                 $stmt->bindValue(3, NULL);
                 $stmt->bindValue(4, $tomo);

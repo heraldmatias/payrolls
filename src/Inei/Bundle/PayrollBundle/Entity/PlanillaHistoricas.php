@@ -22,7 +22,7 @@ class PlanillaHistoricas
 
     /**
      * @var string
-     * @ORM\Column(name="ANO_PERI_TPE", type="string", length=4) 
+     * @ORM\Column(name="ANO_PERI_TPE", type="string", length=30) 
      */
     private $anoPeriTpe;
 

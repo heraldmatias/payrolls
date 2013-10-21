@@ -249,4 +249,24 @@ class PlanillaService {
         }
         return $html;
     }
+    
+    public function getReporteByTomo(array $filtro=null){
+        $rows = $this->em->getRepository('IneiPayrollBundle:Tomos')
+                ->findResumenFolios($filtro);                
+        return array_map(create_function('$item', 'return array_values($item);'), $rows);
+//        $html = '';
+//        foreach ($rows as $value) {
+//            $html .='<tr>';
+//            $html .='<td>'.$value['tomo'].'</td>';
+//            $html .='<td>'.$value['folios'].'</td>';
+//            $html .='<td>'.$value['resumen'].'</td>';
+//            $html .='<td>'.$value['digitables'].'</td>';
+//            $html .='<td>'.$value['digitados'].'</td>';
+//            $html .='<td>'.$value['por_digitar'].'</td>';
+//            $html .='<td>'.$value['estado'].'</td>';
+//            $html .='</tr>';
+//        }
+//        return $html;
+    }
+    
 }

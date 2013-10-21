@@ -20,11 +20,30 @@ use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
 class PlanillaController extends Controller {
 
     /**
+     * @Route("/reporte-tomo/", name="_planilla_tomo_reporte")
+     * @Template("")
+     */
+    public function reporteTomoAction() {
+        return array();
+    }
+    
+    /**
+     * @Route("/reporte-tomo/ajax/", name="_planilla_tomo_ajax")
+     * @Template("")
+     */
+    public function ajaxReporteTomoAction(Request $request) {
+        $data = $request->request->get('form');
+        $msg = $this->get('planilla_service')->getReporteByTomo($data);
+        $response = new Response(json_encode($msg));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
      * @Route("/reporte/", name="_planilla_digitador")
      * @Template("")
      */
-    public function reporteDigitadorAction(Request $request) {
-        
+    public function reporteDigitadorAction() {
         return array();
     }
     
@@ -36,7 +55,6 @@ class PlanillaController extends Controller {
         $data = $request->request->get('form');
         $msg = $this->get('planilla_service')->getReporteByUsername($data);
         $response = new Response($msg);
-        //$response->headers->set('content/type', 'application/json');
         return $response;
     }
     
