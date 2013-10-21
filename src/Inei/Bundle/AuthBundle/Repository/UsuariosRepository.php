@@ -13,6 +13,18 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class UsuariosRepository extends EntityRepository implements UserProviderInterface
 {
+    public function listaUsuariosPlanilla(){
+        $DQL = "SELECT u.id, u.username
+            FROM IneiAuthBundle:Usuarios u
+            JOIN u.roles r
+            WHERE r.id in (:role)
+            ORDER BY u.id ASC";//AND :perm in p.type 
+        $qb = $this->getEntityManager()->createQuery($DQL)
+                ->setParameter('role', array(6));
+        $re = $qb->getArrayResult();
+        return $re;
+    }
+    
     public function loadUserByUsername($username)        
     {
         echo $username;

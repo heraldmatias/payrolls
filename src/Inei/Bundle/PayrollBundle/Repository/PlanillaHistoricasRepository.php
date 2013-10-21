@@ -12,11 +12,40 @@ use Doctrine\ORM\EntityRepository;
  */
 class PlanillaHistoricasRepository extends EntityRepository
 {
-    public function getByFolio($folio){
-        //$em = $this->getEntityManager();
-        return $this->findBy(array(
-            'folio' => $folio
-        ));
+    public function getByUsername(array $filtro=null){
+        $_where = array();
+        $fini = $filtro['fecha-ini'];
+        $ffin = $filtro['fecha-fin'];
+        $user = $filtro['digitador'];
+        //\DateTime()->format('Y-m-d')
+        if($fini & $ffin)
+            $_where[] = "date(fec_creac) between '$fini' and '$ffin'";
+        if($user)
+            $_where[] = "usu_crea_id = $user";
+        $where = (count($_where))?' WHERE '.implode(' and ', $_where):'';
+        $sql = "select *,
+            round((digitados/registros)*100,2) as porcentaje_registros,
+            round((folios_digitados/folios)*100,2) as porcentaje_folios
+            from (Select pla.digitador, f.codi_tomo as tomo, count(pla.codi_folio)::numeric as folios_digitados, 
+(select count(ff.codi_folio) from
+folios ff where ff.codi_tomo = f.codi_tomo) as folios,
+sum(pla.cantidad) as digitados,
+(select sum(ff.reg_folio) from
+folios ff where ff.codi_tomo = f.codi_tomo) as Registros
+FROM 
+(select p.codi_folio,u.cod_usu as digitador, count(distinct p.num_reg) as cantidad
+from planilla_historicas p
+join usuarios u 
+on u.id = p.usu_crea_id $where
+group by p.codi_folio,u.cod_usu) as pla
+ left join folios f
+on pla.codi_folio = f.codi_folio
+group by f.codi_tomo, pla.digitador
+order by f.codi_tomo) as tabla;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
     
 }

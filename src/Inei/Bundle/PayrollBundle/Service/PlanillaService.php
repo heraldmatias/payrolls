@@ -21,8 +21,16 @@ class PlanillaService {
         $this->sc = $sc;
     }
 
+    /**
+     * Genera el nombre del archivo con la siguiente nomenclatura
+     * codigo de usuario_numero de tomo_folio 
+     * @param integer $tomo
+     * @param integer $folio
+     * @return string
+     */
     private function getAutoSaveFilename($tomo, $folio) {
-        $filename = 'planilla' . $tomo . '_' . $folio . '.json';
+        $userid = $this->sc->getToken()->getUser()->getId();
+        $filename = 'planilla_' . $userid . '_' . $tomo . '_' . $folio . '.json';
         $fp = __DIR__ . '/../../../../../web/' . $filename;
         return $fp;
     }
@@ -66,15 +74,35 @@ class PlanillaService {
 
     public function getCountPlanillas($codiFolio) {
         $DQL = "
-            SELECT COUNT(p.id) as cantidad
+            SELECT p.registro, p.id 
             FROM IneiPayrollBundle:PlanillaHistoricas p
-            WHERE p.codi_folio = :folio
+            WHERE p.folio = :folio
+            ORDER BY p.registro ASC
         ";
-        $qb = $this->getEntityManager()
+        $qb = $this->em
                 ->createQuery($DQL)
-                ->setParameters('folio', $codiFolio);
+                ->setParameter('folio', $codiFolio);
         $result = $qb->getArrayResult();
-        return $result['cantidad'];
+        $group = array();
+        if (!$result)
+            return array();
+        $id = $result[0]['registro'];
+        $ids = array();
+        $co = 0;
+        foreach ($result as $planilla) {
+            if ($id == $planilla['registro']) {
+                $id = $planilla['registro'];
+                $ids[] = $planilla['id'];
+                continue;
+            }
+            $group[$co] = $ids;
+            $ids = array();
+            $ids[] = $planilla['id'];
+            $id = $planilla['registro'];
+            $co++;
+        }
+        $group[$co] = $ids;
+        return $group;
     }
 
     /**
@@ -88,7 +116,7 @@ class PlanillaService {
         $qb->select('c')
                 ->from('IneiPayrollBundle:PlanillaHistoricas', 'c')
                 ->where('c.folio = :folio')
-                ->orderBy('c.id', 'ASC')
+                ->orderBy('c.registro', 'ASC')
                 ->setParameter('folio', $codiFolio);
         $planillas = $qb->getQuery()->getResult();
         return $planillas;
@@ -157,23 +185,24 @@ class PlanillaService {
     public function saveMatrix($object, $data) {
         try {
             $q = $this->em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
-            $results = $q->execute();
+            $q->execute();
             $userid = $this->sc->getToken()->getUser()->getId();
             $fecha = new \DateTime();
-            foreach ($data as $key => $planilla) {
+            foreach ($data as $key1 => $planilla) {
                 $reg = $planilla['registro'];
                 $dni = $planilla['codiEmplPer'];
                 $descripcion = $planilla['descripcion'];
+                //unset($results[$key1]);
                 unset($planilla['codiEmplPer']);
                 unset($planilla['descripcion']);
                 unset($planilla['registro']);
-//                if ($this->getCountPlanillas($object->getCodiFolio())) {                    
-//                } else {
+                //FALTA JALAR LA FILA key para coger correctamente los ids
+
                 foreach ($planilla as $key => $valor) {
                     $planillah = new PlanillaHistoricas();
                     $pos = strpos($key, '_');
-                    $planillah->setCodiConcTco(false !== $pos ? substr($key, 0, $pos) : $key);
-                    $planillah->setFlag(false !== $pos ? substr($key, $pos + 1) : NULL);
+                    $planillah->setCodiConcTco(substr($key, 0, $pos));
+                    $planillah->setFlag(substr($key, $pos + 1));
                     $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
                     $planillah->setSubtPlanTpl($object->getSubtPlanStp());
                     $planillah->setNumePeriTpe(01);
@@ -185,12 +214,10 @@ class PlanillaService {
                     $planillah->setRegistro($reg);
                     $planillah->setCreador($userid);
                     $planillah->setFecCreac($fecha);
-                    $planillah->setModificador($userid);
-                    $planillah->setFecMod($fecha);
                     $this->em->persist($planillah);
                 }
-//                }
-            }
+            }/*             * ELIMINA REGISTROS SOBRANTES PORQUE LOS DATOS DEL FOLIO FUERON MODIFICADOS* */
+
             $this->em->flush();
             $this->em->clear();
             $filename = $this->getAutoSaveFilename(
@@ -204,4 +231,22 @@ class PlanillaService {
         }
     }
 
+    public function getReporteByUsername(array $filtro=null){
+        $rows = $this->em->getRepository('IneiPayrollBundle:PlanillaHistoricas')
+                ->getByUsername($filtro);
+        $html = '';
+        foreach ($rows as $value) {
+            $html .='<tr>';
+            $html .='<td>'.$value['digitador'].'</td>';
+            $html .='<td>'.$value['tomo'].'</td>';
+            $html .='<td>'.$value['folios'].'</td>';
+            $html .='<td>'.$value['folios_digitados'].'</td>';
+            $html .='<td>'.$value['porcentaje_folios'].'%</td>';
+            $html .='<td>'.$value['registros'].'</td>';
+            $html .='<td>'.$value['digitados'].'</td>';
+            $html .='<td>'.$value['porcentaje_registros'].'%</td>';
+            $html .='</tr>';
+        }
+        return $html;
+    }
 }

@@ -20,6 +20,27 @@ use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
 class PlanillaController extends Controller {
 
     /**
+     * @Route("/reporte/", name="_planilla_digitador")
+     * @Template("")
+     */
+    public function reporteDigitadorAction(Request $request) {
+        
+        return array();
+    }
+    
+    /**
+     * @Route("/reporte/ajax/", name="_planilla_digitador_ajax")
+     * @Template("")
+     */
+    public function ajaxReporteDigitadorAction(Request $request) {
+        $data = $request->request->get('form');
+        $msg = $this->get('planilla_service')->getReporteByUsername($data);
+        $response = new Response($msg);
+        //$response->headers->set('content/type', 'application/json');
+        return $response;
+    }
+    
+    /**
      * @Route("/autosave/", name="_planilla_autosave")
      * @Template("")
      */
@@ -30,10 +51,6 @@ class PlanillaController extends Controller {
         $msg = $this->get('planilla_service')->autoSave($tomo, $folio, $data);
         $response = new Response($msg);
         return $response;
-    }
-
-    public function loadAutoSave($tomo, $folio) {
-        return $this->get('planilla_service')->loadAutoSave($tomo, $folio);
     }
 
     public function createPlanillaForm($array, $object) {

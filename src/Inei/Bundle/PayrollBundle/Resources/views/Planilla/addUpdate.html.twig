@@ -110,7 +110,7 @@
     function indexar() {
         var rows = jQuery('#tplanillas tbody').find('tr');
         jQuery.each(rows, function(i, v){
-            var reg = jQuery(v).find('input[type="hidden"]');
+            var reg = jQuery(v).find('input[name*="registro"]');
             reg.val(i);
             var $td = jQuery('<td class="column-item">'+(i+1)+'</td>');
             jQuery(v).prepend($td);

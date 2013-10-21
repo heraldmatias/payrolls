@@ -55,5 +55,10 @@ class UsuarioService {
                 ->getPermissions($user->getId());
         return $perms;
     }
+    
+    public function listaUsuariosPlanilla() {
+        return $this->em->getRepository('IneiAuthBundle:Usuarios')
+                ->listaUsuariosPlanilla();
+    }
 
 }

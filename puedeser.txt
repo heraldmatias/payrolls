@@ -1,0 +1,119 @@
+public function saveMatrix($object, $data) {
+        try {
+//            $q = $this->em->createQuery('delete from IneiPayrollBundle:PlanillaHistoricas m where m.folio = ' . $object->getCodiFolio());
+//            $results = $q->execute();
+            $results = $this->getCountPlanillas($object->getCodiFolio());
+            $count = count($results);
+
+            $userid = $this->sc->getToken()->getUser()->getId();
+            $fecha = new \DateTime();
+            foreach ($data as $key1 => $planilla) {
+                $reg = $planilla['registro'];
+                $dni = $planilla['codiEmplPer'];
+                $descripcion = $planilla['descripcion'];
+                $ids = array_key_exists($key1, $results)?$results[$key1]:array();
+                $fila = 0;
+                //unset($results[$key1]);
+                unset($planilla['codiEmplPer']);
+                unset($planilla['descripcion']);
+                unset($planilla['registro']);
+                //FALTA JALAR LA FILA key para coger correctamente los ids
+                if ($count) {
+                    foreach ($planilla as $key => $valor) {
+                        $pos = strpos($key, '_');
+                        if (!array_key_exists($fila, $ids)) {
+                            $planillah = new PlanillaHistoricas();
+                            $pos = strpos($key, '_');
+                            $planillah->setCodiConcTco(substr($key, 0, $pos));
+                            $planillah->setFlag(substr($key, $pos + 1));
+                            $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
+                            $planillah->setSubtPlanTpl($object->getSubtPlanStp());
+                            $planillah->setNumePeriTpe(01);
+                            $planillah->setDescripcion($descripcion);
+                            $planillah->setValoCalcPhi($valor);
+                            $planillah->setCodiEmplPer($dni);
+                            $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
+                            $planillah->setFolio($object->getCodiFolio());
+                            $planillah->setRegistro($reg);
+                            $planillah->setCreador($userid);
+                            $planillah->setFecCreac($fecha);
+                            $this->em->persist($planillah);
+                            $fila++;
+                        } else {
+                            $q = $this->em->createQuery('update IneiPayrollBundle:PlanillaHistoricas p set 
+                        p.codiConcTco = :codiConcTco,
+                        p.flag = :flag,
+                        p.tipoPlanTpl = :tipoPlanTpl,
+                        p.subtPlanTpl = :subtPlanTpl,
+                        p.numePeriTpe = :numePeriTpe,
+                        p.descripcion = :descripcion,
+                        p.valoCalcPhi = :valoCalcPhi,
+                        p.codiEmplPer = :codiEmplPer,
+                        p.anoPeriTpe = :anoPeriTpe,
+                        p.folio = :folio,
+                        p.registro = :registro,                        
+                        p.modificador = :modificador,
+                        p.fec_mod = :fecMod
+                        WHERE p.id = :id')->setParameters(array(
+                                'codiConcTco' => substr($key, 0, $pos),
+                                'flag' => substr($key, $pos + 1),
+                                'tipoPlanTpl' => $object->getTipoPlanTpl()->getTipoPlanTpl(),
+                                'subtPlanTpl' => $object->getSubtPlanStp(),
+                                'numePeriTpe' => '01',
+                                'descripcion' => $descripcion,
+                                'valoCalcPhi' => $valor,
+                                'codiEmplPer' => $dni,
+                                'anoPeriTpe' => $object->getTomo()->getAnoTomo(),
+                                'folio' => $object->getCodiFolio(),
+                                'registro' => $reg,
+                                'modificador' => $userid,
+                                'fecMod' => $fecha,
+                                'id' => $ids[$fila]
+                            ));
+                            $q->execute();
+                            $fila++;
+                            unset($results[$key1][$fila]);
+                        }
+                    }
+                } else {
+                    foreach ($planilla as $key => $valor) {
+                        $planillah = new PlanillaHistoricas();
+                        $pos = strpos($key, '_');
+                        $planillah->setCodiConcTco(substr($key, 0, $pos));
+                        $planillah->setFlag(substr($key, $pos + 1));
+                        $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
+                        $planillah->setSubtPlanTpl($object->getSubtPlanStp());
+                        $planillah->setNumePeriTpe(01);
+                        $planillah->setDescripcion($descripcion);
+                        $planillah->setValoCalcPhi($valor);
+                        $planillah->setCodiEmplPer($dni);
+                        $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
+                        $planillah->setFolio($object->getCodiFolio());
+                        $planillah->setRegistro($reg);
+                        $planillah->setCreador($userid);
+                        $planillah->setFecCreac($fecha);
+                        $this->em->persist($planillah);
+                    }
+                }
+            }/*             * ELIMINA REGISTROS SOBRANTES PORQUE LOS DATOS DEL FOLIO FUERON MODIFICADOS* */
+            if (count($results)) {
+                foreach ($results as $value) {
+                    $q = $this->em->createQuery('delete from 
+                        IneiPayrollBundle:PlanillaHistoricas m 
+                        where m.id IN (:ids) ')
+                            ->setParameter('ids', $value);
+                    $q->execute();
+                }
+            }
+            $this->em->flush();
+            $this->em->clear();
+            $filename = $this->getAutoSaveFilename(
+                    $object->getTomo()->getCodiTomo(), $object->getFolio());
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            return true;
+        } catch (Doctrine\DBAL\DBALException $e) {
+            return false;
+        }
+    }
