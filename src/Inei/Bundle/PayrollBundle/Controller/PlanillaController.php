@@ -28,6 +28,24 @@ class PlanillaController extends Controller {
     }
     
     /**
+     * @Route("print/{reporte}", name="_planilla_reporte_print")
+     * @Template("")
+     */
+    public function printReporteAction(Request $request,$reporte) {
+        $service = $this->get('planilla_service');
+        $excel = $service->printReporte(array(),array(),'Hola a todos',3);        
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="01simple.xlsx"');
+        $response->prepare($request);
+        $response->sendHeaders();        
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+        //return $response;
+    }
+    
+    /**
      * @Route("/reporte-tomo/ajax/", name="_planilla_tomo_ajax")
      * @Template("")
      */

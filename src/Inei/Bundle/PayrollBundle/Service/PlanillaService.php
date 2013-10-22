@@ -168,9 +168,9 @@ class PlanillaService {
             }
             if ($co <= $object->getRegistrosFolio() - 1)
                 $array['payrolls'][$co] = $planilla;
-        } else {
-            $array = array('payrolls' => array_map(
-                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+//        } else {
+//            $array = array('payrolls' => array_map(
+//                        create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
         }
         return $array;
     }
@@ -207,7 +207,7 @@ class PlanillaService {
                     $planillah->setSubtPlanTpl($object->getSubtPlanStp());
                     $planillah->setNumePeriTpe(01);
                     $planillah->setDescripcion($descripcion);
-                    $planillah->setValoCalcPhi($valor);
+                    $planillah->setValoCalcPhi((null === $valor) ? '0' : $valor);
                     $planillah->setCodiEmplPer($dni);
                     $planillah->setAnoPeriTpe($object->getTomo()->getAnoTomo());
                     $planillah->setFolio($object->getCodiFolio());
@@ -231,28 +231,29 @@ class PlanillaService {
         }
     }
 
-    public function getReporteByUsername(array $filtro=null){
+    public function getReporteByUsername(array $filtro = null) {
         $rows = $this->em->getRepository('IneiPayrollBundle:PlanillaHistoricas')
                 ->getByUsername($filtro);
         $html = '';
-        foreach ($rows as $value) {
-            $html .='<tr>';
-            $html .='<td>'.$value['digitador'].'</td>';
-            $html .='<td>'.$value['tomo'].'</td>';
-            $html .='<td>'.$value['folios'].'</td>';
-            $html .='<td>'.$value['folios_digitados'].'</td>';
-            $html .='<td>'.$value['porcentaje_folios'].'%</td>';
-            $html .='<td>'.$value['registros'].'</td>';
-            $html .='<td>'.$value['digitados'].'</td>';
-            $html .='<td>'.$value['porcentaje_registros'].'%</td>';
+        $color = array('info', '');
+        foreach ($rows as $key => $value) {
+            $html .="<tr class='" . $color[($key % 2)] . "'>";
+            $html .='<td>' . $value['digitador'] . '</td>';
+            $html .='<td>' . $value['tomo'] . '</td>';
+            $html .='<td>' . $value['folios'] . '</td>';
+            $html .='<td>' . $value['folios_digitados'] . '</td>';
+            $html .='<td>' . $value['porcentaje_folios'] . '%</td>';
+            $html .='<td>' . $value['registros'] . '</td>';
+            $html .='<td>' . $value['digitados'] . '</td>';
+            $html .='<td>' . $value['porcentaje_registros'] . '%</td>';
             $html .='</tr>';
         }
         return $html;
     }
-    
-    public function getReporteByTomo(array $filtro=null){
+
+    public function getReporteByTomo(array $filtro = null) {
         $rows = $this->em->getRepository('IneiPayrollBundle:Tomos')
-                ->findResumenFolios($filtro);                
+                ->findResumenFolios($filtro);
         return array_map(create_function('$item', 'return array_values($item);'), $rows);
 //        $html = '';
 //        foreach ($rows as $value) {
@@ -268,5 +269,43 @@ class PlanillaService {
 //        }
 //        return $html;
     }
-    
+
+    public function printReporte(array $rows, array $cols, $title, $from = 3) {
+        $objPHPExcel = new \PHPExcel();
+
+// Set document properties
+        $objPHPExcel->getProperties()->setCreator("INEI")
+                ->setLastModifiedBy("INEI")
+                ->setTitle($title)
+                ->setSubject($title)
+                ->setDescription("Reporte")
+                ->setCategory("Reporte");
+// Add some data
+        $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A1', 'Hello')
+                ->setCellValue('B2', 'world!')
+                ->setCellValue('C1', 'Hello')
+                ->setCellValue('D2', 'world!');
+
+// Miscellaneous glyphs, UTF-8
+        $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A4', 'Miscellaneous glyphs');
+
+// Rename worksheet
+        $objPHPExcel->getActiveSheet()->setTitle($title);
+
+// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+
+// Redirect output to a client’s web browser (Excel2007)
+//        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//        header('Content-Disposition: attachment;filename="01simple.xlsx"');
+//        header('Cache-Control: max-age=0');
+        
+        
+        //$objWriter->save('php://output');
+        return $objPHPExcel;//->save('php://output');
+        //$objWriter->save('php://output');
+    }
+
 }

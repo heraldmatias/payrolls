@@ -16,10 +16,10 @@
                         <div class="span4">
                     <div class="control-group">
                         <label class="control-label" for="fecha-ini">Fecha desde:</label>
-                        <div class="controls"><input id="fecha-ini" name="form[fecha-ini]" type="text" class="span5"></div>
+                        <div class="controls"><input id="fecha-ini" name="form[fecha-ini]" type="text" class="span10"></div>
                         <br>
                         <label class="control-label" for="fecha-fin">Fecha Final:</label>
-                        <div class="controls"><input id="fecha-fin" name="form[fecha-fin]" type="text" class="span5"></div>
+                        <div class="controls"><input id="fecha-fin" name="form[fecha-fin]" type="text" class="span10"></div>
                     </div></div>
                     <div class="span4">
                     <div class="control-group">
@@ -43,14 +43,14 @@
                         </div>
                     </div></div>
                     <div class="span4">
-                    <input type="submit" value ="Consultar" id="ver"/>
+                    <input type="submit" value ="Consultar" class="btn btn-primary" id="ver"/>
                     </div>
                     </div>
                 </form>
                     <br>
                 <table id="tbltomos" class="table table-striped table-bordered">
                     <thead>
-                        <tr>
+                        <tr class="row-black">
                             <th>Tomo</th>
                             <th>Total Folios</th>
                             <th>Folios Resumen</th>
@@ -117,7 +117,8 @@
             $('#tbltomos').dataTable( {
                 "aaData": data,
                 "bDestroy": true, 
-                "sWrapper": "dataTables_wrapper form-inline"
+                "sWrapper": "dataTables_wrapper form-inline",
+                "bFilter": false
             });
         })
         .fail(function(data, textStatus, jqXHR) {
