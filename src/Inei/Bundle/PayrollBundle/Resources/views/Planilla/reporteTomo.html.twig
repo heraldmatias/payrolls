@@ -44,6 +44,7 @@
                     </div></div>
                     <div class="span4">
                     <input type="submit" value ="Consultar" class="btn btn-primary" id="ver"/>
+                    <input type="button" class="btn btn-primary" id="reporte" value="Imprimir"/>
                     </div>
                     </div>
                 </form>
@@ -124,6 +125,12 @@
         .fail(function(data, textStatus, jqXHR) {
             $('#feedback').html(textStatus);
         })
+        });
+        $('#reporte').on('click', function(event){        
+            event.preventDefault();
+            var data = $('form').serialize(true),
+            url = '{{ path('_planilla_tomo_reporte_print') }}?';
+            location.href = url+data;
         });
     });
         

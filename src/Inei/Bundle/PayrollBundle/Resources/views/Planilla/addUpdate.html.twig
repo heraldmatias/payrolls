@@ -45,6 +45,9 @@
                         <div class="span1">{{ form_label(sform.folio) }}</div>
                         <div class="span2">{{ form_widget(sform.folio) }}</div>
                         <div class="span2">{{ form_widget(sform.buscar) }}</div>
+                        {% if usuario_service.hasPermission('planilla', 'other') %}
+                        <div class="span2"><input type="button" value="Imprimir" id="imprimir" class="btn btn-primary"/></div>
+                        {% endif %}
                     {{ form_end(sform) }}
                     </div>
                 </div>{% if folio %}
@@ -161,6 +164,13 @@
 
     jQuery('form:eq(1)').on('submit', function(e){
         return confirm('¿Esta seguro que desea modificar este registro?');
+    });
+    
+    jQuery('#imprimir').on('click', function(event){
+        event.preventDefault();
+        var data = $('form_consulta').serialize(),
+        url = '{{ path('_planilla_print') }}?';
+        location.href = url+data;
     });
     
     function sendForm(){

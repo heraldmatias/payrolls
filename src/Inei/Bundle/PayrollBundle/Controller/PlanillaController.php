@@ -18,7 +18,7 @@ use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
  * @author holivares
  */
 class PlanillaController extends Controller {
-
+    private static $REPORTES = array('digitador','tomo');
     /**
      * @Route("/reporte-tomo/", name="_planilla_tomo_reporte")
      * @Template("")
@@ -26,23 +26,29 @@ class PlanillaController extends Controller {
     public function reporteTomoAction() {
         return array();
     }
-    
+        
     /**
-     * @Route("print/{reporte}", name="_planilla_reporte_print")
+     * @Route("/reporte-tomo/print/", name="_planilla_tomo_reporte_print")
      * @Template("")
      */
-    public function printReporteAction(Request $request,$reporte) {
+    public function printTomoReporteAction(Request $request) {
+        $form = $request->request->get('form');
+        if(!$form){
+            $form = $request->query->get('form');
+        }
         $service = $this->get('planilla_service');
-        $excel = $service->printReporte(array(),array(),'Hola a todos',3);        
+        $data = $service->getReporteByTomo($form);
+        $excel = $service->printReporte($data,array(
+            'Numero de Tomo','Total de Folios','Folios de Resumen','Folios Digitables',
+        'Folios Digitados','Folios por Digitar','Estado'),'Reporte de Avance por Tomos',4);
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 'attachment;filename="01simple.xlsx"');
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"','reptomo'));
         $response->prepare($request);
-        $response->sendHeaders();        
+        $response->sendHeaders();
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $objWriter->save('php://output');
-        exit;
-        //return $response;
+        exit;        
     }
     
     /**
@@ -186,6 +192,36 @@ class PlanillaController extends Controller {
             'sform' => $sform->createView(),
             'folio' => $object
         );
+    }
+    
+    /**
+     * @Route("/print/", name="_planilla_print")
+     * @Template("")
+     */
+    public function printAction(Request $request) {
+        if (!$this->get('usuario_service')->hasPermission('planilla', 'other')) {
+            throw $this->createNotFoundException();
+        }
+        $form = $request->query->get('registrar_planilla');
+        $folio = $form['folio'];
+        $tomo = $form['tomo'];
+        $em = $this->getDoctrine()
+                    ->getRepository('IneiPayrollBundle:Folios');
+        $object = $em->findOneCustomByNum($folio, $tomo);
+        $service = $this->get('planilla_service');
+        $data = $service->getPlanillaValues($object);
+        $cols = $service->getPlanillaColumns($object);
+        $title = sprintf('Planilla TOMO %s  FOLIO%s',$tomo,$folio);
+        $excel = $service->printReporte($data,$cols,$title,4);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 
+                sprintf('attachment;filename="%s_%s_%s.xlsx"','planilla',$tomo,$folio));
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;        
     }
 
     /**

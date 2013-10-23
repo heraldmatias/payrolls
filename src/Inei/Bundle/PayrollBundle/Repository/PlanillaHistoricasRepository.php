@@ -25,10 +25,12 @@ class PlanillaHistoricasRepository extends EntityRepository
         $where = (count($_where))?' WHERE '.implode(' and ', $_where):'';
         $sql = "select *,
             round((digitados/registros)*100,2) as porcentaje_registros,
-            round((folios_digitados/folios)*100,2) as porcentaje_folios
+            round((folios_digitados/(folios-resumen))*100,2) as porcentaje_folios
             from (Select pla.digitador, f.codi_tomo as tomo, count(pla.codi_folio)::numeric as folios_digitados, 
 (select count(ff.codi_folio) from
 folios ff where ff.codi_tomo = f.codi_tomo) as folios,
+(select count(ff.codi_folio) from folios ff 
+where (ff.reg_folio is null or ff.reg_folio=0) and ff.codi_tomo=f.codi_tomo) as resumen,
 sum(pla.cantidad) as digitados,
 (select sum(ff.reg_folio) from
 folios ff where ff.codi_tomo = f.codi_tomo) as Registros

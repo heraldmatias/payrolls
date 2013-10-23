@@ -12,4 +12,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class ConceptosFoliosRepository extends EntityRepository
 {
+    public function getForColumns($folio){
+        $query = $this->getEntityManager()
+                ->createQuery('SELECT c.descCortTco
+                    FROM IneiPayrollBundle:Conceptos c
+                    JOIN c.folios cf
+                    WHERE cf.codiFolio = :folio
+                    ORDER BY cf.orden ASC')
+                ->setParameter('folio', $folio);
+        return $query->getArrayResult();
+    }
 }
