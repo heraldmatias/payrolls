@@ -107,6 +107,7 @@
             </table>
         </div>
         <div class="modal-footer">
+            <input type="hidden" id="folioupdate" name="folioupdate"/>
             {{ form_widget(form.save) }}
             {{ form_widget(form.saveAndAdd) }}
             <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
@@ -143,6 +144,7 @@
             $('#folios_tipoPlanTpl').on('change', function(e) {
                 loadSubPlanillas($(this).val());
             });
+            $('#folioupdate').val($('#folios_folio').val());
         });
         function addConceptForm(collectionHolder) {
             var prototype = collectionHolder.data('prototype');

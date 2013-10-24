@@ -93,3 +93,8 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@security.context"]
         tags:
             - { name: service, alias: planilla_service }
+    folios_service:
+        class: Inei\Bundle\PayrollBundle\Service\FoliosService
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: service, alias: folios_service }

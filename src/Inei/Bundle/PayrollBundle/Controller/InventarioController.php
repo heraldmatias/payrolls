@@ -70,7 +70,6 @@ class InventarioController extends Controller {
         $object = new Tomos();
         $form = $this->createForm('tomos', $object);
         $form->handleRequest($request);
-
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
             try {
@@ -188,9 +187,14 @@ class InventarioController extends Controller {
         $tomo = $request->get('tomo') ? $request->get('tomo') : 0;
         $_tomo = $em->find($tomo);
         $object->setTomo($_tomo);
+        $folioupdate = $request->request->get('folioupdate');
         $form = $this->createForm('folios', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);
-
+        /******SI EXISTE EL FOLIO Y ES DIFERENTE ENTONCES HAY QUE REEMPLAZAR******/
+        if($request->getMethod()==='POST'){
+            $service = $this->get('folios_service');
+            $service->orderFolios($object->getFolio(), $folioupdate, $object->getTomo()->getCodiTomo());
+        }
         if ($form->isValid()) {
             // perform some action, such as saving the task to the database
             try {
@@ -241,8 +245,14 @@ class InventarioController extends Controller {
         $em = $this->getDoctrine()
                 ->getRepository('IneiPayrollBundle:Folios');
         $object = $em->findOneCustomBy($pk);
+        $folioupdate = $request->request->get('folioupdate');
         $form = $this->createForm('folios', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);
+        /******SI EXISTE EL FOLIO Y ES DIFERENTE ENTONCES HAY QUE REEMPLAZAR******/
+        if($request->getMethod()==='POST'){
+            $service = $this->get('folios_service');
+            $service->orderFolios($object->getFolio(), $folioupdate, $object->getTomo()->getCodiTomo());
+        }
         /* VERFICAR SI EL FORMULARIO ES VALIDO */
         if ($form->isValid()) {
             try {
@@ -320,6 +330,32 @@ class InventarioController extends Controller {
             );
         }
         $nextAction = '_inventario_list';
+        return $this->redirect($this->generateUrl($nextAction));
+    }
+    
+    /**
+     * @Route("/folio/delete/{pk}", name="_inventario_folio_delete")
+     * @Template("")
+     */
+    public function deleteFolioAction(Request $request, $pk) {
+        if (!$this->get('usuario_service')->hasPermission('folio', 'del')) {
+            throw $this->createNotFoundException();
+        }
+        try {
+            $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Folios')->find($pk);
+            $em = $this->getDoctrine()->getEntityManager();
+            $em->remove($object);
+            $em->flush();
+            $this->get('folios_service')->deletePlanillas($pk);
+            $this->get('session')->getFlashBag()->add(
+                    'folio', 'Registro eliminado satisfactoriamente'
+            );
+        } catch (DBALException $e) {
+            $this->get('session')->getFlashBag()->add(
+                    'folio', 'Ocurrio un error al grabar el registro'
+            );
+        }
+        $nextAction = '_inventario_folio_list';
         return $this->redirect($this->generateUrl($nextAction));
     }
 
