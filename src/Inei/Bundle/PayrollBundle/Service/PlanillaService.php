@@ -244,7 +244,7 @@ class PlanillaService {
                     $pos = strpos($key, '_');
                     $planillah->setCodiConcTco(substr($key, 0, $pos));
                     $planillah->setFlag(substr($key, $pos + 1));
-                    $planillah->setTipoPlanTpl($object->getTipoPlanTpl()->getTipoPlanTpl());
+                    $planillah->setTipoPlanTpl(is_object($object->getTipoPlanTpl())?$object->getTipoPlanTpl()->getTipoPlanTpl():$object->getTipoPlanTpl());
                     $planillah->setSubtPlanTpl($object->getSubtPlanStp());
                     $planillah->setNumePeriTpe(01);
                     $planillah->setDescripcion($descripcion);

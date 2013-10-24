@@ -48,7 +48,7 @@ class FoliosRepository extends EntityRepository {
         $folio = $re[0];
 
         /*         * *CONCEPTOS*** */
-        $DQL = "SELECT cf, c
+        $DQL = "SELECT cf, partial c.{codiConcTco, descConcTco, descCortTco}
             FROM IneiPayrollBundle:ConceptosFolios cf
             JOIN cf.codiConcTco c
             WHERE cf.codiFolio = :pk ORDER BY cf.orden";
@@ -78,7 +78,7 @@ class FoliosRepository extends EntityRepository {
             return null;
         $folio = $re[0];
         /*         * *CONCEPTOS*** */
-        $DQL = "SELECT cf, c
+        $DQL = "SELECT cf, partial c.{codiConcTco, descCortTco}
             FROM IneiPayrollBundle:ConceptosFolios cf
             JOIN cf.codiConcTco c
             WHERE cf.codiFolio = :pk ORDER BY cf.orden";
@@ -87,9 +87,6 @@ class FoliosRepository extends EntityRepository {
             'pk' => $folio->getCodiFolio(),
         ));
         $folio->setConceptos($qbc->getResult());
-//        foreach ($qbc as $key => $conc){
-//            $folio->getConceptos()->set($key, $conc);
-//        }
         return $folio;
     }
 
