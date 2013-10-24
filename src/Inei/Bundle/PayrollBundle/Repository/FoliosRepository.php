@@ -3,6 +3,7 @@
 namespace Inei\Bundle\PayrollBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * FoliosRepository
@@ -90,4 +91,48 @@ class FoliosRepository extends EntityRepository {
         return $folio;
     }
 
+    public function findResumenFolios(array $filtro = null) {
+        $where1 = array();
+        $where2 = array();
+        $where = array();
+        $sql="select * from (select f.codi_tomo as tomo, pla.digitador, f.num_folio as folio, f.reg_folio as total_registros, pla.registros_digitados,
+ pla.fecha, (case when f.reg_folio=pla.registros_digitados then 'COMPLETO' when f.reg_folio>pla.registros_digitados then 'INCOMPLETO' when pla.registros_digitados is null then 'POR DIGITAR' END) as estado from
+(select p.codi_folio,u.cod_usu as digitador, count(distinct p.num_reg) as registros_digitados, max(fec_creac) as fecha
+from planilla_historicas p
+join usuarios u
+on u.id = p.usu_crea_id %s
+group by p.codi_folio,u.cod_usu) as pla
+right join folios f
+on f.codi_folio = pla.codi_folio
+WHERE reg_folio is not null) as tabla %s order by folio ASC;";
+        if ($filtro['fecha-ini'] & $filtro['fecha-fin']) {
+            $where1[] = "date(p.fec_creac) between :fecini and :fecfin";
+            $where['fecini'] = $filtro['fecha-ini'];
+            $where['fecfin'] = $filtro['fecha-fin'];
+        }
+
+        if ($filtro['tomo']) {
+            $where2[] = 'tomo = :tomo';
+            $where['tomo'] = $filtro['tomo'];
+        }
+        if ($filtro['estado']) {
+            $where2[] = "estado = :estado";
+            $where['estado'] = $filtro['estado'];
+        }
+        $_where1 = count($where1) ? ' WHERE ' . implode(' AND ', $where1) : '';
+        $_where2 = count($where2) ? ' WHERE ' . implode(' AND ', $where2) : '';
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('digitador', 'digitador');
+        $rsm->addScalarResult('folio', 'folio');
+        $rsm->addScalarResult('total_registros', 'total_registros');
+        $rsm->addScalarResult('registros_digitados', 'registros_digitados');
+        $rsm->addScalarResult('fecha', 'fecha');
+        
+        $rsm->addScalarResult('estado', 'estado');
+        $query = $this->getEntityManager()->createNativeQuery(
+                sprintf($sql, $_where1, $_where2), $rsm);
+        $query->setParameters($where);
+        $tomos = $query->getArrayResult();
+        return $tomos;
+    }
 }

@@ -325,6 +325,22 @@ class PlanillaService {
     
     /**
      * 
+     * @param array $filtro
+     * @param boolean $ashtml
+     * @param boolean $values
+     * @return mixed
+     */
+    public function getReporteByFolio(array $filtro = null, $ashtml = true, $values = true) {
+        $rows = $this->em->getRepository('IneiPayrollBundle:Folios')
+                ->findResumenFolios($filtro);
+        if ($values) {
+            $rows = array_map(create_function('$item', 'return array_values($item);'), $rows);
+        }
+        return $rows;
+    }
+    
+    /**
+     * 
      * @param array $rows
      * @param array $cols
      * @param string $title

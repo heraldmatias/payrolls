@@ -40,7 +40,7 @@ from planilla_historicas p
 join usuarios u 
 on u.id = p.usu_crea_id $where
 group by p.codi_folio,u.cod_usu) as pla
- left join folios f
+ join folios f
 on pla.codi_folio = f.codi_folio
 group by f.codi_tomo, pla.digitador
 order by f.codi_tomo) as tabla;";

@@ -28,6 +28,13 @@ class PlanillaController extends Controller {
     }
         
     /**
+     * @Route("/reporte-folio/", name="_planilla_folio_reporte")
+     * @Template("")
+     */
+    public function reporteFolioAction() {
+        return array();
+    }
+    /**
      * @Route("/reporte-tomo/print/", name="_planilla_tomo_reporte_print")
      * @Template("")
      */
@@ -63,6 +70,17 @@ class PlanillaController extends Controller {
         return $response;
     }
     
+    /**
+     * @Route("/reporte-folio/ajax/", name="_planilla_folio_ajax")
+     * @Template("")
+     */
+    public function ajaxReporteFolioAction(Request $request) {
+        $data = $request->request->get('form');
+        $msg = $this->get('planilla_service')->getReporteByFolio($data);
+        $response = new Response(json_encode($msg));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
     /**
      * @Route("/reporte/", name="_planilla_digitador")
      * @Template("")
