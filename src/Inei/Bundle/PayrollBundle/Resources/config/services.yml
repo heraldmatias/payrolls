@@ -98,3 +98,12 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: service, alias: folios_service }
+    tomos_service:
+        class: Inei\Bundle\PayrollBundle\Service\TomosService
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: service, alias: tomos_service }
+    inei_payroll.form.type.asignacion:
+        class: Inei\Bundle\PayrollBundle\Form\Type\AsignacionType
+        tags:
+            - { name: form.type, alias: asignacion }

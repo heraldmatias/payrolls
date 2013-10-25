@@ -127,7 +127,7 @@
         $('#reporte').on('click', function(event){        
             event.preventDefault();
             var data = $('form').serialize(),
-            url = '{{ path('_planilla_tomo_reporte_print') }}?';
+            url = '{{ path('_planilla_folio_reporte_print') }}?';
             location.href = url+data;
         });
     });

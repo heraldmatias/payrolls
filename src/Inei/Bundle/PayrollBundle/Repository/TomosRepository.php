@@ -24,7 +24,7 @@ class TomosRepository extends EntityRepository {
 
     public function findNoDigitados() {
         $sql = "select * from lv_datos_tomo where completo = false 
-            and digitdos=0;";
+            and digitados=0;";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -38,18 +38,29 @@ class TomosRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+    public function findNoDigitado($tomo){
+        $sql = "select * from lv_datos_tomo where completo = false
+            and digitados=0 and tomo=:tomo;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('tomo', $tomo);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
 
     public function findResumenFolios(array $filtro = null) {
         $where1 = array();
         $where2 = array();
         $where = array();
-        $sql = "SELECT * FROM (select r.*, r.digitables-r.digitados as por_digitar, 
-            (case when digitados = 0 then 'POR DIGITAR' 
+        $sql = "SELECT * FROM (select r.tomo,r.folios,r.resumen,r.digitables,r.digitados, 
+            r.digitables-r.digitados as por_digitar, r.registros, (case when digitados = 0 then 'POR DIGITAR' 
             when r.digitados >0 and r.digitados <r.digitables then 'INCOMPLETO'
             when digitados = digitables then 'COMPLETO' end) as estado, digitados = digitables as completo
 FROM (select t.codi_tomo as tomo, t.folios_tomo as folios,
 (select count(f.codi_folio) from folios f where (f.reg_folio is null or f.reg_folio=0) and f.codi_tomo=t.codi_tomo) as resumen,
 (select count(f.codi_folio) from folios f where (f.reg_folio is not null or f.reg_folio>0) and f.codi_tomo=t.codi_tomo) as digitables,
+(select sum(f.reg_folio) from folios f where f.codi_tomo = t.codi_tomo) as registros,
 count(distinct p.codi_folio) as digitados
 from tomos t join folios ff
 on ff.codi_tomo = t.codi_tomo
@@ -81,6 +92,7 @@ GROUP BY t.codi_tomo) as r) as t %s;";
         $rsm->addScalarResult('digitables', 'digitables');
         $rsm->addScalarResult('digitados', 'digitados');
         $rsm->addScalarResult('por_digitar', 'por_digitar');
+        $rsm->addScalarResult('registros', 'registros');
         $rsm->addScalarResult('estado', 'estado');
         $rsm->addScalarResult('completo', 'completo');
         $query = $this->getEntityManager()->createNativeQuery(

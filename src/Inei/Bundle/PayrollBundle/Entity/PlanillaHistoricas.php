@@ -39,7 +39,7 @@ class PlanillaHistoricas
     private $valoCalcPhi;
 
     /**
-     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=5)
+     * @ORM\Column(name="TIPO_PLAN_TPL", type="string", length=5, nullable=true)
      */
     private $tipoPlanTpl;
 

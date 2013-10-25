@@ -66,6 +66,10 @@ class Usuarios implements AdvancedUserInterface, \Serializable {
         $roles[] = 'ROLE_USER';
         return $roles;
     }
+    
+    public function __toString() {
+        return $this->username;
+    }
 
     public function __construct() {
         $this->isActive = true;

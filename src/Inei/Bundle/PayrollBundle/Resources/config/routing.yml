@@ -28,3 +28,8 @@ _inei_payroll_personal:
     resource: "@IneiPayrollBundle/Controller/MaestroPersonalController.php"
     type:     annotation
     prefix:   /admin/personal
+    
+_inei_payroll_asignacion:
+    resource: "@IneiPayrollBundle/Controller/AsignacionController.php"
+    type:     annotation
+    prefix:   /admin/asignacion

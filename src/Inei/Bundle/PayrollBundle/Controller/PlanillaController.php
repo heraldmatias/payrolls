@@ -25,15 +25,20 @@ class PlanillaController extends Controller {
      */
     public function reporteTomoAction() {
         return array();
-    }
-        
+    }        
+    
     /**
-     * @Route("/reporte-folio/", name="_planilla_folio_reporte")
+     * @Route("/reporte-tomo/ajax/", name="_planilla_tomo_ajax")
      * @Template("")
      */
-    public function reporteFolioAction() {
-        return array();
+    public function ajaxReporteTomoAction(Request $request) {
+        $data = $request->request->get('form');
+        $msg = $this->get('planilla_service')->getReporteByTomo($data);
+        $response = new Response(json_encode($msg));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
+    
     /**
      * @Route("/reporte-tomo/print/", name="_planilla_tomo_reporte_print")
      * @Template("")
@@ -59,16 +64,12 @@ class PlanillaController extends Controller {
     }
     
     /**
-     * @Route("/reporte-tomo/ajax/", name="_planilla_tomo_ajax")
+     * @Route("/reporte-folio/", name="_planilla_folio_reporte")
      * @Template("")
      */
-    public function ajaxReporteTomoAction(Request $request) {
-        $data = $request->request->get('form');
-        $msg = $this->get('planilla_service')->getReporteByTomo($data);
-        $response = new Response(json_encode($msg));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
+    public function reporteFolioAction() {
+        return array();
+    }    
     
     /**
      * @Route("/reporte-folio/ajax/", name="_planilla_folio_ajax")
@@ -81,6 +82,31 @@ class PlanillaController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
+    
+    /**
+     * @Route("/reporte-folio/print/", name="_planilla_folio_reporte_print")
+     * @Template("")
+     */
+    public function printFolioReporteAction(Request $request) {
+        $form = $request->request->get('form');
+        if(!$form){
+            $form = $request->query->get('form');
+        }
+        $service = $this->get('planilla_service');
+        $data = $service->getReporteByFolio($form);
+        $excel = $service->printReporte($data,array(
+            'Digitador','Numero de Folios','Total Registros',
+            'Registros Digitados', 'Fecha','Estado'),'Reporte de Avance por Folios',4);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"','repfolio'));
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;        
+    }
+    
     /**
      * @Route("/reporte/", name="_planilla_digitador")
      * @Template("")

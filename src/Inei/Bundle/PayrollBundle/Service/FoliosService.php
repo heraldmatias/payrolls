@@ -3,7 +3,7 @@
 namespace Inei\Bundle\PayrollBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-use Inei\Bundle\PayrollBundle\Entity\Folios;
+
 /**
  * Description of FoliosService
  *

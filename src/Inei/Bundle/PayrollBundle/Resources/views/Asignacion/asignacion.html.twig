@@ -1,0 +1,135 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block csspage %}
+<style type="text/css" >
+</style>
+{% endblock %}
+{% block form %}
+<div class="span10">
+    <div class="row-fluid">
+    {{ form_start(form) }}
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Registrar Asignacion</h3>
+        </div>
+        <div class="modal-body"> 
+                    {% for flashMessage in app.session.flashbag.get('asignacion') %}
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {{ form_errors(form) }}
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.asignado) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.asignado) }}
+                    {{ form_widget(form.asignado) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.tomo) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tomo) }}
+                    {{ form_widget(form.tomo) }}
+                </div>
+                <div class="span2">
+                    {{ form_widget(form.add) }}
+                </div>
+            </div>
+            <div class="folio-options"></div>
+            <br>
+            <table id="tbltomos" class="table table-bordered table-condensed">
+                <thead><tr class="row-black">
+                <th>Item</th><th>Tomo</th><th>Total Folios</th>
+                <th>Folios de Resumen</th><th>Folios Digitables</th>
+                <th>Registros</th><th>Opciones</th></tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+            <div class="modal-footer">
+                {{ form_widget(form.save) }}
+                {{ form_widget(form.saveAndAdd) }}
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
+            </div>            
+        </div>
+        {{ form_end(form) }}
+        </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#tbltomos tbody').data('tomos', []);
+            $('#asignacion_add').on('click', function(event){
+                var tomo = $('#asignacion_tomo').val(),
+                    url = '{{ path('_asignacion_tomo_ajax') }}';
+                var tabla = $('#tbltomos tbody'),
+                    item = tabla.find('tr').length+1;
+                if(!$.isNumeric(tomo)){
+                    alert("Debe ingresar un número de tomo correcto");
+                    return false;
+                }
+                if($.inArray(parseInt(tomo), tabla.data('tomos'))!==-1){
+                    alert("El tomo ya esta ingresado en la lista");
+                    return false;
+                }
+                var data = {
+                    tomo: tomo
+                };
+                // Send the data using post
+                var oOptions = {  
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    dataType: 'json',
+                    async: true,
+                    ajaxSend : function(data, textStatus, jqXHR) {
+                        $('#feedback').html('Cargando...');
+                    }
+                };
+                var posting = $.ajax(oOptions);                
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data){
+                        tabla.data('tomos').push(data['tomo']);
+                        var fila = $('<tr class="'+((item%2===0)?'info':'')+'"></tr>');
+                        var columnas = '<td>'+item+'</td>'+
+                                '<td>'+data['tomo']+'</td>'+
+                                '<td>'+data['folios']+'</td>'+
+                                '<td>'+data['resumen']+'</td>'+
+                                '<td>'+data['digitables']+'</td>'+
+                                '<td>'+data['registros']+'</td>';
+                        fila.append(columnas);
+                        fila.data('tomo', data['tomo']);
+                        addOptions(fila);
+                        tabla.append(fila);
+                    }else{
+                        alert('El folio ya ha sido asignado');
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    $('#feedback').html(textStatus);
+                });
+            });
+        });
+        
+        function addOptions($newForm) {
+            var $deleteopt = $('<a href="#" title="Eliminar tomo"><i class="icon-trash"></i> </a>');
+            var $options = $('<td></td>');
+            $options.append($deleteopt);
+            $newForm.append($options);
+            $deleteopt.on('click', function(e) {
+                e.preventDefault();
+                var tabla = $('#tbltomos tbody'),
+                tomo=$newForm.data('tomo');           
+                tabla.data('tomos').splice( $.inArray(tomo, tabla.data('tomos')), 1 );
+                $newForm.remove();
+            });
+        }
+    </script>
+{% endblock %}    
