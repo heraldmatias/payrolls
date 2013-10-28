@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class UsuariosRepository extends EntityRepository implements UserProviderInterface
 {
-    public function listaUsuariosPlanilla(){
+    public function listaUsuariosPlanilla($keys = true){
         $DQL = "SELECT u.id, u.username
             FROM IneiAuthBundle:Usuarios u
             JOIN u.roles r
@@ -22,10 +22,17 @@ class UsuariosRepository extends EntityRepository implements UserProviderInterfa
         $qb = $this->getEntityManager()->createQuery($DQL)
                 ->setParameter('role', array(6));
         $re = $qb->getArrayResult();
+        if(!$keys){
+            $data = array();
+            foreach ($re as $item) {
+                $data[$item['id']] = $item['username'];
+            }
+            $re = $data;
+        }
         return $re;
     }
     
-    public function loadUserByUsername($username)        
+    public function loadUserByUsername($username)
     {
         echo $username;
         $q = $this
@@ -72,6 +79,20 @@ class UsuariosRepository extends EntityRepository implements UserProviderInterfa
         return $re;
     }
 
+    public function listaTomosAsignados($usuario){
+        $sql = "select co_tomo from asignacion where co_asignado=:usuario;";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('usuario', $usuario);
+        $stmt->execute();
+        $re = $stmt->fetchAll();
+        $data = array();
+        foreach ($re as $item) {
+            $data[$item['co_tomo']] = $item['co_tomo'];
+        }
+        return $data;
+    }
+    
     public function refreshUser(\Symfony\Component\Security\Core\User\UserInterface $user) {
         $user = $this->findOneByPk($user->getId());
         return $user;

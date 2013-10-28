@@ -56,9 +56,14 @@ class UsuarioService {
         return $perms;
     }
     
-    public function listaUsuariosPlanilla() {
+    public function listaUsuariosPlanilla($keys = true) {
         return $this->em->getRepository('IneiAuthBundle:Usuarios')
-                ->listaUsuariosPlanilla();
+                ->listaUsuariosPlanilla($keys);
     }
 
+    public function listaTomosAsignados() {
+        $user = $this->sc->getToken()->getUser()->getId();
+        return $this->em->getRepository('IneiAuthBundle:Usuarios')
+                ->listaTomosAsignados($user);
+    }
 }

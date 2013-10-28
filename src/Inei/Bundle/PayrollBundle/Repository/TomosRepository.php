@@ -41,12 +41,23 @@ class TomosRepository extends EntityRepository {
     
     public function findNoDigitado($tomo){
         $sql = "select * from lv_datos_tomo where completo = false
-            and digitados=0 and tomo=:tomo;";
+            and digitados=0 and tomo=:tomo and tomo not in(
+            Select co_tomo from asignacion);";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->bindValue('tomo', $tomo);
         $stmt->execute();
         return $stmt->fetch();
+    }
+    
+    public function findAsignados($usuario){
+        $sql = "select * from lv_datos_tomo where tomo in(
+            Select co_tomo from asignacion where co_asignado=:usuario);";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('usuario', $usuario);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 
     public function findResumenFolios(array $filtro = null) {

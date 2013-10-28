@@ -15,19 +15,30 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AsignacionController extends Controller {
 
-    
     /**
      * @Route("/new", name="_asignacion_tomo")
      * @Template("")
      */
     public function asignacionAction(Request $request) {
         $_form = $this->createForm('asignacion');
-        $_form->handleRequest($request);
-        if ($_form->isValid()) {
-            /**             * *GUARDAR** */
-            $this->get('session')->getFlashBag()->add(
-                    'planilla', 'Ocurrio un error al grabar la planilla'
-            );
+        $asignacion = $request->request->get('asignacion');
+        $service = $this->get('asignacion_service');
+        if ($asignacion) {
+            if (array_key_exists('tomos', $asignacion) & 
+                    array_key_exists('asignado', $asignacion)) {
+                $usuario = $asignacion['asignado'];
+                $tomos = $asignacion['tomos'];
+                $result = $service->asignarTomos($usuario, $tomos);
+                if ($result) {
+                    $this->get('session')->getFlashBag()->add(
+                            'asignacion', 'Registro grabado con éxito'
+                    );
+                } else {
+                    $this->get('session')->getFlashBag()->add(
+                            'asignacion', 'Ocurrio un error al grabar el registro'
+                    );
+                }
+            }
         }
         return array(
             'form' => $_form->createView()
@@ -46,5 +57,18 @@ class AsignacionController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-    
+
+    /**
+     * @Route("/tomos/ajax/", name="_asignacion_tomos_ajax")
+     * @Template("")
+     */
+    public function tomosAction(Request $request) {
+        $pk = $request->request->get('usuario');
+        $service = $this->get('tomos_service');
+        $tomos = $service->findTomosAsignados($pk);
+        $response = new Response(json_encode($tomos));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
 }

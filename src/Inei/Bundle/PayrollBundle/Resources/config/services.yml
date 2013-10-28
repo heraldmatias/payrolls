@@ -5,6 +5,26 @@ services:
 #    inei_payroll.example:
 #        class: %inei_payroll.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    planilla_service:
+        class: Inei\Bundle\PayrollBundle\Service\PlanillaService
+        arguments: ["@doctrine.orm.entity_manager", "@security.context"]
+        tags:
+            - { name: service, alias: planilla_service }
+    folios_service:
+        class: Inei\Bundle\PayrollBundle\Service\FoliosService
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: service, alias: folios_service }
+    tomos_service:
+        class: Inei\Bundle\PayrollBundle\Service\TomosService
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: service, alias: tomos_service }
+    asignacion_service:
+        class: Inei\Bundle\PayrollBundle\Service\AsignacionService
+        arguments: ["@doctrine.orm.entity_manager", "@security.context"]
+        tags:
+            - { name: service, alias: asignacion_service }
     inei_payroll.form.type.tomo:
         class: Inei\Bundle\PayrollBundle\Form\Type\TomoType
         tags:
@@ -62,6 +82,7 @@ services:
             - { name: form.type, alias: search_folios }            
     inei_payroll.form.type.registrar_planilla:
         class: Inei\Bundle\PayrollBundle\Form\Type\RegistrarPlanillaType
+        arguments: ["@usuario_service"]
         tags:
             - { name: form.type, alias: registrar_planilla }
     inei_payroll.form.type.exceltomo:
@@ -88,22 +109,8 @@ services:
         class: Inei\Bundle\PayrollBundle\Form\Type\SearchTomoExcelType
         tags:
             - { name: form.type, alias: search_tomoexcel }
-    planilla_service:
-        class: Inei\Bundle\PayrollBundle\Service\PlanillaService
-        arguments: ["@doctrine.orm.entity_manager", "@security.context"]
-        tags:
-            - { name: service, alias: planilla_service }
-    folios_service:
-        class: Inei\Bundle\PayrollBundle\Service\FoliosService
-        arguments: ["@doctrine.orm.entity_manager"]
-        tags:
-            - { name: service, alias: folios_service }
-    tomos_service:
-        class: Inei\Bundle\PayrollBundle\Service\TomosService
-        arguments: ["@doctrine.orm.entity_manager"]
-        tags:
-            - { name: service, alias: tomos_service }
     inei_payroll.form.type.asignacion:
         class: Inei\Bundle\PayrollBundle\Form\Type\AsignacionType
+        arguments: ["@usuario_service"]
         tags:
             - { name: form.type, alias: asignacion }

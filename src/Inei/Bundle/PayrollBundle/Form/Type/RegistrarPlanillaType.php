@@ -19,8 +19,15 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Inei\Bundle\AuthBundle\Service\UsuarioService;
 
 class RegistrarPlanillaType extends AbstractType {
+    
+    private $service;
+    
+    public function __construct(UsuarioService $service) {
+        $this->service = $service;
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
@@ -29,7 +36,7 @@ class RegistrarPlanillaType extends AbstractType {
                     'attr' => array('style' => 'width:100%'),
                     'empty_value' => 'SELECCIONE',
                     'label' => 'Tomo',
-                    'choices' => array_combine(range(1, 419),range(1, 419)),
+                    'choices' => $this->service->listaTomosAsignados(), #array_combine(range(1, 419),range(1, 419)),
                     'required' => false
                 ))
                 ->add('buscar', 'submit', array(

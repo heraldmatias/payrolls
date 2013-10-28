@@ -5,7 +5,7 @@ namespace Inei\Bundle\PayrollBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityManager;
+use Inei\Bundle\AuthBundle\Service\UsuarioService;
 
 /**
  * Description of AsignacionType
@@ -14,22 +14,10 @@ use Doctrine\ORM\EntityManager;
  */
 class AsignacionType extends AbstractType {
     
-
-    public function __construct() {
-    }
-
-    private function generateCodes() {
-//        $codes = array();
-//        foreach (range(1, 419) as $number) {
-//            $codes[$number] = 'TOMO - ' . $number;
-//        }
-//        return $codes;
-        $rep = $this->em->getRepository('IneiPayrollBundle:Tomos')
-                ->findNoDigitados();
-        
-        $tomos = array_map(create_function('$item', 'return $item["tomo"];'), $rep);
-        
-        return $tomos;
+    private $service;
+    
+    public function __construct(UsuarioService $service) {
+        $this->service = $service;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
@@ -38,14 +26,16 @@ class AsignacionType extends AbstractType {
                     'attr' => array(
                         'style' => 'width: 100%',
                         'size' => '10'
-                    )
+                    ),
+                    'required' => false
                 ))
-                ->add('asignado', null, array(
+                ->add('asignado', 'choice', array(
                     'label' => 'Asignado A',
+                    'choices' => $this->service->listaUsuariosPlanilla(FALSE),
                     'attr' => array(
-                        'style' => 'width: 100%',
-                        'empty_value' => '---SELECCIONE---'
-                    )
+                        'style' => 'width: 100%'
+                    ),
+                    'empty_value' => '---SELECCIONE---'
                 ))
                 ->add('add', 'button', array(
                     'label' => 'Agregar',

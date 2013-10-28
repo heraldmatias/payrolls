@@ -18,7 +18,6 @@ class FoliosService {
     }
     
     public function orderFolios($folio, $folioupdate, $tomo){
-        echo $folio.'<br>'.$folioupdate;
         $conn = $this->em->getConnection();
         if (null === $folioupdate | trim($folioupdate)===''){
             $sql = "SELECT codi_folio FROM folios 

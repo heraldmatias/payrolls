@@ -47,10 +47,12 @@
                 <th>Folios de Resumen</th><th>Folios Digitables</th>
                 <th>Registros</th><th>Opciones</th></tr>
                 </thead>
-                <tbody>
-                    
-                </tbody>
+                <tbody></tbody>
             </table>
+            <div class="row-fluid">
+                <div class="span2"><b>Folios Digitables</b></div><div class="span1" id="folios">0</div>
+                <div class="span1"><b>Registros</b></div><div class="span1" id="registros">0</div>
+            </div>
         </div>
             <div class="modal-footer">
                 {{ form_widget(form.save) }}
@@ -66,55 +68,97 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('#tbltomos tbody').data('tomos', []);
-            $('#asignacion_add').on('click', function(event){
-                var tomo = $('#asignacion_tomo').val(),
-                    url = '{{ path('_asignacion_tomo_ajax') }}';
-                var tabla = $('#tbltomos tbody'),
-                    item = tabla.find('tr').length+1;
-                if(!$.isNumeric(tomo)){
-                    alert("Debe ingresar un número de tomo correcto");
-                    return false;
+        });
+        
+        $('#asignacion_add').on('click', function(event){
+            var tomo = $('#asignacion_tomo').val(),
+                url = '{{ path('_asignacion_tomo_ajax') }}';
+            var tabla = $('#tbltomos tbody'),
+                item = tabla.find('tr').length+1;
+            if(!$.isNumeric(tomo)){
+                alert("Debe ingresar un número de tomo correcto");
+                return false;
+            }
+            if($.inArray(parseInt(tomo), tabla.data('tomos'))!==-1){
+                alert("El tomo ya esta ingresado en la lista");
+                return false;
+            }
+            var data = {
+                tomo: tomo
+            };
+            // Send the data using post
+            var oOptions = {  
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'json',
+                async: true,
+                ajaxSend : function(data, textStatus, jqXHR) {
+                    $('#feedback').html('Cargando...');
                 }
-                if($.inArray(parseInt(tomo), tabla.data('tomos'))!==-1){
-                    alert("El tomo ya esta ingresado en la lista");
-                    return false;
+            };
+            var posting = $.ajax(oOptions);                
+            posting.done(function(data, textStatus, jqXHR) {
+                if(data){
+                    tabla.data('tomos').push(data['tomo']);
+                    var fila = $('<tr class="'+((item%2!==0)?'info':'')+'"></tr>');
+                    var columnas = '<td>'+item+'</td>'+
+                            '<td>'+data['tomo']+'<input type="hidden" name="asignacion[tomos][]" value="'+data['tomo']+'"/></td>'+
+                            '<td>'+data['folios']+'</td>'+
+                            '<td>'+data['resumen']+'</td>'+
+                            '<td>'+data['digitables']+'</td>'+
+                            '<td>'+data['registros']+'</td>';
+                    fila.append(columnas);
+                    fila.data('tomo', data['tomo']);
+                    addOptions(fila);
+                    tabla.append(fila);
+                    resumen();
+                }else{
+                    alert('El folio ya ha sido asignado');
                 }
-                var data = {
-                    tomo: tomo
-                };
-                // Send the data using post
-                var oOptions = {  
-                    type: "POST",
-                    url: url,
-                    data: data,
-                    dataType: 'json',
-                    async: true,
-                    ajaxSend : function(data, textStatus, jqXHR) {
-                        $('#feedback').html('Cargando...');
-                    }
-                };
-                var posting = $.ajax(oOptions);                
-                posting.done(function(data, textStatus, jqXHR) {
-                    if(data){
-                        tabla.data('tomos').push(data['tomo']);
-                        var fila = $('<tr class="'+((item%2===0)?'info':'')+'"></tr>');
-                        var columnas = '<td>'+item+'</td>'+
-                                '<td>'+data['tomo']+'</td>'+
-                                '<td>'+data['folios']+'</td>'+
-                                '<td>'+data['resumen']+'</td>'+
-                                '<td>'+data['digitables']+'</td>'+
-                                '<td>'+data['registros']+'</td>';
-                        fila.append(columnas);
-                        fila.data('tomo', data['tomo']);
-                        addOptions(fila);
-                        tabla.append(fila);
-                    }else{
-                        alert('El folio ya ha sido asignado');
-                    }
-                })
-                .fail(function(data, textStatus, jqXHR) {
-                    $('#feedback').html(textStatus);
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#feedback').html(textStatus);
+            });
+        });
+
+        $('#asignacion_asignado').on('change', function(event){
+            var usuario = $('#asignacion_asignado').val(),
+                url = '{{ path('_asignacion_tomos_ajax') }}';
+            var tabla = $('#tbltomos tbody');
+            tabla.find('tr').remove();
+            $('#tbltomos tbody').data('tomos', []);
+            var data = {
+                usuario: usuario
+            };
+            var oOptions = {  
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'json',
+                async: true,
+                ajaxSend : function(data, textStatus, jqXHR) {
+                    $('#feedback').html('Cargando...');
+                }
+            };
+            var posting = $.ajax(oOptions);
+            posting.done(function(data, textStatus, jqXHR) {
+                $.each(data, function(k, v){
+                    var fila = $('<tr class="'+((k%2===0)?'info':'')+'"></tr>');
+                    var columnas = '<td>'+(k+1)+'</td>'+
+                            '<td>'+v['tomo']+
+                            '<td>'+v['folios']+'</td>'+
+                            '<td>'+v['resumen']+'</td>'+
+                            '<td>'+v['digitables']+'</td>'+
+                            '<td>'+v['registros']+'</td>';
+                    fila.append(columnas);
+                    addOptions(fila);
+                    tabla.append(fila);
                 });
+                resumen();
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#feedback').html(textStatus);
             });
         });
         
@@ -129,7 +173,19 @@
                 tomo=$newForm.data('tomo');           
                 tabla.data('tomos').splice( $.inArray(tomo, tabla.data('tomos')), 1 );
                 $newForm.remove();
+                resumen();
             });
         }
+        function resumen(){
+            var filas = $('#tbltomos tbody tr'),
+            folios=0,
+            registros=0;
+            $.each(filas, function(k,fila){
+                folios += parseInt($(fila).find('td:eq(4)').html());
+                registros += parseInt($(fila).find('td:eq(5)').html());
+            });
+            $('#folios').html(folios);
+            $('#registros').html(registros);
+        }
     </script>
-{% endblock %}    
+{% endblock %}
