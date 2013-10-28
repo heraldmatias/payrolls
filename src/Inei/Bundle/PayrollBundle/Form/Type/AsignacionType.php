@@ -39,13 +39,13 @@ class AsignacionType extends AbstractType {
                 ))
                 ->add('add', 'button', array(
                     'label' => 'Agregar',
-                    'attr' => array('class' => 'btn btn-primary'),))
-                ->add('save', 'submit', array(
-                    'label' => 'Guardar',
-                    'attr' => array('class' => 'btn btn-primary'),))
-                ->add('saveAndAdd', 'submit', array(
-                    'label' => 'Guardar y Añadir Otro',
-                    'attr' => array('class' => 'btn btn-primary')));
+                    'attr' => array('class' => 'btn btn-primary'),));
+//                ->add('save', 'submit', array(
+//                    'label' => 'Guardar',
+//                    'attr' => array('class' => 'btn btn-primary'),))
+//                ->add('saveAndAdd', 'submit', array(
+//                    'label' => 'Guardar y Añadir Otro',
+//                    'attr' => array('class' => 'btn btn-primary')));
     }
 
     public function getName() {

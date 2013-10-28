@@ -51,9 +51,30 @@ class AsignacionController extends Controller {
      */
     public function tomoAction(Request $request) {
         $pk = $request->request->get('tomo');
+        $usuario = $request->request->get('usuario');
         $service = $this->get('tomos_service');
         $tomo = $service->findNoDigitado($pk);
+        if($tomo){
+            $this->get('asignacion_service')
+                    ->asignarTomos($usuario, $pk);
+        }
         $response = new Response(json_encode($tomo));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/tomo-quitar/ajax/", name="_asignacion_tomo_quitar_ajax")
+     * @Template("")
+     */
+    public function tomoQuitarAction(Request $request) {
+        $pk = $request->request->get('tomo');
+        $usuario = $request->request->get('usuario');
+        $result = $this->get('asignacion_service')
+                    ->desasignarTomos($usuario, $pk);        
+        $response = new Response(json_encode(array(
+            'success' => $result
+        )));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }

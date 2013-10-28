@@ -48,6 +48,18 @@ class UsuarioService {
         }
         return $_perm;
     }
+    
+    public function hasRole($role) {
+        $user = $this->sc->getToken()->getUser();
+        $roles = $user->getRoles();        
+        foreach ($roles as $role) {
+            $rol = is_object($role)?$role->getRole():$role;
+            if ($rol === 'ROLE_ADMINISTRADOR') {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public function getPermissions() {
         $user = $this->sc->getToken()->getUser();
@@ -55,15 +67,22 @@ class UsuarioService {
                 ->getPermissions($user->getId());
         return $perms;
     }
-    
+
     public function listaUsuariosPlanilla($keys = true) {
         return $this->em->getRepository('IneiAuthBundle:Usuarios')
-                ->listaUsuariosPlanilla($keys);
+                        ->listaUsuariosPlanilla($keys);
     }
 
     public function listaTomosAsignados() {
-        $user = $this->sc->getToken()->getUser()->getId();
-        return $this->em->getRepository('IneiAuthBundle:Usuarios')
-                ->listaTomosAsignados($user);
+        $user = $this->sc->getToken()->getUser();
+        //print_r($user->getRoles());
+        if ($this->hasRole('ROLE_ADMINISTRADOR')) {
+            $tomos = array_combine(range(1, 419), range(1, 419));
+        } else {
+            $tomos = $this->em->getRepository('IneiAuthBundle:Usuarios')
+                    ->listaTomosAsignados($user->getId());
+        }
+        return $tomos;
     }
+
 }

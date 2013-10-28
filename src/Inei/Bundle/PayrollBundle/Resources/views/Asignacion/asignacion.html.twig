@@ -55,8 +55,6 @@
             </div>
         </div>
             <div class="modal-footer">
-                {{ form_widget(form.save) }}
-                {{ form_widget(form.saveAndAdd) }}
                 <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
             </div>            
         </div>
@@ -72,9 +70,14 @@
         
         $('#asignacion_add').on('click', function(event){
             var tomo = $('#asignacion_tomo').val(),
-                url = '{{ path('_asignacion_tomo_ajax') }}';
+                url = '{{ path('_asignacion_tomo_ajax') }}',
+                usuario = $('#asignacion_asignado').val();
             var tabla = $('#tbltomos tbody'),
                 item = tabla.find('tr').length+1;
+            if($('#asignacion_asignado').val()===''){
+                alert("Debe seleccionar un usuario");
+                return false;
+            }
             if(!$.isNumeric(tomo)){
                 alert("Debe ingresar un número de tomo correcto");
                 return false;
@@ -83,8 +86,10 @@
                 alert("El tomo ya esta ingresado en la lista");
                 return false;
             }
+            if(confirm('¿Desea agregar el tomo?')){
             var data = {
-                tomo: tomo
+                tomo: tomo,
+                usuario: usuario
             };
             // Send the data using post
             var oOptions = {  
@@ -114,12 +119,13 @@
                     tabla.append(fila);
                     resumen();
                 }else{
-                    alert('El folio ya ha sido asignado');
+                    alert('El tomo ya ha sido asignado');
                 }
             })
             .fail(function(data, textStatus, jqXHR) {
                 $('#feedback').html(textStatus);
             });
+            }
         });
 
         $('#asignacion_asignado').on('change', function(event){
@@ -152,6 +158,7 @@
                             '<td>'+v['digitables']+'</td>'+
                             '<td>'+v['registros']+'</td>';
                     fila.append(columnas);
+                    fila.data('tomo', v['tomo']);
                     addOptions(fila);
                     tabla.append(fila);
                 });
@@ -169,11 +176,39 @@
             $newForm.append($options);
             $deleteopt.on('click', function(e) {
                 e.preventDefault();
-                var tabla = $('#tbltomos tbody'),
-                tomo=$newForm.data('tomo');           
-                tabla.data('tomos').splice( $.inArray(tomo, tabla.data('tomos')), 1 );
-                $newForm.remove();
-                resumen();
+                if(confirm('¿Desea eliminar el tomo asignado?')){
+                    var tabla = $('#tbltomos tbody'),
+                    tomo=$newForm.data('tomo'),
+                    url = '{{ path('_asignacion_tomo_quitar_ajax') }}',
+                    usuario = $('#asignacion_asignado').val();
+                    tabla.data('tomos').splice( $.inArray(tomo, tabla.data('tomos')), 1 );
+                    var data = {
+                        usuario: usuario,
+                        tomo: tomo
+                    };
+                    var oOptions = {  
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        dataType: 'json',
+                        async: true,
+                        ajaxSend : function(data, textStatus, jqXHR) {
+                            $('#feedback').html('Cargando...');
+                        }
+                    };
+                    var posting = $.ajax(oOptions);
+                    posting.done(function(data, textStatus, jqXHR) {
+                        if(data['success']){
+                            $newForm.remove();
+                            resumen();
+                        }else{
+                            alert('No se puede eliminar el tomo');
+                        }
+                    })
+                    .fail(function(data, textStatus, jqXHR) {
+                        $('#feedback').html(textStatus);
+                    });
+                }
             });
         }
         function resumen(){
