@@ -341,16 +341,15 @@ class InventarioController extends Controller {
         if (!$this->get('usuario_service')->hasPermission('folio', 'del')) {
             throw $this->createNotFoundException();
         }
-        try {
-            $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Folios')->find($pk);
-            $em = $this->getDoctrine()->getEntityManager();
-            $em->remove($object);
-            $em->flush();
-            $this->get('folios_service')->deletePlanillas($pk);
+        
+//            $object = $this->getDoctrine()->getRepository(
+//                    'IneiPayrollBundle:Folios')->find($pk);
+        $result = $this->get('folios_service')->deleteFolio($pk);
+        if($result){
             $this->get('session')->getFlashBag()->add(
                     'folio', 'Registro eliminado satisfactoriamente'
             );
-        } catch (DBALException $e) {
+        }else{
             $this->get('session')->getFlashBag()->add(
                     'folio', 'Ocurrio un error al grabar el registro'
             );

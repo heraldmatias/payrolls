@@ -37,7 +37,7 @@ class SearchFoliosType extends AbstractType {
                      ),
                     'required' => false,
                     'empty_value' => '---SELECCIONE---',
-                    'choices' => array_combine(range(1, 500),range(1, 500)),
+                    'choices' => array_combine(range(1, 700),range(1, 700)),
                     'label' => 'Numero de Folio'
                 ))
                 ->add('periodoFolio', 'choice', array(

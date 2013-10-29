@@ -30,7 +30,7 @@ class FoliosRepository extends EntityRepository {
         if (array_key_exists('registrosFolio', $criteria))
             $where[] = 'f.registrosFolio =' . $criteria['registrosFolio'];
         $DQL .= count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
-        $qb = $this->getEntityManager()->createQuery($DQL);
+        $qb = $this->getEntityManager()->createQuery($DQL.' ORDER BY f.folio');
         return $qb->getResult();
     }
 
