@@ -41,7 +41,7 @@ class TomosRepository extends EntityRepository {
     
     public function findNoDigitado($tomo){
         $sql = "select * from lv_datos_tomo where completo = false
-            and digitados=0 and tomo=:tomo and tomo not in(
+             and tomo=:tomo and tomo not in(
             Select co_tomo from asignacion);";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
