@@ -119,6 +119,35 @@
             jQuery(v).prepend($td);
         });
     }
+    function resumen(){
+        var cols = jQuery('#tplanillas tbody tr:eq(0) td').length;
+        var fresumen= jQuery('<tr></tr>');
+        var colsr='';
+        for(i=0;i<cols;i++){
+            colsr +='<td>&nbsp;</td>';
+        }
+        fresumen.append(colsr);
+        jQuery('#tplanillas tbody').append(fresumen);
+    }
+    
+    function calculaTotales(){
+        /*var resumen = jQuery('#tplanillas tbody tr:last');
+        var rows = jQuery('#tplanillas tbody tr'),
+                filas=rows.length;
+        jQuery.each(rows, function(k, v){
+            if(k<(filas-1)){
+                var cols = jQuery(v).find('td.column-monto'),
+                total = 0,
+                valor = 0;
+                jQuery.each(cols, function(i, c){
+                    valor = jQuery(c).find('input[type="text"]').val();
+                    total += isNaN(valor)?0:parseFloat(valor);
+               });
+               resumen.find('td:eq('+k+')').html(total);
+            }
+        });*/
+    }
+    
     function loadFolios(tomo) {
         var $folios = jQuery('#registrar_planilla_folio');
         $folios.empty();
@@ -140,8 +169,25 @@
             }
         });
         activateNextRow();
+        resumen();
     });
-
+    
+    jQuery('.monto').on('keypress', function(e){
+        if(e.which === 13){
+            if(jQuery(this).val().indexOf('+')!==-1){
+                var value = jQuery(this).val(),
+                numbers=value.split('+'),
+                total=0;
+                for(i=0; i< numbers.length;i++){
+                    total += isNaN(numbers[i])?0:parseFloat(numbers[i]);
+                }
+                jQuery(this).val(total);
+                jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
+            }
+            calculaTotales();
+        }
+    });
+    
     function activateNextRow(){
         var rows = jQuery('#tplanillas tbody tr');
         var c_rows = rows.length-1;
