@@ -11,7 +11,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Inei\Bundle\AuthBundle\Entity\User
  *
- * @ORM\Table(name="USUARIOS")
+ * @ORM\Table(name="USUARIOS",
+ * indexes={@ORM\Index(name="NOM_COMP_USU_idx", columns={"NOM_COMP_USU"})})
  * @ORM\Entity(repositoryClass="Inei\Bundle\AuthBundle\Repository\UsuariosRepository")
  */
 class Usuarios implements AdvancedUserInterface, \Serializable {

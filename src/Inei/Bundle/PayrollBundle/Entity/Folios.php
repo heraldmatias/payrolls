@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 /**
  * Folios
  *
- * @ORM\Table(name="FOLIOS")
+ * @ORM\Table(name="FOLIOS",
+ * indexes={@ORM\Index(name="NUM_FOLIO_idx", columns={"NUM_FOLIO"})})
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\FoliosRepository")
  * @HasLifecycleCallbacks
  */
