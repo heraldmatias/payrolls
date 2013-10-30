@@ -181,7 +181,7 @@
                 for(i=0; i< numbers.length;i++){
                     total += isNaN(numbers[i])?0:parseFloat(numbers[i]);
                 }
-                jQuery(this).val(total);
+                jQuery(this).val(total.toFixed(2));
                 jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
             }
             calculaTotales();
