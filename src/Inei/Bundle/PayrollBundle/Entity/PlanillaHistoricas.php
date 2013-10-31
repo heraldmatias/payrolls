@@ -19,7 +19,7 @@ class PlanillaHistoricas
      * @var integer
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $id;
 
@@ -123,6 +123,12 @@ class PlanillaHistoricas
     public function getId()
     {
         return $this->id;
+    }
+    
+    public function setId($id)
+    {
+        $this->id=$id;
+        return $this;
     }
 
        /**
