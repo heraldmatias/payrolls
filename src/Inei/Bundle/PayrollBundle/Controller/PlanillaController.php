@@ -495,4 +495,103 @@ class PlanillaController extends Controller {
         );
     }
 
+    /***************************PRUEBAS***********************************/
+    public function createPlanillaForm2($array, $object) {
+        return $this->createFormBuilder($array, array(
+                            'attr' => array(
+                                'id' => 'form_planilla'
+                            ),
+                            'action' => $this->generateUrl('_planilla_save2')
+                        ))
+                        ->add('payrolls', 'collection', array(
+                            'required' => true,
+                            'allow_delete' => true,
+                            'allow_add' => true,
+                            'prototype' => true,
+                            'type' => new \Inei\Bundle\PayrollBundle\Form\Type\PlanillaType2(),
+                            'options' => array(
+                                'folio' => $object
+                            )
+                        ))
+                        ->add('save', 'submit', array(
+                            'label' => 'Guardar',
+                            'attr' => array('class' => 'btn btn-primary'),))
+                        ->getForm();
+    }
+
+    /**
+     * @Route("/save2", name="_planilla_save2")
+     * @Template("")
+     */
+    public function save2Action(Request $request) {        
+        $object = null;
+        $folio = $request->request->get('folio');
+        $tomo = $request->request->get('tomo');
+        if (null != $folio & null != $tomo) {
+            $em = $this->getDoctrine()
+                    ->getRepository('IneiPayrollBundle:Folios');
+            $object = $em->findOneCustomByNum($folio, $tomo);
+        }
+        $service = $this->get('planilla_service');
+        if ($object && $object->getRegistrosFolio()) {
+            $_form = $this->createPlanillaForm2(array(), $object);
+            $_form->handleRequest($request);
+            if ($_form->isValid()) {
+                /**                 * *GUARDAR** */
+                $_data = $_form->getData();
+                $data = $_data['payrolls'];
+                if ($service->saveMatrix2($object, $data)) {
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Registro grabado satisfactoriamente'
+                    );
+                } else {
+                    $this->get('session')->getFlashBag()->add(
+                            'planilla', 'Ocurrio un error al grabar la planilla'
+                    );
+                }
+            }
+        }
+        $nextAction = '_planilla_add2';
+        return $this->redirect($this->generateUrl($nextAction));
+    }
+
+    /**
+     * @Route("/add2", name="_planilla_add2")
+     * @Template("IneiPayrollBundle:Planilla:addUpdate.html.twig")
+     */
+    public function addUpdate2Action(Request $request) {
+        if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
+            throw $this->createNotFoundException();
+        }
+        $folio = null;
+        $tomo = null;
+        $object = null;
+        if ($request->request->get('form')) {
+            $folio = $request->request->get('folio');
+            $tomo = $request->request->get('tomo');
+        } else if ($request->request->get('registrar_planilla')) {
+            $aplanilla = $request->request->get('registrar_planilla');
+            $folio = array_key_exists('folio', $aplanilla) ? $aplanilla['folio'] : null;
+            $tomo = array_key_exists('tomo', $aplanilla) ? $aplanilla['tomo'] : null;
+        }
+        $form = null;
+        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
+        $sform->handleRequest($request);
+        if (null != $folio & null != $tomo) {
+            $em = $this->getDoctrine()
+                    ->getRepository('IneiPayrollBundle:Folios');
+            $object = $em->findOneCustomByNum($folio, $tomo);
+        }
+        $service = $this->get('planilla_service');
+        if ($object && $object->getRegistrosFolio()) {
+            $array = $service->generateMatrix2($object, true);
+            $_form = $this->createPlanillaForm2($array, $object);
+            $form = $_form->createView();
+        }
+        return array(
+            'form' => $form,
+            'sform' => $sform->createView(),
+            'folio' => $object
+        );
+    }
 }

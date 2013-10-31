@@ -27,3 +27,72 @@ CREATE OR REPLACE VIEW lv_datos_tomo AS
 
 ALTER TABLE lv_datos_tomo
   OWNER TO postgres;
+
+CREATE OR REPLACE FUNCTION fn_planilla(
+IN aid integer,
+IN aano_peri_tpe character varying(30), 
+IN anume_peri_tpe character varying(2), 
+IN avalo_calc_phi character varying(150),
+IN atipo_plan_tpl character varying(5), 
+IN asubt_plan_stp character varying(2),
+IN acodi_empl_per character varying(100),
+IN acodi_conc_tco character varying(5),
+IN acodi_folio integer,
+IN adesc_plan_stp text, 
+IN aflag_folio integer,
+IN anum_reg integer,
+IN ausu_crea_id integer,
+IN ausu_mod_id integer=null)
+RETURNS INTEGER AS
+$BODY$
+BEGIN
+IF EXISTS(SELECT * FROM planilla_historicas WHERE id = aid) THEN
+   UPDATE planilla_historicas
+   SET ano_peri_tpe=aano_peri_tpe, nume_peri_tpe=anume_peri_tpe, 
+	valo_calc_phi=avalo_calc_phi, tipo_plan_tpl=atipo_plan_tpl, 
+       subt_plan_stp=asubt_plan_stp, codi_empl_per=acodi_empl_per,
+       codi_conc_tco=acodi_conc_tco, codi_folio=acodi_folio, 
+       desc_plan_stp=adesc_plan_stp, flag_folio=aflag_folio,
+	num_reg=anum_reg, usu_mod_id=ausu_mod_id, fec_mod=now()
+WHERE id=aid;
+RETURN aid;
+ELSE
+INSERT INTO planilla_historicas(
+            ano_peri_tpe, nume_peri_tpe, valo_calc_phi, tipo_plan_tpl, 
+            subt_plan_stp, codi_empl_per, codi_conc_tco, codi_folio, 
+            desc_plan_stp, flag_folio, num_reg, usu_crea_id, fec_creac)
+    VALUES (aano_peri_tpe, anume_peri_tpe, avalo_calc_phi, atipo_plan_tpl, 
+            asubt_plan_stp, acodi_empl_per, acodi_conc_tco, acodi_folio, 
+            adesc_plan_stp, aflag_folio, anum_reg, 
+            ausu_crea_id,now());
+            RETURN 1;
+END IF;
+END;
+$BODY$
+LANGUAGE plpgsql
+
+
+CREATE OR REPLACE FUNCTION fn_fixplanilla(
+IN acodi_folio integer)
+RETURNS INTEGER AS
+$BODY$
+DECLARE registros integer;
+BEGIN
+--BORRA FILAS INNECESARIAS
+SELECT COALESCE(reg_folio-1,-1) FROM folios WHERE codi_folio=acodi_folio INTO registros;
+DELETE FROM planilla_historicas WHERE codi_folio = acodi_folio
+AND num_reg>registros;
+--BORRA COLUMNAS INNECESARIAS
+DELETE FROM planilla_historicas WHERE --p.codi_folio = acodi_folio
+--AND codi_conc_tco not in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio)
+id in (SELECT p.id FROM planilla_historicas p WHERE p.codi_conc_tco in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio) and 
+p.flag_folio > (SELECT count(cp.codi_conc_tco) FROM conceptos_folios cp where cp.codi_folio = acodi_folio and cp.codi_conc_tco=p.codi_conc_tco)
+);
+RETURN 1;
+--BORRA COLUMNAS INNECESARIAS
+DELETE FROM planilla_historicas WHERE codi_folio = acodi_folio
+AND codi_conc_tco not in (SELECT codi_conc_tco FROM conceptos_folios where codi_folio = acodi_folio);
+RETURN 1;
+END;
+$BODY$
+LANGUAGE plpgsql

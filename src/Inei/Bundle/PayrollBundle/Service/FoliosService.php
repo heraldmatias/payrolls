@@ -71,5 +71,22 @@ class FoliosService {
             return false;
         }
     }
+    
+    public function updateMatrix($folio) {
+        $conn = $this->em->getConnection();
+        try {
+            $conn->beginTransaction();            
+            $sql = "SELECT fn_fixplanilla(:acodi_folio);";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue('acodi_folio', $folio);
+            $stmt->execute();
+            $conn->commit();
+            return true;
+        } catch (Doctrine\DBAL\DBALException $e) {
+            $conn->rollBack();
+            return false;
+        }
+    }
+    
 
 }

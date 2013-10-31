@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class PlanillaType extends AbstractType {
+class PlanillaType2 extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $folio = $options['folio'];
@@ -28,16 +28,14 @@ class PlanillaType extends AbstractType {
                     'attr' => array(
                         'data-title' => 'NOMBRES Y APELLIDOS',
                         'class' => 'nombre',
-                        'style' => 'width:200px;',
-                        'autocomplete' => 'on',
-                        'data-provide' => 'typeahead'
+                        'style' => 'width:200px;'
                     ),
                     'max_length' => 100
                 ))
                 ->add('registro', 'hidden', array(
                 ))
-//                ->add('codigos', 'hidden', array(
-//                ))
+                ->add('codigos', 'hidden', array(
+                ))
                 ->add('descripcion', 'textarea', array(
                     'attr' => array(
                         'data-title' => 'OBSERVACION',
@@ -76,7 +74,7 @@ class PlanillaType extends AbstractType {
     }
 
     public function getName() {
-        return 'planilla';
+        return 'planilla2';
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

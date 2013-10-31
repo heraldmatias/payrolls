@@ -248,11 +248,10 @@ class InventarioController extends Controller {
         $folioupdate = $request->request->get('folioupdate');
         $form = $this->createForm('folios', $object, array('em' => $this->getDoctrine()->getManager()));
         $form->handleRequest($request);
+        $service = $this->get('folios_service');
         /******SI EXISTE EL FOLIO Y ES DIFERENTE ENTONCES HAY QUE REEMPLAZAR******/
-        if($request->getMethod()==='POST'){
-            $service = $this->get('folios_service');
-            $service->orderFolios($object->getFolio(), $folioupdate, $object->getTomo()->getCodiTomo());
-        }
+//        if($request->getMethod()==='POST'){
+//        }
         /* VERFICAR SI EL FORMULARIO ES VALIDO */
         if ($form->isValid()) {
             try {
@@ -265,6 +264,9 @@ class InventarioController extends Controller {
                     }
                     $em->flush();
                 }
+                $service->orderFolios($object->getFolio(), $folioupdate,
+                        $object->getTomo()->getCodiTomo());
+                $service->updateMatrix($pk);
                 $this->get('session')->getFlashBag()->add(
                         'folio', 'Registro modificado satisfactoriamente'
                 );
