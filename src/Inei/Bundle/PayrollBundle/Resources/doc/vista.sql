@@ -71,10 +71,12 @@ END;
 $BODY$
 LANGUAGE plpgsql
 
+-- Function: fn_fixplanilla(integer)
 
-CREATE OR REPLACE FUNCTION fn_fixplanilla(
-IN acodi_folio integer)
-RETURNS INTEGER AS
+-- DROP FUNCTION fn_fixplanilla(integer);
+
+CREATE OR REPLACE FUNCTION fn_fixplanilla(acodi_folio integer)
+  RETURNS integer AS
 $BODY$
 DECLARE registros integer;
 BEGIN
@@ -83,16 +85,55 @@ SELECT COALESCE(reg_folio-1,-1) FROM folios WHERE codi_folio=acodi_folio INTO re
 DELETE FROM planilla_historicas WHERE codi_folio = acodi_folio
 AND num_reg>registros;
 --BORRA COLUMNAS INNECESARIAS
-DELETE FROM planilla_historicas WHERE --p.codi_folio = acodi_folio
---AND codi_conc_tco not in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio)
-id in (SELECT p.id FROM planilla_historicas p WHERE p.codi_conc_tco in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio) and 
-p.flag_folio > (SELECT count(cp.codi_conc_tco) FROM conceptos_folios cp where cp.codi_folio = acodi_folio and cp.codi_conc_tco=p.codi_conc_tco)
-);
-RETURN 1;
+--DELETE FROM planilla_historicas p WHERE p.codi_folio = acodi_folio
+--AND p.codi_conc_tco not in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio);
+--id in ( SELECT p.id FROM planilla_historicas p WHERE p.codi_conc_tco in (SELECT codi_conc_tco FROM conceptos_folios cp1 where cp1.codi_folio = acodi_folio) and 
+--p.flag_folio > (SELECT count(cp.codi_conc_tco) FROM conceptos_folios cp where cp.codi_folio = acodi_folio and cp.codi_conc_tco=p.codi_conc_tco)
+--);
+--RETURN 1;
 --BORRA COLUMNAS INNECESARIAS
 DELETE FROM planilla_historicas WHERE codi_folio = acodi_folio
 AND codi_conc_tco not in (SELECT codi_conc_tco FROM conceptos_folios where codi_folio = acodi_folio);
 RETURN 1;
 END;
 $BODY$
-LANGUAGE plpgsql
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION fn_fixplanilla(integer)
+  OWNER TO postgres;
+
+-- Function: fn_planilla(integer, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer, text, integer, integer, integer, integer)
+
+-- DROP FUNCTION fn_planilla(integer, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer, text, integer, integer, integer, integer);
+
+CREATE OR REPLACE FUNCTION fn_planilla(aid integer, aano_peri_tpe character varying, anume_peri_tpe character varying, avalo_calc_phi character varying, atipo_plan_tpl character varying, asubt_plan_stp character varying, acodi_empl_per character varying, acodi_conc_tco character varying, acodi_folio integer, adesc_plan_stp text, aflag_folio integer, anum_reg integer, ausu_crea_id integer, ausu_mod_id integer DEFAULT NULL::integer)
+  RETURNS integer AS
+$BODY$
+BEGIN
+IF EXISTS(SELECT * FROM planilla_historicas WHERE id = aid) THEN
+   UPDATE planilla_historicas
+   SET ano_peri_tpe=aano_peri_tpe, nume_peri_tpe=anume_peri_tpe, 
+	valo_calc_phi=avalo_calc_phi, tipo_plan_tpl=atipo_plan_tpl, 
+       subt_plan_stp=asubt_plan_stp, codi_empl_per=acodi_empl_per,
+       codi_conc_tco=acodi_conc_tco, codi_folio=acodi_folio, 
+       desc_plan_stp=adesc_plan_stp, flag_folio=aflag_folio,
+	num_reg=anum_reg, usu_mod_id=ausu_mod_id, fec_mod=now()
+WHERE id=aid;
+RETURN aid;
+ELSE
+INSERT INTO planilla_historicas(
+            ano_peri_tpe, nume_peri_tpe, valo_calc_phi, tipo_plan_tpl, 
+            subt_plan_stp, codi_empl_per, codi_conc_tco, codi_folio, 
+            desc_plan_stp, flag_folio, num_reg, usu_crea_id, fec_creac)
+    VALUES (aano_peri_tpe, anume_peri_tpe, avalo_calc_phi, atipo_plan_tpl, 
+            asubt_plan_stp, acodi_empl_per, acodi_conc_tco, acodi_folio, 
+            adesc_plan_stp, aflag_folio, anum_reg, 
+            ausu_crea_id,now());
+            RETURN 1;
+END IF;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION fn_planilla(integer, character varying, character varying, character varying, character varying, character varying, character varying, character varying, integer, text, integer, integer, integer, integer)
+  OWNER TO postgres;

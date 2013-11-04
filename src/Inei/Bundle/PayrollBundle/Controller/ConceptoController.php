@@ -61,6 +61,8 @@ class ConceptoController extends Controller {
             // perform some action, such as saving the task to the database
             try {
                 $em = $this->getDoctrine()->getManager();
+                $object->setCreador($this->get('security.context')->getToken()->getUser());
+                $object->setFecCreac(new \DateTime());
                 $em->persist($object);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
@@ -100,6 +102,8 @@ class ConceptoController extends Controller {
             // perform some action, such as saving the task to the database
             try {
                 $em = $this->getDoctrine()->getManager();
+                $object->setModificador($this->get('security.context')->getToken()->getUser());
+                $object->setFecMod(new \DateTime());
                 $em->persist($object);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(

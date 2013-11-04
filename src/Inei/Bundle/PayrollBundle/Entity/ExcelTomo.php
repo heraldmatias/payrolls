@@ -71,6 +71,20 @@ class ExcelTomo {
      */
     private $tomo;
     
+    /**
+     * @var Inei\Bundle\AuthBundle\Entity\Usuarios
+     * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
+     * @ORM\JoinColumn(name="USU_CREA_ID",referencedColumnName="id", nullable=true)
+     */
+    private $creador;
+    
+    /**
+     * @var Inei\Bundle\AuthBundle\Entity\Usuarios
+     * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
+     * @ORM\JoinColumn(name="USU_MOD_ID",referencedColumnName="id", nullable=true)
+     */
+    private $modificador;
+    
     
     public function getFullWebPath(){
         return null === $this->filename ? null : $this->getWebPath() . $this->filename;
@@ -309,5 +323,51 @@ class ExcelTomo {
     public function getTomo()
     {
         return $this->tomo;
+    }
+
+    /**
+     * Set creador
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $creador
+     * @return ExcelTomo
+     */
+    public function setCreador(\Inei\Bundle\AuthBundle\Entity\Usuarios $creador = null)
+    {
+        $this->creador = $creador;
+
+        return $this;
+    }
+
+    /**
+     * Get creador
+     *
+     * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
+     */
+    public function getCreador()
+    {
+        return $this->creador;
+    }
+
+    /**
+     * Set modificador
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $modificador
+     * @return ExcelTomo
+     */
+    public function setModificador(\Inei\Bundle\AuthBundle\Entity\Usuarios $modificador = null)
+    {
+        $this->modificador = $modificador;
+
+        return $this;
+    }
+
+    /**
+     * Get modificador
+     *
+     * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
+     */
+    public function getModificador()
+    {
+        return $this->modificador;
     }
 }

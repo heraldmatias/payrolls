@@ -57,6 +57,7 @@ class ExcelTomoController extends Controller {
             throw $this->createNotFoundException();
         }
         $object = new ExcelTomo();
+        $object->setCreador($this->get('security.context')->getToken()->getUser());
         $object->setCreatedAt(new \DateTime("now"));
         $form = $this->createForm('exceltomo', $object);
         $form->handleRequest($request);
@@ -101,6 +102,8 @@ class ExcelTomoController extends Controller {
         if ($form->isValid()) {
             try {
                 $em = $this->getDoctrine()->getManager();
+                $object->setUpdatedAt(new \DateTime("now"));
+                $object->setModificador($this->get('security.context')->getToken()->getUser());
                 $object->uploadFile();
                 $em->persist($object);
                 $em->flush();
@@ -207,10 +210,15 @@ class ExcelTomoController extends Controller {
         $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
         $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
         $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
+        $userid = $this->get('security.context')
+                    ->getToken()->getUser()->getId();
+        $date = new \DateTime();
+        $fecha = $date->format('Y-m-d H:i:s');
         /*         * *************************SE GUARDA EL TOMO********************* */
         $insertFolio = 'INSERT INTO folios(
             per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, 
-            num_folio) VALUES ( ?, ?, ?, ?, ?, ?) returning codi_folio;';
+            num_folio,usu_crea_id,fec_creac) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
+            returning codi_folio;';
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
             codi_folio, codi_conc_tco) values ';
         try {
@@ -232,7 +240,9 @@ class ExcelTomoController extends Controller {
                 'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
                 'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
                 'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
-                'desc_tomo' => NULL
+                'desc_tomo' => NULL,
+                'fec_creac' => $fecha,
+                'usu_crea_id' => $userid
             ));
             while (true) {
                 $nfolio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
@@ -248,6 +258,8 @@ class ExcelTomoController extends Controller {
                 $stmt->bindValue(4, $tomo);
                 $stmt->bindValue(5, $tplanilla ? str_replace(' ', '', strtoupper($tplanilla)) : NULL);
                 $stmt->bindValue(6, $nfolio);
+                $stmt->bindValue(7, $userid);
+                $stmt->bindValue(8, $fecha);
                 $stmt->execute();
                 $_folio = $stmt->fetch();
                 $folio = $_folio['codi_folio'];

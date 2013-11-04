@@ -79,6 +79,32 @@ class Folios {
 
     private $descSubtStp;
     
+    /**
+     * @var Inei\Bundle\AuthBundle\Entity\Usuarios
+     * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
+     * @ORM\JoinColumn(name="USU_CREA_ID",referencedColumnName="id", nullable=true)
+     */
+    private $creador;
+    
+    /**
+     * @var Inei\Bundle\AuthBundle\Entity\Usuarios
+     * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
+     * @ORM\JoinColumn(name="USU_MOD_ID",referencedColumnName="id", nullable=true)
+     */
+    private $modificador;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_CREAC", type="datetime", nullable=true)
+     */
+    private $fec_creac;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_MOD", type="datetime", nullable=true)
+     */
+    private $fec_mod;
+    
     public function setDescSubtStp($descSubtStp){
         $this->descSubtStp = $descSubtStp;
     }
@@ -348,5 +374,97 @@ class Folios {
 
     public function setConceptos($conceptos) {
         return $this->conceptos = $conceptos;
+    }
+
+    /**
+     * Set fec_creac
+     *
+     * @param \DateTime $fecCreac
+     * @return Folios
+     */
+    public function setFecCreac($fecCreac)
+    {
+        $this->fec_creac = $fecCreac;
+
+        return $this;
+    }
+
+    /**
+     * Get fec_creac
+     *
+     * @return \DateTime 
+     */
+    public function getFecCreac()
+    {
+        return $this->fec_creac;
+    }
+
+    /**
+     * Set fec_mod
+     *
+     * @param \DateTime $fecMod
+     * @return Folios
+     */
+    public function setFecMod($fecMod)
+    {
+        $this->fec_mod = $fecMod;
+
+        return $this;
+    }
+
+    /**
+     * Get fec_mod
+     *
+     * @return \DateTime 
+     */
+    public function getFecMod()
+    {
+        return $this->fec_mod;
+    }
+
+    /**
+     * Set creador
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $creador
+     * @return Folios
+     */
+    public function setCreador(\Inei\Bundle\AuthBundle\Entity\Usuarios $creador = null)
+    {
+        $this->creador = $creador;
+
+        return $this;
+    }
+
+    /**
+     * Get creador
+     *
+     * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
+     */
+    public function getCreador()
+    {
+        return $this->creador;
+    }
+
+    /**
+     * Set modificador
+     *
+     * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $modificador
+     * @return Folios
+     */
+    public function setModificador(\Inei\Bundle\AuthBundle\Entity\Usuarios $modificador = null)
+    {
+        $this->modificador = $modificador;
+
+        return $this;
+    }
+
+    /**
+     * Get modificador
+     *
+     * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
+     */
+    public function getModificador()
+    {
+        return $this->modificador;
     }
 }

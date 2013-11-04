@@ -15,14 +15,16 @@ class SubtplanillaRepository extends EntityRepository
     public function findUsingLike($filter = array(), $orderBy=NULL) {
         array_walk($filter, function(&$v, &$k) {
                     if ($k === 'descSubtStp') {
-                        $v = " t.$k LIKE '%$v%'";
+                        $v = " st.$k LIKE '%$v%'";
                     } else {
-                        $v = "t.$k = $v";
+                        $v = "st.$k = $v";
                     }
                 });
         $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
         $query = $this->getEntityManager()
-                ->createQuery('SELECT t FROM IneiPayrollBundle:Subtplanilla t ' . $filter.' '.$orderBy);
+                ->createQuery('SELECT st, t
+                    FROM IneiPayrollBundle:Subtplanilla st
+                    JOIN st.tipoPlanTpl t ' . $filter.' '.$orderBy);
         return $query->getResult();
     }
 }
