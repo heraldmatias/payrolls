@@ -120,28 +120,31 @@ class PlanillaService {
                 ->setParameter('folio', $codiFolio);
         $planillas = $qb->getQuery()->getResult();
         return $planillas;
-    }    
-    
+    }
+
     public function getPlanillaColumns($object) {
-        if(!$object) return array();
+        if (!$object)
+            return array();
         $array = $this->em->getRepository('IneiPayrollBundle:ConceptosFolios')
                 ->getForColumns($object->getCodiFolio());
         $result = array_map(
                 create_function('$item', 'return $item["descCortTco"];'), $array);
-        return array_merge(array('REGISTRO','NOMBRES Y APELLIDOS','OBSERVACION'), $result);
+        return array_merge(array('REGISTRO', 'NOMBRES Y APELLIDOS', 'OBSERVACION'), $result);
     }
-    
+
     public function getPlanillaValues($object) {
-        if(!$object) return array();
+        if (!$object)
+            return array();
         $_planillas = $this->getPlanillas($object->getCodiFolio());
         $planilla = array();
-        $array = array();$co=0;
+        $array = array();
+        $co = 0;
         if ($_planillas) {
             $reg = $_planillas[0]->getRegistro();
             foreach ($_planillas as $key => $value) {
                 if ($reg == $value->getRegistro()) {
                     $reg = $value->getRegistro();
-                    $planilla['registro'] = ($reg+1);
+                    $planilla['registro'] = ($reg + 1);
                     $planilla['codiEmplPer'] = $value->getCodiEmplPer();
                     $planilla['descripcion'] = $value->getDescripcion();
                     $key = $value->getCodiConcTco() . '_' . $value->getFlag();
@@ -162,7 +165,7 @@ class PlanillaService {
                 create_function('$item', 'return array_values($item);'), $array);
         return $result;
     }
-    
+
     /**
      * 
      * @param array $filtro
@@ -182,7 +185,7 @@ class PlanillaService {
                 $html .='<td>' . $value['tomo'] . '</td>';
                 $html .='<td>' . $value['folios'] . '</td>';
                 $html .='<td>' . $value['resumen'] . '</td>';
-                $html .='<td>' . ($value['folios']-$value['resumen']) . '</td>';
+                $html .='<td>' . ($value['folios'] - $value['resumen']) . '</td>';
                 $html .='<td>' . $value['folios_digitados'] . '</td>';
                 $html .='<td>' . $value['porcentaje_folios'] . '%</td>';
                 $html .='<td>' . $value['registros'] . '</td>';
@@ -212,7 +215,7 @@ class PlanillaService {
         }
         return $rows;
     }
-    
+
     /**
      * 
      * @param array $filtro
@@ -228,7 +231,7 @@ class PlanillaService {
         }
         return $rows;
     }
-    
+
     /**
      * 
      * @param array $rows
@@ -260,8 +263,7 @@ class PlanillaService {
         foreach ($rows as $row => $rcell) {
             $count = count($rcell);
             foreach ($cols as $col => $ccell) {
-                $sheet->setCellValueByColumnAndRow($col, $row+$from,
-                        ($col<$count)?$rcell[$col]:null);
+                $sheet->setCellValueByColumnAndRow($col, $row + $from, ($col < $count) ? $rcell[$col] : null);
             }
         }
 // Rename worksheet
@@ -270,15 +272,25 @@ class PlanillaService {
         $objPHPExcel->setActiveSheetIndex(0);
         return $objPHPExcel;
     }
-    
-/*********************PRUEBAS *************************/
+
+    /*     * *******************PRUEBAS ************************ */
+
     public function generateMatrix($object, $autosave = false) {
         $_planillas = null;
         if ($autosave) {
             $_planillas = $this->
                     loadAutoSave($object->getTomo()->getCodiTomo(), $object->getFolio());
+            if (null !== $_planillas) {
+                $array = &$_planillas['payrolls'];
+                if (count($array) > $object->getRegistrosFolio()) {
+                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
+                        unset($array[$index]);
+                    }
+                }
+            }
         }
         if (null !== $_planillas) {
+            //$object->getRegistrosFolio()
             return $_planillas;
         } else {
             $_planillas = $this->getPlanillas($object->getCodiFolio());
@@ -315,27 +327,29 @@ class PlanillaService {
                     break;
             }
             if ($co <= $object->getRegistrosFolio() - 1)
-                $planilla['codigos'] = implode(',',$codigos);
-                $array['payrolls'][$co] = $planilla;
+                $planilla['codigos'] = implode(',', $codigos);
+            $array['payrolls'][$co] = $planilla;
         }
         return $array;
     }
-    
+
     public function saveMatrix($object, $data) {
-        $conn = $this->em->getConnection();    
+        $conn = $this->em->getConnection();
         try {
             //FALTA JALAR LA FILA key para coger correctamente los ids
             //ACTUALIZAR EL VALOR SOLO SI ESTE CAMBIA
             $userid = $this->sc->getToken()->getUser()->getId();
             $conn->beginTransaction();
             $stmt = $conn->prepare(
-                            'SELECT fn_planilla (:aid, :aano_peri_tpe, :anume_peri_tpe,
+                    'SELECT fn_planilla (:aid, :aano_peri_tpe, :anume_peri_tpe,
                                 :avalo_calc_phi, :atipo_plan_tpl, :asubt_plan_stp, 
                                 :acodi_empl_per, :acodi_conc_tco, :acodi_folio, 
                                 :adesc_plan_stp, :aflag_folio, :anum_reg,
                                 :ausu_crea_id, :ausu_mod_id)'
-                        );
+            );
             foreach ($data as $key1 => $planilla) {
+                if ($key1 >= $object->getRegistrosFolio())
+                    break;
                 $reg = $planilla['registro'];
                 $dni = $planilla['codiEmplPer'];
                 $descripcion = $planilla['descripcion'];
@@ -343,17 +357,16 @@ class PlanillaService {
                 unset($planilla['codiEmplPer']);
                 unset($planilla['descripcion']);
                 unset($planilla['registro']);
-                unset($planilla['codigos']);$co=0;
+                unset($planilla['codigos']);
+                $co = 0;
                 foreach ($planilla as $key => $valor) {
                     $pos = strpos($key, '_');
-                    $stmt->bindValue('aid', array_key_exists($co, $codigos)?
-                            is_numeric($codigos[$co])?$codigos[$co]:null:null);
+                    $stmt->bindValue('aid', array_key_exists($co, $codigos) ?
+                                    is_numeric($codigos[$co]) ? $codigos[$co] : null : null);
                     $stmt->bindValue('aano_peri_tpe', $object->getTomo()->getAnoTomo());
                     $stmt->bindValue('anume_peri_tpe', '01');
                     $stmt->bindValue('avalo_calc_phi', $valor);
-                    $stmt->bindValue('atipo_plan_tpl', is_object($object->getTipoPlanTpl())
-                            ?$object->getTipoPlanTpl()->getTipoPlanTpl()
-                            :$object->getTipoPlanTpl());
+                    $stmt->bindValue('atipo_plan_tpl', is_object($object->getTipoPlanTpl()) ? $object->getTipoPlanTpl()->getTipoPlanTpl() : $object->getTipoPlanTpl());
                     $stmt->bindValue('asubt_plan_stp', $object->getSubtPlanStp());
                     $stmt->bindValue('acodi_empl_per', $dni);
                     $stmt->bindValue('acodi_conc_tco', substr($key, 0, $pos));
@@ -367,8 +380,8 @@ class PlanillaService {
                     $codigos[$co] = -1;
                     $co++;
                 }
-                /*****************ELIMINAMOS LAS FILAS QUE YA NO 
-                 * SE ENCUENTREN EN LA MATRIZ********************/
+                /*                 * ***************ELIMINAMOS LAS FILAS QUE YA NO 
+                 * SE ENCUENTREN EN LA MATRIZ******************* */
                 $q = $this->em->createQuery('delete from 
                     IneiPayrollBundle:PlanillaHistoricas m where m.id in (:ids)');
                 $q->setParameter('ids', $codigos);
@@ -384,10 +397,10 @@ class PlanillaService {
         } catch (Doctrine\DBAL\DBALException $e) {
             $conn->rollBack();
             return false;
-        } catch(\Exception $ee){
+        } catch (\Exception $ee) {
             $conn->rollBack();
             return false;
         }
     }
-    
+
 }
