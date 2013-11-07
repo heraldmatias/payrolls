@@ -276,28 +276,30 @@ class PlanillaService {
     /*     * *******************PRUEBAS ************************ */
 
     public function generateMatrix($object, $autosave = false) {
-        $_planillas = null;
+        $array = array('payrolls' => array_map(
+                    create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
         if ($autosave) {
             $_planillas = $this->
                     loadAutoSave($object->getTomo()->getCodiTomo(), $object->getFolio());
             if (null !== $_planillas) {
-                $array = &$_planillas['payrolls'];
-                if (count($array) > $object->getRegistrosFolio()) {
-                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
-                        unset($array[$index]);
-                    }
+                //$array = &$_planillas['payrolls'];
+//                if (count($array) > $object->getRegistrosFolio()) {
+//                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
+//                        //unset($array[$index]);
+//                    }
+//                }
+                //print_r($_planillas['payrolls']);
+                $plas = $_planillas['payrolls'];
+                foreach ($array['payrolls'] as $key => $value) {
+                    $array['payrolls'][$key] = array_key_exists($key, $plas)?
+                            $plas[$key]:array();
                 }
+                return $array;
             }
-        }
-        if (null !== $_planillas) {
-            //$object->getRegistrosFolio()
-            return $_planillas;
-        } else {
-            $_planillas = $this->getPlanillas($object->getCodiFolio());
-        }
+        } 
+        $_planillas = $this->getPlanillas($object->getCodiFolio());
         $planilla = array();
-        $array = array('payrolls' => array_map(
-                    create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+        
         $co = 0;
         if ($_planillas) {
             $reg = $_planillas[0]->getRegistro();
