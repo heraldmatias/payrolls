@@ -120,8 +120,8 @@ class PlanillaService {
                 ->setParameter('folio', $codiFolio);
         $planillas = $qb->getQuery()->getResult();
         return $planillas;
-    }
-
+    }    
+    
     public function getPlanillaColumns($object) {
         if (!$object)
             return array();

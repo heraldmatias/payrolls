@@ -235,16 +235,17 @@ class ExcelTomoController extends Controller {
             $sheet = $objPHPExcel->getSheet(0);
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
+            $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
             $conn->insert('tomos', array(
                 'codi_tomo' => $tomo,
                 'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
                 'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
-                'folios_tomo' => $sheet->getCellByColumnAndRow(6, $filat)->getValue(),
+                'folios_tomo' => $folios,
                 'desc_tomo' => NULL,
                 'fec_creac' => $fecha,
                 'usu_crea_id' => $userid
             ));
-            while (true) {
+            while ($filaf <= ($folios+7) ) {
                 $nfolio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();

@@ -1,4 +1,5 @@
-<html>
+  <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 {% block head %}
     <link rel="icon" sizes="16x16" href="{{ asset('favicon.ico') }}" />
@@ -10,10 +11,10 @@
 
 <title>{% block title 'Sitio Administrativo' %}</title>
 </head>
-<body>
+<body style="width: 1800px; height: 1800px;">
 {% block body %}
     {% block content_header %}
-    {% endblock %}    
+    {% endblock %}
     {% block content %}{% endblock %}
 {% endblock %}
 

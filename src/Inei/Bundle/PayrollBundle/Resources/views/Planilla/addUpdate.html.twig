@@ -183,6 +183,7 @@
                 }
                 jQuery(this).val(total.toFixed(2));
                 jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
+                return false;
             }
             calculaTotales();
         }

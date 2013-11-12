@@ -4,13 +4,13 @@
         body {
             padding-top: 180px;
             padding-bottom: 400px;
-			background-image: -moz-linear-gradient(top, #fff, #7998aa);
-			background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#7998aa));
-			background-image: -o-linear-gradient(top, #fff, #7998aa);
-			font-family: "Helvetica Neue",sans-serif;
-			font-size: 15px;
-			line-height: 1.2;
-			color:#5c7883;			
+            background-image: -moz-linear-gradient(top, #fff, #7998aa);
+            background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fff), to(#7998aa));
+            background-image: -o-linear-gradient(top, #fff, #7998aa);
+            font-family: "Helvetica Neue",sans-serif;
+            font-size: 15px;
+            line-height: 1.2;
+            color:#5c7883;			
         }
 
         .form-signin {
@@ -26,12 +26,12 @@
             -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
             box-shadow: 4px 7px 2px rgba(36, 34, 3, 0.33)
         }
-		
-		.txth3 {
-		font-size:19px;
-		line-height: 29px;
-		font-weight:normal;
-		}
+
+        .txth3 {
+            font-size:19px;
+            line-height: 29px;
+            font-weight:normal;
+        }
 
     </style>
 {% endblock %}
@@ -41,14 +41,14 @@
             <center><img alt="inei" src="{{ asset('bundles/inei/bootstrap/img/inei.png') }}" /></center>
             <h3 class="txth3"><center>Sistema de Registro de Planillas de Remuneraciones</center></h3>
             {% if error %}
-            <div class="error">{{ error.message }}</div>
+                    <div class="error">{{ error.message }}</div>
     {% endif %}
-                <input type="text" class="input-block-level" placeholder="Usuario" id="username" name="_username">
-            <input type="password" class="input-block-level" placeholder="Contraseña" id="password" name="_password">
-			<label class="checkbox">
-					<input type="checkbox" value="remember-me">Recordarme
-			</label>
-            <center><button class="btn btn-primary" type="submit">Ingresar</button></center>
-        </form>
-    </div>
+                    <input type="text" class="input-block-level" placeholder="Usuario" id="username" name="_username">
+                    <input type="password" class="input-block-level" placeholder="Contraseña" id="password" name="_password">
+                    <label class="checkbox">
+                        <input type="checkbox" value="remember-me">Recordarme
+                    </label>
+                    <center><button class="btn btn-primary" type="submit">Ingresar</button></center>
+                </form>
+            </div>
 {% endblock %}
