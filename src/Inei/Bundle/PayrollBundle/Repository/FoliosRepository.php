@@ -35,7 +35,8 @@ class FoliosRepository extends EntityRepository {
     }
 
     public function findOneCustomBy($pk) {
-        $DQL = "SELECT f, t, pla
+        $DQL = "SELECT f, partial t.{codiTomo},
+            partial pla.{tipoPlanTpl, descTipoTpl}
             FROM IneiPayrollBundle:Folios f
             JOIN f.tomo t
             LEFT JOIN f.tipoPlanTpl pla WHERE f.codiFolio = :pk";
