@@ -176,7 +176,7 @@
         if(e.which === 13){
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
-            jQuery('.monto:eq(0)').focus();
+            jQuery(this).parent().find('.monto:eq(0)').focus();
         }
     });
     
