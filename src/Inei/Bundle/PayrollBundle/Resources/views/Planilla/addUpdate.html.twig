@@ -218,6 +218,16 @@
     }
 
     jQuery('form:eq(1)').on('submit', function(e){
+        var rpt = true;
+        var campos = jQuery('input[type="text"]');
+        jQuery.each(campos, function(k, v){            
+           if(jQuery(v).val() === ''){
+               jQuery(v).focus();
+               rpt = false;
+               return false;
+           } 
+        });
+        if(rpt === false) return false;
         return confirm('¿Esta seguro que desea modificar este registro?');
     });
     
