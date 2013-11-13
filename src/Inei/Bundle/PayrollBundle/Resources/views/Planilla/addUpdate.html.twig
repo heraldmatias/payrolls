@@ -173,6 +173,7 @@
     });
     
     jQuery('.monto').on('keypress', function(e){
+        e.preventDefault();
         if(e.which === 13){
             if(jQuery(this).val().indexOf('+')!==-1){
                 var value = jQuery(this).val(),
@@ -183,7 +184,7 @@
                 }
                 jQuery(this).val(total.toFixed(2));
                 jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
-                return false;
+                
             }
             calculaTotales();
         }
