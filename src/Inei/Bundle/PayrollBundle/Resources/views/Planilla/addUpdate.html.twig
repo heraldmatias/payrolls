@@ -172,6 +172,13 @@
         resumen();
     });
     
+    jQuery('.nombre').on('keypress', function(e){
+        e.preventDefault();
+        if(e.which === 13){
+            jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
+        }
+    });
+    
     jQuery('.monto').on('keypress', function(e){
         e.preventDefault();
         if(e.which === 13){
