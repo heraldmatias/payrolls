@@ -175,7 +175,7 @@
     jQuery('.nombre').on('keypress', function(e){
         e.preventDefault();
         if(e.which === 13){
-            jQuery(this).parent().next().next().find('input[type="text"]:eq(0)').focus();
+            jQuery(this).parent().next().find('input[type="text"]:eq(1)').focus();
         }
     });
     
