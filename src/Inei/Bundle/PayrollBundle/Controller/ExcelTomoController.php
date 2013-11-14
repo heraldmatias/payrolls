@@ -276,6 +276,7 @@ class ExcelTomoController extends Controller {
             $conn->commit();
             $this->updateTomo($object, $tomo, $data['data']);
         } catch (DBALException $e) {
+            echo $e->getMessage();
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
             $conn->rollback();
             if (isset($object)) {
