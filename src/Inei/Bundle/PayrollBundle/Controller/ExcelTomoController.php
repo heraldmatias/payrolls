@@ -226,6 +226,7 @@ class ExcelTomoController extends Controller {
             if (!null == $object->getTomo()) {
                 $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
                 $emt = $this->getDoctrine()->getEntityManager();
+                $conn->prepare('DELETE FROM asignacion where co_tomo='.$pk);
                 if (null !== $tomo) {
                     $emt->remove($tomo);
                     $emt->flush();
