@@ -245,7 +245,7 @@ class ExcelTomoController extends Controller {
                 'fec_creac' => $fecha,
                 'usu_crea_id' => $userid
             ));
-            while ($filaf <= ($folios+7) ) {
+            while (true) {
                 $nfolio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
