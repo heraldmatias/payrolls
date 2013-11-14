@@ -222,11 +222,12 @@ class ExcelTomoController extends Controller {
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
             codi_folio, codi_conc_tco) values ';
         try {
+            
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
             if (!null == $object->getTomo()) {
                 $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
                 $emt = $this->getDoctrine()->getEntityManager();
-                $st = $conn->prepare('DELETE FROM asignacion where co_tomo='.$pk);
+                $st = $conn->prepare('DELETE FROM asignacion where co_tomo='.$object->getTomo());
                 $st->execute();
                 if (null !== $tomo) {
                     $emt->remove($tomo);
