@@ -5,7 +5,7 @@
 {% block csspage %}
 <style type="text/css">        
         td.column-monto{
-            width: 150px;
+            width: 70px;
         }
         td.column-nombre{
             width: 200px;
@@ -15,11 +15,12 @@
         }
         td.column-item{
             width: 30px;
-            font-size: 26px;
+            font-size: 18px;
         }
         td#col0{
             width: 200px;
         }
+        .placeholder { color: #F5F5F5; }
     </style>
 {% endblock %}
 {% block form %}
@@ -170,6 +171,7 @@
         });
         activateNextRow();
         resumen();
+        jQuery('input, textarea').placeholder();
     });
     
     jQuery('.nombre').on('keypress', function(e){
