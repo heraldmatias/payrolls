@@ -79,7 +79,7 @@ class FoliosRepository extends EntityRepository {
             return null;
         $folio = $re[0];
         /*         * *CONCEPTOS*** */
-        $DQL = "SELECT cf, partial c.{codiConcTco, descCortTco}
+        $DQL = "SELECT cf, partial c.{codiConcTco, descCortTco, tipoConcTco}
             FROM IneiPayrollBundle:ConceptosFolios cf
             JOIN cf.codiConcTco c
             WHERE cf.codiFolio = :pk ORDER BY cf.orden";
@@ -134,5 +134,17 @@ WHERE reg_folio is not null) as tabla %s order by folio ASC;";
         $query->setParameters($where);
         $tomos = $query->getArrayResult();
         return $tomos;
+    }
+    
+    public function findSiguienteFolioDigitable($tomo, $folio){
+        $sql = "select * from lv_datos_folios where tomo= :tomo
+            and folio>:folio limit 1;";
+        echo $sql;
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('tomo', $tomo);
+        $stmt->bindValue('folio', $folio);
+        $stmt->execute();
+        return $stmt->fetch();
     }
 }

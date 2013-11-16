@@ -11,22 +11,23 @@ use Inei\Bundle\PayrollBundle\Form\Type\PlanillaType;
 use Inei\Bundle\PayrollBundle\Entity\Tplanilla;
 use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
 
-
 /**
  * Description of InventarioController
  *
  * @author holivares
  */
 class PlanillaController extends Controller {
-    private static $REPORTES = array('digitador','tomo');
+
+    private static $REPORTES = array('digitador', 'tomo');
+
     /**
      * @Route("/reporte-tomo/", name="_planilla_tomo_reporte")
      * @Template("")
      */
     public function reporteTomoAction() {
         return array();
-    }        
-    
+    }
+
     /**
      * @Route("/reporte-tomo/ajax/", name="_planilla_tomo_ajax")
      * @Template("")
@@ -38,39 +39,39 @@ class PlanillaController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/reporte-tomo/print/", name="_planilla_tomo_reporte_print")
      * @Template("")
      */
     public function printTomoReporteAction(Request $request) {
         $form = $request->request->get('form');
-        if(!$form){
+        if (!$form) {
             $form = $request->query->get('form');
         }
         $service = $this->get('planilla_service');
         $data = $service->getReporteByTomo($form);
-        $excel = $service->printReporte($data,array(
-            'Numero de Tomo','Total de Folios','Folios de Resumen','Folios Digitables',
-        'Folios Digitados','Folios por Digitar','Estado'),'Reporte de Avance por Tomos',4);
+        $excel = $service->printReporte($data, array(
+            'Numero de Tomo', 'Total de Folios', 'Folios de Resumen', 'Folios Digitables',
+            'Folios Digitados', 'Folios por Digitar', 'Estado'), 'Reporte de Avance por Tomos', 4);
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"','reptomo'));
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"', 'reptomo'));
         $response->prepare($request);
         $response->sendHeaders();
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $objWriter->save('php://output');
-        exit;        
+        exit;
     }
-    
+
     /**
      * @Route("/reporte-folio/", name="_planilla_folio_reporte")
      * @Template("")
      */
     public function reporteFolioAction() {
         return array();
-    }    
-    
+    }
+
     /**
      * @Route("/reporte-folio/ajax/", name="_planilla_folio_ajax")
      * @Template("")
@@ -82,31 +83,31 @@ class PlanillaController extends Controller {
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/reporte-folio/print/", name="_planilla_folio_reporte_print")
      * @Template("")
      */
     public function printFolioReporteAction(Request $request) {
         $form = $request->request->get('form');
-        if(!$form){
+        if (!$form) {
             $form = $request->query->get('form');
         }
         $service = $this->get('planilla_service');
         $data = $service->getReporteByFolio($form);
-        $excel = $service->printReporte($data,array(
-            'Digitador','Numero de Folios','Total Registros',
-            'Registros Digitados', 'Fecha','Estado'),'Reporte de Avance por Folios',4);
+        $excel = $service->printReporte($data, array(
+            'Digitador', 'Numero de Folios', 'Total Registros',
+            'Registros Digitados', 'Fecha', 'Estado'), 'Reporte de Avance por Folios', 4);
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"','repfolio'));
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"', 'repfolio'));
         $response->prepare($request);
         $response->sendHeaders();
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $objWriter->save('php://output');
-        exit;        
+        exit;
     }
-    
+
     /**
      * @Route("/reporte/", name="_planilla_digitador")
      * @Template("")
@@ -114,7 +115,7 @@ class PlanillaController extends Controller {
     public function reporteDigitadorAction() {
         return array();
     }
-    
+
     /**
      * @Route("/reporte/ajax/", name="_planilla_digitador_ajax")
      * @Template("")
@@ -125,7 +126,7 @@ class PlanillaController extends Controller {
         $response = new Response($msg);
         return $response;
     }
-    
+
     /**
      * @Route("/autosave/", name="_planilla_autosave")
      * @Template("")
@@ -138,7 +139,7 @@ class PlanillaController extends Controller {
         $response = new Response($msg);
         return $response;
     }
-    
+
     /**
      * @Route("/print/", name="_planilla_print")
      * @Template("")
@@ -151,22 +152,21 @@ class PlanillaController extends Controller {
         $folio = $form['folio'];
         $tomo = $form['tomo'];
         $em = $this->getDoctrine()
-                    ->getRepository('IneiPayrollBundle:Folios');
+                ->getRepository('IneiPayrollBundle:Folios');
         $object = $em->findOneCustomByNum($folio, $tomo);
         $service = $this->get('planilla_service');
         $data = $service->getPlanillaValues($object);
         $cols = $service->getPlanillaColumns($object);
-        $title = sprintf('Planilla TOMO %s  FOLIO%s',$tomo,$folio);
-        $excel = $service->printReporte($data,$cols,$title,4);
+        $title = sprintf('Planilla TOMO %s  FOLIO%s', $tomo, $folio);
+        $excel = $service->printReporte($data, $cols, $title, 4);
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        $response->headers->set('Content-Disposition', 
-                sprintf('attachment;filename="%s_%s_%s.xlsx"','planilla',$tomo,$folio));
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s_%s_%s.xlsx"', 'planilla', $tomo, $folio));
         $response->prepare($request);
         $response->sendHeaders();
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
         $objWriter->save('php://output');
-        exit;        
+        exit;
     }
 
     /**
@@ -404,7 +404,8 @@ class PlanillaController extends Controller {
         );
     }
 
-    /***************************PRUEBAS***********************************/
+    /*     * *************************PRUEBAS********************************** */
+
     public function createPlanillaForm($array, $object) {
         return $this->createFormBuilder($array, array(
                             'attr' => array(
@@ -432,7 +433,7 @@ class PlanillaController extends Controller {
      * @Route("/save", name="_planilla_save")
      * @Template("")
      */
-    public function saveAction(Request $request) {        
+    public function saveAction(Request $request) {
         $object = null;
         $folio = $request->request->get('folio');
         $tomo = $request->request->get('tomo');
@@ -441,16 +442,22 @@ class PlanillaController extends Controller {
                     ->getRepository('IneiPayrollBundle:Folios');
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
-        $service = $this->get('planilla_service');
+        $service = $this->get('planilla_service');//SERVICIO
+        $session = $this->get('session');//SESSION
         if ($object && $object->getRegistrosFolio()) {
             $_form = $this->createPlanillaForm(array(), $object);
             $_form->handleRequest($request);
             if ($_form->isValid()) {
-                /**                 * *GUARDAR** */
+                /*
+                 * AL GUARDAR LA PLANILLA SE ALMACENA EL NUMERO DE TOMO
+                 * PARA LUEGO OBTENER EL SIGUIENTE FOLIO A DIGITAR EN
+                 * DICHO TOMO
+                 */
                 $_data = $_form->getData();
                 $data = $_data['payrolls'];
                 if ($service->saveMatrix($object, $data)) {
-                    $this->get('session')->getFlashBag()->add(
+                    $session->set('tomo', $tomo);
+                    $session->getFlashBag()->add(
                             'planilla', 'Registro grabado satisfactoriamente'
                     );
                 } else {
@@ -459,6 +466,19 @@ class PlanillaController extends Controller {
                     );
                 }
             }
+        }
+        /*
+         * OBTIENE EL SIGUIENTE FOLIO DIGITABLE EN EL TOMO
+         * EN CASO NO EXISTA MAS FOLIOS DIGITABLES CON RESPECTO AL
+         * FOLIO ACTUAL, EL USUARIO ES LIBRE DE ELEGIR OTRO TOMO Y FOLIO 
+         * MOTIVO POR EL CUAL SE DESTRUYEN LAS VARIABLES DE SESION
+         */
+        $nextFolio = $folio+1;//$this->get('folios_service')->
+                //siguienteFolioDigitable($tomo, $folio);
+        $session->set('folio', $nextFolio);
+        if (!$nextFolio) {
+            $session->remove('tomo');
+            $session->remove('folio');
         }
         $nextAction = '_planilla_add';
         return $this->redirect($this->generateUrl($nextAction));
@@ -472,9 +492,17 @@ class PlanillaController extends Controller {
         if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
             throw $this->createNotFoundException();
         }
+        $session = $this->get('session');
+        $form = null;
         $folio = null;
         $tomo = null;
         $object = null;
+        /*
+         * SE BUSCA EL NUMERO DE TOMO Y NUMERO DE FOLIO DESDE EL FORMULARIO
+         * EN CASO NO SE HAYA ELEGIDO NINGUNO, SE PROCEDERA A BUSCAR EN LAS
+         * VARIABLES DE SESION PARA AUTOSELECCIONAR EL FOLIO SIGUIENTE, EN
+         * CASO EXISTA
+         */
         if ($request->request->get('form')) {
             $folio = $request->request->get('folio');
             $tomo = $request->request->get('tomo');
@@ -483,15 +511,22 @@ class PlanillaController extends Controller {
             $folio = array_key_exists('folio', $aplanilla) ? $aplanilla['folio'] : null;
             $tomo = array_key_exists('tomo', $aplanilla) ? $aplanilla['tomo'] : null;
         }
-        $form = null;
-        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager()));
-        $sform->handleRequest($request);
+        if (null === $folio & null === $tomo) {
+            $folio = $session->get('folio');
+            $tomo = $session->get('tomo');
+        }
         if (null != $folio & null != $tomo) {
             $em = $this->getDoctrine()
                     ->getRepository('IneiPayrollBundle:Folios');
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
         $service = $this->get('planilla_service');
+        /*         * **************FORMULARIOS*********************** */
+        $sform = $this->createForm('registrar_planilla', null, 
+                array('em' => $this->getDoctrine()->getManager(),
+                    'tomo' => $tomo,
+                    'folio' => $folio));
+        $sform->handleRequest($request);
         if ($object && $object->getRegistrosFolio()) {
             $array = $service->generateMatrix($object, true);
             $_form = $this->createPlanillaForm($array, $object);
@@ -503,4 +538,5 @@ class PlanillaController extends Controller {
             'folio' => $object
         );
     }
+
 }

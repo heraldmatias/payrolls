@@ -52,24 +52,58 @@ class PlanillaType extends AbstractType {
                     $form = $event->getForm();
                     $campos = array();
                     $formOptions = array();
+                    /*
+                     * SE LEEN LOS CONCEPTOS DEL FOLIO PARA 
+                     * CONSTRUIR LAS COLUMNAS Y FILAS DE LA PLANILLA
+                     */
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
-                        $formOptions['label'] = $concepto->getCodiConcTco();
-                       // $formOptions['data'] = '0';
+                        $codigoConcepto = $concepto->getCodiConcTco();
+                        $tipo = $concepto->getTipoConcTco();
+                        $tipoCaja = 'text';
+                        $formOptions['label'] = $codigoConcepto;
+                        switch ($codigoConcepto) {
+                            case 'C373':
+                                $class = 'remuneraciones';
+                                break;
+                            case 'C374':
+                                $class = 'descuentos';
+                                break;
+                            case 'C12':
+                                $class = 'total';
+                                break;
+                            default:
+                                $class = 'monto';
+                                break;
+                        }                        
+                        //echo in_array($tipo, array(1,2));
+//                        if($tipo === '1' || $tipo === '2')
+//                            $tipoCaja = 'integer';
+                        /*
+                         * ATRIBUTOS PARA CADA CAMPO DE CONCEPTO A DIGITAR
+                         */
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
-                            'class' => 'monto',
-                            'style' => 'width:150px;font-size:10px;'
+                            'data-tipo' => $tipo,
+                            'class' => $class,
+                            'style' => 'width:auto;font-size:15px;'
                         );
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
+                        /*
+                         * CORRELATIVO PARA CONCEPTOS REPETIDOS EN LA 
+                         * PLANILLA
+                         */
                         if(array_key_exists($concepto->getCodiConcTco(), $campos)){
                             $campos[$concepto->getCodiConcTco()] += 1;
                         } else {
                             $campos[$concepto->getCodiConcTco()] = 1;
                         }
+                        /*
+                         * SE AGREGA EL CAMPO AL FORMULARIO
+                         */
                         $index = $campos[$concepto->getCodiConcTco()];
                         $flag = '_'.$index;//($index>1)?'_'.$index:'';
-                        $form->add($concepto->getCodiConcTco().$flag, 'text', $formOptions);
+                        $form->add($concepto->getCodiConcTco().$flag, $tipoCaja, $formOptions);
                     }
                 }
         );

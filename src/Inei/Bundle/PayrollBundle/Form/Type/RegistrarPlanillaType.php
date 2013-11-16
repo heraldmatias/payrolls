@@ -31,13 +31,16 @@ class RegistrarPlanillaType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $entityManager = $options['em'];
+        $tomo = $options['tomo'];
+        $folio = $options['folio'];
         $self = $this;
         $builder->add('tomo', 'choice', array(
                     'attr' => array('style' => 'width:100%'),
                     'empty_value' => 'SELECCIONE',
                     'label' => 'Tomo',
                     'choices' => $this->service->listaTomosAsignados(), #array_combine(range(1, 419),range(1, 419)),
-                    'required' => false
+                    'required' => false,
+                    'data' => $tomo
                 ))
                 ->add('buscar', 'submit', array(
                     'label' => 'Consultar',
@@ -45,28 +48,32 @@ class RegistrarPlanillaType extends AbstractType {
 
         $builder->addEventListener(
                 FormEvents::PRE_SET_DATA, function(FormEvent $event) 
-                    use ($entityManager, $self) {
+                    use ($entityManager, $self, $folio, $tomo) {
                     $form = $event->getForm();
-
+                    echo $folio;
                     $formOptions = array(
                         'attr' => array('style' => 'width:100%'),
                         'empty_value' => 'SELECCIONE',
-                        'choices' => $self->getFolios($event->getData(), $entityManager),
-                        'required' => false
+                        'choices' => $self->
+                            getFolios($event->getData(), $tomo, $entityManager),
+                        'required' => false,
+                        'data' => $folio
                     );
                     $form->add('folio', 'choice', $formOptions);
                 }
         );
         $builder->addEventListener(
                 FormEvents::PRE_BIND, function(FormEvent $event)
-                use ($entityManager, $self) {
+                use ($entityManager, $self, $folio, $tomo) {
                     $form = $event->getForm();
 
                     $formOptions = array(
                         'attr' => array('style' => 'width:100%'),
                         'empty_value' => 'SELECCIONE',
-                        'choices' => $self->getFolios($event->getData(), $entityManager),
-                        'required' => false,                        
+                        'choices' => $self->
+                            getFolios($event->getData(), $tomo, $entityManager),
+                        'required' => false,
+                        'data' => $folio
                     );
                     $form->add('folio', 'choice', $formOptions);
                 }
@@ -74,14 +81,24 @@ class RegistrarPlanillaType extends AbstractType {
         
     }
     
-    public function getFolios($data, $em) {
-        if (null === $data) {
-            return;
-        }        
+    public function getFolios($data, $tomo, $em) {
         $folios = array();
-        if(array_key_exists('tomo', $data))
+        /*
+         * BUSCA SE SE HAN ENVIADO DATOS DESDE EL FORMULARIO
+         * CASO CONTRARIO OBTENDRA EL TOMO DESDE LA
+         * VARIABLE DE SESSION
+         */
+        if (null !== $data) {
+            if(array_key_exists('tomo', $data)){
+                $tomo = is_numeric($data['tomo'])?$data['tomo']:0;
+            }
+        }
+        if($tomo)
         {
-            $tomo = is_numeric($data['tomo'])?$data['tomo']:0;
+            /*
+             * OBTIENE LA INFORMACION DEL TOMO PARA GENERAR LA
+             * LISTA DE FOLIOS 
+             */
             $_tomo = $em->getRepository('IneiPayrollBundle:Tomos')->find($tomo);
             if (null === $_tomo){
                 return;
@@ -108,9 +125,13 @@ class RegistrarPlanillaType extends AbstractType {
             // a unique key to help generate the secret token
             
         ));
-
+        /*
+         * ENTRADAS REQUERIDAS PARA CONSTRUIR CORRECTAMENTE EL FORMULARIO
+         */
         $resolver->setRequired(array(
             'em',
+            'tomo',
+            'folio'
         ));
 
         $resolver->setAllowedTypes(array(

@@ -88,5 +88,12 @@ class FoliosService {
         }
     }
     
-
+    public function siguienteFolioDigitable($tomo, $folio){
+        $_folio = $this->em->getRepository('IneiPayrollBundle:Folios')
+                ->findSiguienteFolioDigitable($tomo, $folio);
+        $nextFolio = null;
+        if($_folio)
+            $nextFolio = $_folio['folio'];
+        return $nextFolio;
+    }
 }
