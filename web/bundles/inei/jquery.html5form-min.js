@@ -28,4 +28,4 @@ else if(opts.messages=='it'){$(opts.responseDiv).html("<p>L'indirizzo e-mail non
 else if(opts.messages=='de'){$(opts.responseDiv).html("<p>Bitte eine gültige E-Mail-Adresse eintragen.</p>");}
 else if(opts.messages=='fr'){$(opts.responseDiv).html("<p>Entrez une adresse email valide s’il vous plait.</p>");}
 $(emailError).select();}else{alert('Unknown Error');}}
-return false;});});});}})(jQuery);
+return false;});});});}})($);

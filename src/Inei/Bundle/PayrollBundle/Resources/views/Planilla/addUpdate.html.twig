@@ -96,6 +96,8 @@
 <script type="text/javascript">
     jQuery.noConflict();
 // $j is now an alias to the jQuery function; creating the new alias is optional.
+    
+    
     function loadColumns() {
         var form = jQuery(jQuery('#tplanillas tbody').data('prototype'));
         var collectionColumns = jQuery('#tplanillas thead');
@@ -131,7 +133,7 @@
         jQuery('#tplanillas tbody').append(fresumen);
     }
     
-    function calculaTotales(){
+    function filacalculaTotales(){
         /*var resumen = jQuery('#tplanillas tbody tr:last');
         var rows = jQuery('#tplanillas tbody tr'),
                 filas=rows.length;
@@ -290,7 +292,6 @@
                 jQuery(this).val(total.toFixed(2));
             }
             jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
-            calculaTotales();
         }
     });
     
@@ -333,32 +334,6 @@
             lastcol = lastRow.find('td:last'),
             $txt = lastcol.find('input[type="text"]');
         $txt.data('ultimo', true);
-        /*$txt.keypress(function(e) {
-            if(e.which === 13) {
-                jQuery('form:eq(1)').submit();
-            }
-        });
-        var rows = jQuery('#tplanillas tbody tr');
-        var c_rows = rows.length-1;
-        jQuery.each(rows, function(k, v){
-           var $lastcol = jQuery(v).find('td:last');
-           var $txt = $lastcol.find('input[type="text"]');
-           if(!$txt.hasClass('total')){
-            if(k<c_rows){
-                 $txt.keypress(function(e) {
-                     if(e.which === 13) {
-                         nextRow(jQuery(v));
-                     }
-                 });
-            }else{
-                $txt.keypress(function(e) {
-                    if(e.which === 13) {
-                        jQuery('form:eq(1)').submit();
-                    }
-                });
-            }
-            }
-        });*/
     }
 
     jQuery('form:eq(1)').on('submit', function(e){
