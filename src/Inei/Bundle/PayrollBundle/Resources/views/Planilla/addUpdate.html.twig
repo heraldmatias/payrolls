@@ -299,8 +299,8 @@ font-family: arial;
         if(e.which === 13){
             e.preventDefault();
             var campo = jQuery(this);
-            /*index = campo.val().indexOf('+');
-            if(index == -1){}
+            index = campo.val().indexOf('+');
+            if(index === -1){/*NO HAY SUMA*/}
             else{
                 var value = jQuery(this).val(),
                 numbers=value.split('+'),
@@ -309,7 +309,7 @@ font-family: arial;
                     total += isNaN(numbers[ii])?0:parseFloat(numbers[ii]);
                 }
                 campo.val(total.toFixed(2));
-            }*/
+            }
             if(campo.data('tipo')===1 || campo.data('tipo')===2){
             if(isNaN(campo.val())){
                 return false;
