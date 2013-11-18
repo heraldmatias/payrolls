@@ -50,7 +50,6 @@ class RegistrarPlanillaType extends AbstractType {
                 FormEvents::PRE_SET_DATA, function(FormEvent $event) 
                     use ($entityManager, $self, $folio, $tomo) {
                     $form = $event->getForm();
-                    echo $folio;
                     $formOptions = array(
                         'attr' => array('style' => 'width:100%'),
                         'empty_value' => 'SELECCIONE',

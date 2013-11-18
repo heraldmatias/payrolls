@@ -486,7 +486,7 @@ class PlanillaController extends Controller {
 
     /**
      * @Route("/add", name="_planilla_add")
-     * @Template("IneiPayrollBundle:Planilla:addUpdate.html.twig")
+     * @Template("")
      */
     public function addUpdateAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('planilla', 'query')) {
@@ -532,11 +532,14 @@ class PlanillaController extends Controller {
             $_form = $this->createPlanillaForm($array, $object);
             $form = $_form->createView();
         }
-        return array(
+        $view = 'IneiPayrollBundle:Planilla:addUpdateOld.html.twig';
+        if($tomo>=89)
+            $view = 'IneiPayrollBundle:Planilla:addUpdate.html.twig';
+        return $this->render($view, array(
             'form' => $form,
             'sform' => $sform->createView(),
             'folio' => $object
-        );
+        ));
     }
 
 }

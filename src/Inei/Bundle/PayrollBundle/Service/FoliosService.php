@@ -38,9 +38,6 @@ class FoliosService {
             $stmt1->execute();
             $result = $stmt1->fetch();
             $f = $result['codi_folio'];
-//            $sql2 = "UPDATE folios 
-//                SET num_folio=$folio WHERE codi_tomo=$tomo and num_folio=$folioupdate";
-//            $conn->prepare($sql2)->execute();
             $sql3 = "UPDATE folios 
                 SET num_folio=$folioupdate WHERE codi_folio = $f";
             $conn->prepare($sql3)->execute();
@@ -70,6 +67,39 @@ class FoliosService {
             $conn->rollBack();
             return false;
         }
+    }
+    
+    public function deleteConcepto($concepto){
+        $conn = $this->em->getConnection();
+        $sql = "SELECT fn_position_concepto_update(:concepto, :folio, :id) as c;";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue('concepto', $concepto->getCodiConcTco()->getCodiConcTco());
+        $stmt->bindValue('folio', $concepto->getCodiFolio()->getCodiFolio());
+        $stmt->bindValue('id', $concepto->getId());
+        $stmt->execute();
+        echo $concepto->getCodiConcTco()->getCodiConcTco().'<br>';
+        echo $concepto->getCodiFolio()->getCodiFolio().'<br>';
+        echo $concepto->getId();
+        $pos = $stmt->fetch();
+        print_r($pos);
+        $pos = ($pos['c']===null)?0:$pos['c'];
+        //exit;
+        $conn->executeQuery('DELETE FROM planilla_historicas WHERE 
+            codi_folio = :folio AND codi_conc_tco=:concepto
+            AND flag_folio= :pos', array(
+                'folio' => $concepto->getCodiFolio()->getCodiFolio(),
+                'concepto' => $concepto->getCodiConcTco()->getCodiConcTco(),
+                'pos' => $pos
+            ));
+        $conn->executeQuery('UPDATE planilla_historicas SET flag_folio = flag_folio-1
+            WHERE codi_folio = :folio AND codi_conc_tco=:concepto
+            AND flag_folio>:pos', array(
+                'folio' => $concepto->getCodiFolio()->getCodiFolio(),
+                'concepto' => $concepto->getCodiConcTco()->getCodiConcTco(),
+                'pos' => $pos
+            ));
+        $this->em->remove($concepto);
+        return true;
     }
     
     public function updateMatrix($folio) {

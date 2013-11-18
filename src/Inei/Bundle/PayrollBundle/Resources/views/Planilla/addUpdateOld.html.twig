@@ -3,10 +3,9 @@
 {% form_theme form.payrolls 'IneiPayrollBundle:Form:form_table_horizontal_layout.html.twig' %}
 {% endif %}
 {% block csspage %}
-
-<style type="text/css">        
+<style type="text/css">
         td.column-monto{
-            width: 70px;
+            width: 150px;
         }
         td.column-nombre{
             width: 200px;
@@ -16,14 +15,10 @@
         }
         td.column-item{
             width: 30px;
-            font-size: 18px;
+            font-size: 26px;
         }
         td#col0{
             width: 200px;
-        }
-        .placeholder { color: #F5F5F5; }
-        .fijo {
-	position: fixed;
         }
         .box2 {
 position: fixed;
@@ -67,7 +62,7 @@ font-family: arial;
                 </div>{% if folio %}
                 <div class="row-fluid">
                     <div class="span12"><h4>Información del Folio</h4></div></div>
-                    <div class="row-fluid"><div class="span12">                            
+                    <div class="row-fluid"><div class="span12">
                     <div class="span2"> <h2>{{ folio.tomo }}</h2> </div>
                     <div class="span2"> <h2>FOLIO - {{ folio.folio }}</h2> </div>
                     <div class="span3"> <h2>REGISTROS:</h4> </div><div class="span1"> <h2>{{ folio.registrosFolio }}</h2> </div>
@@ -140,7 +135,7 @@ font-family: arial;
     }
     function resumen(){
         var cols = jQuery('#tplanillas tbody tr:eq(0) td').length;
-        var fresumen= jQuery('<tr class="fila_totales"></tr>');
+        var fresumen= jQuery('<tr></tr>');
         var colsr='';
         for(i=0;i<cols;i++){
             colsr +='<td>&nbsp;</td>';
@@ -149,22 +144,22 @@ font-family: arial;
         jQuery('#tplanillas tbody').append(fresumen);
     }
     
-    function filacalculaTotales(){
+    function calculaTotales(){
         /*var resumen = jQuery('#tplanillas tbody tr:last');
-        var rows = jQuery('#tplanillas tbody tr'),
-                filas=rows.length;
-        jQuery.each(rows, function(k, v){
-            if(k<(filas-1)){
-                var cols = jQuery(v).find('td.column-monto'),
-                total = 0,
-                valor = 0;
-                jQuery.each(cols, function(i, c){
-                    valor = jQuery(c).find('input[type="text"]').val();
-                    total += isNaN(valor)?0:parseFloat(valor);
-               });
-               resumen.find('td:eq('+k+')').html(total);
-            }
-        });*/
+var rows = jQuery('#tplanillas tbody tr'),
+filas=rows.length;
+jQuery.each(rows, function(k, v){
+if(k<(filas-1)){
+var cols = jQuery(v).find('td.column-monto'),
+total = 0,
+valor = 0;
+jQuery.each(cols, function(i, c){
+valor = jQuery(c).find('input[type="text"]').val();
+total += isNaN(valor)?0:parseFloat(valor);
+});
+resumen.find('td:eq('+k+')').html(total);
+}
+});*/
     }
     
     function loadFolios(tomo) {
@@ -179,7 +174,6 @@ font-family: arial;
     jQuery(document).ready(function() {
         loadColumns();
         indexar();
-        jQuery('.nombre:eq(0)').focus();
         jQuery('#registrar_planilla_tomo').on('change', function(e) {
             loadFolios(jQuery(this).val());
         });
@@ -188,6 +182,7 @@ font-family: arial;
                 jQuery('#registrar_planilla_buscar').click();
             }
         });
+        activateNextRow();
         resumen();
         jQuery('input, textarea').placeholder();
     });
@@ -199,182 +194,61 @@ font-family: arial;
             jQuery(this).parent().parent().find('.monto:eq(0)').focus();
         }
     });
-    /*
-     * 
-     * @param {type} fila
-     * @param {number} tipo 
-     * 1 : REMUNERACIONES
-     * 2 : DESCUENTOS
-     * @returns {Number}
-     */
-    function calculaTotales(fila, tipo){
-        var campos = fila.find('input[data-tipo='.concat(tipo).concat(']')),
-            total=0,
-            monto=0;
-        jQuery.each(campos, function(i, campo){
-            monto = jQuery.trim(jQuery(campo).val());
-            if(monto !== '')
-                total += isNaN(monto)?0:parseFloat(monto);
-        });
-        return total.toFixed(2);
-    }
-    
-    function validaTotales(){
-        var rows = jQuery('#tplanillas tbody').find('tr');
-        var filas = rows.length-2;
-        var correcto = true, txtRemuneracion = null,
-                txtDescuento = null, txtLiquido=null;
-        var totalRemuneracion =0, totalDescuento=0,
-                totalLiquido=0, fila=null,
-                totalRemuneracionDigitado=0,
-                totalDescuentosDigitado=0,
-                totalLiquidoDigitado =0;
-        jQuery.each(rows, function(i, v){
-            fila = jQuery(v);
-            if(i<=filas){
-                totalRemuneracion = parseFloat(calculaTotales(fila, 1));
-                totalDescuento = parseFloat(calculaTotales(fila, 2));
-                txtRemuneracion = fila.find('.remuneraciones');
-                if(txtRemuneracion.length){
-                    totalRemuneracionDigitado = parseFloat(txtRemuneracion.val());
-                    if(totalRemuneracionDigitado !== totalRemuneracion){
-                        txtRemuneracion.focus();
-                        correcto = false;
-                        return false;
-                    }
-                }
-                txtDescuento = fila.find('.descuentos');
-                if(txtDescuento.length){
-                    totalDescuentosDigitado = parseFloat(txtDescuento.val());
-                    if(totalDescuentosDigitado !== totalDescuento){
-                        txtDescuento.focus();
-                        correcto = false;
-                        return false;
-                    }
-                }
-                txtLiquido = fila.find('.total');
-                totalLiquido = parseFloat((totalRemuneracion-totalDescuento).toFixed(2));
-                if(txtLiquido.length){
-                    totalLiquidoDigitado = parseFloat(txtLiquido.val());
-                    if(totalLiquidoDigitado !== totalLiquido){
-                        txtLiquido.focus();
-                        correcto = false;
-                        return false;
-                    }
-                }
-            }
-        });
-        return correcto;
-    }
-    
-    jQuery('.remuneraciones').on('keypress', function(e){
-        if(e.which === 13){
-            e.preventDefault();
-            var fila = jQuery(this).parent().parent();
-            var total = parseFloat(calculaTotales(fila, 1));
-            var monto = isNaN(jQuery(this).val())?0:parseFloat(jQuery(this).val());
-            if(total !== monto){
-                jQuery(this).trigger('focus');
-            }else{
-                jQuery(this).parent().next().find('input[type="text"]').focus();
-            }
-        }
-    });
-    
-    jQuery('.descuentos').on('keypress', function(e){
-        if(e.which === 13){
-            e.preventDefault();
-            var fila = jQuery(this).parent().parent();
-            var total = parseFloat(calculaTotales(fila, 2));
-            var monto = isNaN(jQuery(this).val())?0:parseFloat(jQuery(this).val());
-            if(total !== monto){
-                jQuery(this).trigger('focus');
-            }else{
-                jQuery(this).parent().next().find('input[type="text"]').focus();
-            }
-        }
-    });
     
     jQuery('.monto').on('keypress', function(e){
         if(e.which === 13){
             e.preventDefault();
-            var campo = jQuery(this);
-            /*index = campo.val().indexOf('+');
-            if(index == -1){}
-            else{
+            if(jQuery(this).val().indexOf('+')!==-1){
                 var value = jQuery(this).val(),
                 numbers=value.split('+'),
                 total=0;
-                for(ii=0; ii< numbers.length;ii++){
-                    total += isNaN(numbers[ii])?0:parseFloat(numbers[ii]);
+                for(i=0; i< numbers.length;i++){
+                    total += isNaN(numbers[i])?0:parseFloat(numbers[i]);
                 }
-                campo.val(total.toFixed(2));
-            }*/
-            if(campo.data('tipo')===1 || campo.data('tipo')===2){
-            if(isNaN(campo.val())){
-                return false;
-            }else{
-                campo.parent().next().find('input[type="text"]:eq(0)').focus();
+                jQuery(this).val(total.toFixed(2));
             }
-            }else{
-                campo.parent().next().find('input[type="text"]:eq(0)').focus();
-            }
+            jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
+            calculaTotales();
         }
     });
-    
-    jQuery('.total').on('keypress', function(e){
-        if(e.which === 13){
-            e.preventDefault();
-            /*
-             * tremuneraciones = parseFloat(fila.find('.remuneraciones').val()),
-             * tdescuentos = parseFloat(fila.find('.descuentos').val()),
-             */
-            var fila = jQuery(this).parent().parent(),
-                tremuneraciones = parseFloat(calculaTotales(fila, 1)),
-                tdescuentos = parseFloat(calculaTotales(fila, 2)),
-                total= tremuneraciones-tdescuentos;
-                total = parseFloat(total.toFixed(2));
-            if(total !== parseFloat(jQuery(this).val())){
-                jQuery(this).trigger('focus');
-            }else{
-                nextRow(fila);
-                return false;
-            }
-        }
-    });
-    
-    function nextRow(fila){
-        var nextRow = fila.next();
-        if(nextRow.hasClass('fila_totales')){
-            jQuery('form:eq(1)').submit();
-        }else{
-            nextRow.find('input[type="text"]:eq(0)').focus();
-            var iScroll = jQuery(window).scrollTop();
-            iScroll = iScroll + 40;
-            jQuery('html, body').animate({  scrollTop: iScroll }, 200);
-            return false;
-        }
-    }
     
     function activateNextRow(){
-        var lastRow = jQuery('#tplanillas tbody tr:last'),
-            lastcol = lastRow.find('td:last'),
-            $txt = lastcol.find('input[type="text"]');
-        $txt.data('ultimo', true);
+        var rows = jQuery('#tplanillas tbody tr');
+        var c_rows = rows.length-1;
+        jQuery.each(rows, function(k, v){
+           var $lastcol = jQuery(v).find('td:last');
+           var $txt = $lastcol.find('input[type="text"]');
+           if(k<c_rows){
+                $txt.keypress(function(e) {
+                    if(e.which === 13) {
+                        jQuery(v).next().find('input[type="text"]:eq(0)').focus();
+                        var iScroll = jQuery(window).scrollTop();
+                        iScroll = iScroll + 40;
+                        jQuery('html, body').animate({ scrollTop: iScroll }, 200);
+                        return false;
+                    }
+                });
+           }else{
+                $txt.keypress(function(e) {
+                    if(e.which === 13) {
+               jQuery('form:eq(1)').submit();
+                    }
+                });
+           }
+        });
     }
 
     jQuery('form:eq(1)').on('submit', function(e){
         var rpt = true;
         var campos = jQuery('input[type="text"]');
-        jQuery.each(campos, function(k, v){            
+        jQuery.each(campos, function(k, v){
            if(jQuery(v).val() === ''){
                jQuery(v).focus();
                rpt = false;
                return false;
-           } 
+           }
         });
         if(rpt === false) return false;
-        if(validaTotales() === false) return false;
         return confirm('¿Esta seguro que desea modificar este registro?');
     });
     
@@ -388,29 +262,29 @@ font-family: arial;
     function sendForm(){
         //Event.stop(event);
         var data = Form.serialize("form_planilla");
-        var oOptions = {  
-            method: "POST",  
-            parameters: data,  
+        var oOptions = {
+            method: "POST",
+            parameters: data,
             asynchronous: true,
             //frequency: 15,
             //decay: 1,
-            onFailure: function (oXHR) {  
-                $('feedback').update(oXHR.statusText);  
-            },  
-            onLoading: function (oXHR) {  
-                $('feedback').update('Guardando ...');  
-            },                            
-            onSuccess: function(oXHR) {  
+            onFailure: function (oXHR) {
+                $('feedback').update(oXHR.statusText);
+            },
+            onLoading: function (oXHR) {
+                $('feedback').update('Guardando ...');
+            },
+            onSuccess: function(oXHR) {
                $('feedback').update(oXHR.responseText);
                data = Form.serialize("form_planilla");
-            }                 
-        };  
+            }
+        };
         new Ajax.Updater('feedback', "{{ path('_planilla_autosave') }}", oOptions);
     }
     /*document.observe('dom:loaded', function() {
-        //Event.observe('form_save', 'click', sendForm, false);  
-        sendForm();
-    });*/
+//Event.observe('form_save', 'click', sendForm, false);
+sendForm();
+});*/
     document.observe('dom:loaded', function() {
         new Form.Observer('form_planilla', 20, sendForm);
     });

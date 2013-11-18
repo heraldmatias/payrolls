@@ -268,17 +268,19 @@ class InventarioController extends Controller {
                 $em->flush();
                 if ($object->getRmconceptos()) {
                     foreach ($object->getRmconceptos() as $conc) {
-                        $em->remove($conc);
+                        //$em->remove($conc);
+                        $service->deleteConcepto($conc);
                     }
                     $em->flush();
                 }
                 $service->orderFolios($object->getFolio(), $folioupdate,
                         $object->getTomo()->getCodiTomo());
-                $service->updateMatrix($pk);
+                //$service->updateMatrix($pk);
                 $this->get('session')->getFlashBag()->add(
                         'folio', 'Registro modificado satisfactoriamente'
                 );
             } catch (DBALException $e) {
+                echo $e->getMessage();exit;
                 $this->get('session')->getFlashBag()->add(
                         'folio', 'Ocurrio un error al modificar el registro'
                 );

@@ -58,10 +58,13 @@ class PlanillaType extends AbstractType {
                      */
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
+                        $tomo = $folio->getTomo();
                         $codigoConcepto = $concepto->getCodiConcTco();
                         $tipo = $concepto->getTipoConcTco();
                         $tipoCaja = 'text';
                         $formOptions['label'] = $codigoConcepto;
+                        $class = 'monto';
+                        if($tomo->getCodiTomo()>=89){
                         switch ($codigoConcepto) {
                             case 'C373':
                                 $class = 'remuneraciones';
@@ -75,7 +78,7 @@ class PlanillaType extends AbstractType {
                             default:
                                 $class = 'monto';
                                 break;
-                        }                        
+                        }}
                         //echo in_array($tipo, array(1,2));
 //                        if($tipo === '1' || $tipo === '2')
 //                            $tipoCaja = 'integer';
