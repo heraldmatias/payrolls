@@ -24,16 +24,17 @@ class SecurityCrudController extends Controller {
         if (!$this->get('usuario_service')->hasPermission('usuario', 'query')) {
             throw $this->createNotFoundException();
         }
-        $criteria = array();
-//        $criteria = $form->getData() ? $form->getData() : array();
-//        foreach ($criteria as $key => $value) {
-//            if (!$value) {
-//                unset($criteria[$key]);
-//            }
-//        }
+        $form = $this->createForm('usuario_search');
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }
+        }
         $em = $this->getDoctrine()
                 ->getRepository('IneiAuthBundle:Usuarios');
-        $query = $em->findBy($criteria);
+        $query = $em->findUsingLike($criteria);
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
                 $query, $this->get('request')->query->get('page', 1)/* page number */, 15/* limit per page */
@@ -42,7 +43,7 @@ class SecurityCrudController extends Controller {
 
         return array(
             'pagination' => $pagination,
-                //'form' => $form->createView()
+            'form' => $form->createView()
         );
     }
 

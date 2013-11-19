@@ -93,6 +93,17 @@ class UsuariosRepository extends EntityRepository implements UserProviderInterfa
         return $data;
     }
     
+    public function findUsingLike($filter = array(), $orderBy=NULL) {
+        array_walk($filter, function(&$v, &$k) {                    
+            $v = " UPPER(t.$k) LIKE UPPER('%$v%')";                    
+        });
+        $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
+        $query = $this->getEntityManager()
+                ->createQuery('SELECT t FROM IneiAuthBundle:Usuarios t ' . $filter.' '.$orderBy);
+        $query->getDQL();
+        return $query->getResult();
+    }
+    
     public function refreshUser(\Symfony\Component\Security\Core\User\UserInterface $user) {
         $user = $this->findOneByPk($user->getId());
         return $user;

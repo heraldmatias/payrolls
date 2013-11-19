@@ -20,6 +20,11 @@ services:
         tags:
             - { name: form.type, alias: permission }
 
+    inei_auth.form.type.usuario_search:
+        class: Inei\Bundle\AuthBundle\Form\Type\UsuarioSearchType
+        tags:
+            - { name: form.type, alias: usuario_search }
+
     usuario_service:
         class: Inei\Bundle\AuthBundle\Service\UsuarioService
         arguments: ["@security.encoder_factory", "@security.context", "@doctrine.orm.entity_manager"]

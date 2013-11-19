@@ -32,6 +32,10 @@
                         <th>Nombre</th>
                         <th>Archivo</th>
                         <th>Descripción</th>
+                        <th>Creador</th>
+                        <th>Fecha Creación</th>
+                        <th>Modificador</th>
+                        <th>Fecha Modificación</th>
                         <th style="width: 100px">Opciones</th>
                     </tr>
                 </thead>
@@ -45,6 +49,11 @@
                         <td>{{ item.title }}</td>
                         <td><a href="{{ asset('upload/tomos/') }}{{item.filename}}">{{ item.filename }}</a></td>
                         <td id="message{{ item.id }}">{{ item.description }}</td>
+                        
+                        <td id="message{{ item.id }}">{{ item.creador }}</td>
+                        <td id="message{{ item.id }}">{{ item.createdAt|date('d-M-Y H:m:s') }}</td>
+                        <td id="message{{ item.id }}">{{ item.modificador }}</td>
+                        <td id="message{{ item.id }}">{{ item.updatedAt|date('d-M-Y H:m:s') }}</td>
                         <td><div style="float:left;">{% if edit %}
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>{% endif %}

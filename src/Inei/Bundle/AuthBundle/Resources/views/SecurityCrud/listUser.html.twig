@@ -13,17 +13,21 @@
                 {{ flashMessage }}
             </div>
         {% endfor %}
-            <!--form
+            {{ form_start(form) }}
             <div class="row-fluid">
             <div class="span7">
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
-                
+                <div class="row-fluid">
+                    <div class="span1">{{ form_label(form.nombres) }}</div><div class="span4"> {{ form_widget(form.nombres) }} </div>
+                    <div class="span2">{{ form_label(form.username) }}</div><div class="span3"> {{ form_widget(form.username) }} </div>
+                <div class="span1">{{ form_widget(form.search) }} </div>
+                </div>
                 </div>
             </fieldset>
-            </div></div>
-            -->
+            </div></div>{{ form_end(form) }}
+            
             <h4>Listado de Usuarios</h4>
             <table class="table table-hover table-bordered">
                 <thead>
