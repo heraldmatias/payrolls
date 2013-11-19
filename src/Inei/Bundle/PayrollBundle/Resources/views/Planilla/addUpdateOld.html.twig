@@ -191,7 +191,9 @@ resumen.find('td:eq('+k+')').html(total);
         if(e.which === 13){
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
-            jQuery(this).parent().parent().find('.monto:eq(0)').focus();
+            var campo_siguiente = jQuery(this).parent().parent().find('.monto:eq(0)');
+            campo_siguiente.select();
+            campo_siguiente.focus();
         }
     });
     
@@ -207,7 +209,9 @@ resumen.find('td:eq('+k+')').html(total);
                 }
                 jQuery(this).val(total.toFixed(2));
             }
-            jQuery(this).parent().next().find('input[type="text"]:eq(0)').focus();
+            var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]:eq(0)');
+            campo_siguiente.select();
+            campo_siguiente.focus();
             calculaTotales();
         }
     });

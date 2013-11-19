@@ -196,7 +196,9 @@ font-family: arial;
         if(e.which === 13){
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
-            jQuery(this).parent().parent().find('.monto:eq(0)').focus();
+            var campo_siguiente = jQuery(this).parent().parent().find('.monto:eq(0)');
+            campo_siguiente.select();
+            campo_siguiente.focus();
         }
     });
     /*
@@ -276,7 +278,9 @@ font-family: arial;
             if(total !== monto){
                 jQuery(this).trigger('focus');
             }else{
-                jQuery(this).parent().next().find('input[type="text"]').focus();
+                var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
+                campo_siguiente.select();
+                campo_siguiente.focus();
             }
         }
     });
@@ -290,7 +294,9 @@ font-family: arial;
             if(total !== monto){
                 jQuery(this).trigger('focus');
             }else{
-                jQuery(this).parent().next().find('input[type="text"]').focus();
+                var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
+                campo_siguiente.select();
+                campo_siguiente.focus();
             }
         }
     });
@@ -310,14 +316,17 @@ font-family: arial;
                 }
                 campo.val(total.toFixed(2));
             }
+            var campo_siguiente = campo.parent().next().find('input[type="text"]:eq(0)');
             if(campo.data('tipo')===1 || campo.data('tipo')===2){
             if(isNaN(campo.val())){
                 return false;
             }else{
-                campo.parent().next().find('input[type="text"]:eq(0)').focus();
+                campo_siguiente.select();
+                campo_siguiente.focus();
             }
             }else{
-                campo.parent().next().find('input[type="text"]:eq(0)').focus();
+                campo_siguiente.select();
+                campo_siguiente.focus();
             }
         }
     });
