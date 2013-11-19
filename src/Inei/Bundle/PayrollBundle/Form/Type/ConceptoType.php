@@ -21,13 +21,22 @@ class ConceptoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('codiConcTco', null, array(
-                    'label' => 'Codigo'
+                    'label' => 'Codigo',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('descConcTco', null, array(
-                    'label' => 'Descripcion'
+                    'label' => 'Descripcion',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('descCortTco', null, array(
-                    'label' => 'Descripcion Corta'
+                    'label' => 'Descripcion Corta',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('tipoConcTco', 'choice', array(
                     'label' => 'Tipo Concepto',
@@ -35,7 +44,10 @@ class ConceptoType extends AbstractType
                         0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
                     ),
                     'empty_value' => '---Ninguno---',
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
                     
                 ))
                 ->add('tipoCalcTco', 'choice', array(
@@ -44,35 +56,70 @@ class ConceptoType extends AbstractType
                         0 => 'Otros', 1 => 'Fijo', 2  => 'Formula'
                     ),
                     'empty_value' => '---Ninguno---',
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
                 ))
-                ->add('secuCalcTco', null, array())
-                ->add('flagAsocTco', null, array())
+                ->add('secuCalcTco', null, array(
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
+                ))
+                ->add('flagAsocTco', null, array(
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
+                ))
                 ->add('flagRecuTco', null, array(
-                    'label' => 'Flag'
+                    'label' => 'Flag',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('rntaQntaTco', null, array(
-                    'label' => 'Renta Quinta'
+                    'label' => 'Renta Quinta',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('ctsCtsTco', null, array(
-                    'label' => 'Seleccion de CTS'
+                    'label' => 'Seleccion de CTS',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
-                ->add('codiConcOnc', null, array())
+                ->add('codiConcOnc', null, array(
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
+                ))
                 ->add('codiEntiEnt', null, array(
-                    
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('cntaDebeTco', null, array(
-                    'label' => 'Cuenta Debe'
+                    'label' => 'Cuenta Debe',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('cntaHabeTco', null, array(
-                    'label' => 'Cuenta Haber'
+                    'label' => 'Cuenta Haber',
+                    'attr' => array(
+                        'style' => 'width: 90%'
+                    )
                 ))
                 ->add('clasConcTco', 'choice', array(
                     'choices' => array(
                         1 => 'Fijo', 2 => 'Variable'
                     ),
                     'empty_value' => '---Ninguno---',
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
                 ))
                 ->add('flagPagoTco', 'choice', array(
                     'choices' => array(
@@ -80,7 +127,10 @@ class ConceptoType extends AbstractType
                     ),
                     'label' => 'Pago',
                     'empty_value' => '---Ninguno---',
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
                 ))
                 ->add('sedeConcTco', 'choice', array(
                     'choices' => array(
@@ -88,7 +138,10 @@ class ConceptoType extends AbstractType
                     ),
                     'label' => 'Sede',
                     'empty_value' => '---Ninguno---',
-                    'required' => false
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
                 ))
                 ->add('save', 'submit', array(
                     'label' => 'Guardar',

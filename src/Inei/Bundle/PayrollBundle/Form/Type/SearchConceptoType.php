@@ -23,12 +23,16 @@ class SearchConceptoType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('codiConcTco', 'text', array(
                     'required' => false,
-                    'label' => 'Codigo'
+                    'label' => 'Codigo',
+                    'attr' => array(
+                        'class' => 'registros',
+                        'style' => 'width:90%;'
+                    )
                 ))
                 ->add('descConcTco', 'text', array(
                     'attr' => array(
                         'class' => 'registros',
-                        'style' => 'width:100%;'
+                        'style' => 'width:90%;'
                         ),
                     'required' => false,
                     'label' => 'Descripción'
