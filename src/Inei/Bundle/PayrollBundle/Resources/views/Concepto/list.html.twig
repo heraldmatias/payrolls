@@ -32,30 +32,28 @@
                         <th>Descripción</th>
                         <th>Tipo</th>
                         <th>Calculo</th>
-                        <th>Cta. Debe</th>
-                        <th>Cta. Haber</th>
-                        <th>Clase</th>
-                        <th>Pago</th>
-                        <th>Sede</th>
+                        <th>Creador</th>
+                        <th>Fecha Creación</th>
+                        <th>Modificador</th>
+                        <th>Fecha Modificación</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% set perm = usuario_service.hasPermission('concepto', 'edit') %}
-                {% for tomo in pagination %}
+                {% for item in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ loop.index }}</td>
-                        <td>{{ tomo.codiConcTco }}</td>
-                        <td>{{ tomo.descCortTco }}</td>
-                        <td>{{ tomo.getTipoConcTco_display }}</td>
-                        <td>{{ tomo.getTipoCalcTco_display }}</td>
-                        <td>{{ tomo.cntaDebeTco }}</td>
-                        <td>{{ tomo.cntaHabeTco }}</td>
-                        <td>{{ tomo.getClasConcTco_display }}</td>
-                        <td>{{ tomo.getFlagPagoTco_display }}</td>
-                        <td>{{ tomo.getSedeConcTco_display }}</td>
+                        <td>{{ item.codiConcTco }}</td>
+                        <td>{{ item.descCortTco }}</td>
+                        <td>{{ item.getTipoConcTco_display }}</td>
+                        <td>{{ item.getTipoCalcTco_display }}</td>
+                        <td>{{ item.creador }}</td>
+                        <td>{{ item.fecCreac|date('d-M-Y H:m:s') }}</td>
+                        <td>{{ item.modificador }}</td>
+                        <td>{{ item.fecMod|date('d-M-Y H:m:s') }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            {% if perm %}<a href="{{ path('_concepto_edit', {'pk': tomo.codiConcTco}) }}" 
+                            {% if perm %}<a href="{{ path('_concepto_edit', {'pk': item.codiConcTco}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>

@@ -171,13 +171,13 @@ class Conceptos {
      * @var datetime
      * @ORM\Column(name="FEC_CREAC", type="datetime", nullable=true)
      */
-    private $fec_creac;
+    private $fecCreac;
     
     /**
      * @var datetime
      * @ORM\Column(name="FEC_MOD", type="datetime", nullable=true)
      */
-    private $fec_mod;
+    private $fecMod;
     
     private static $TIPOS = array(
         0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
@@ -670,49 +670,49 @@ class Conceptos {
 
 
     /**
-     * Set fec_creac
+     * Set fecCreac
      *
      * @param \DateTime $fecCreac
      * @return Conceptos
      */
     public function setFecCreac($fecCreac)
     {
-        $this->fec_creac = $fecCreac;
+        $this->fecCreac = $fecCreac;
 
         return $this;
     }
 
     /**
-     * Get fec_creac
+     * Get fecCreac
      *
      * @return \DateTime 
      */
     public function getFecCreac()
     {
-        return $this->fec_creac;
+        return $this->fecCreac;
     }
 
     /**
-     * Set fec_mod
+     * Set fecMod
      *
      * @param \DateTime $fecMod
      * @return Conceptos
      */
     public function setFecMod($fecMod)
     {
-        $this->fec_mod = $fecMod;
+        $this->fecMod = $fecMod;
 
         return $this;
     }
 
     /**
-     * Get fec_mod
+     * Get fecMod
      *
      * @return \DateTime 
      */
     public function getFecMod()
     {
-        return $this->fec_mod;
+        return $this->fecMod;
     }
 
     /**
