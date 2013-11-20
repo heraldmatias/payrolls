@@ -50,10 +50,10 @@
                         <td><a href="{{ asset('upload/tomos/') }}{{item.filename}}">{{ item.filename }}</a></td>
                         <td id="message{{ item.id }}">{{ item.description }}</td>
                         
-                        <td id="message{{ item.id }}">{{ item.creador }}</td>
-                        <td id="message{{ item.id }}">{{ item.createdAt|date('d-M-Y H:m:s') }}</td>
-                        <td id="message{{ item.id }}">{{ item.modificador }}</td>
-                        <td id="message{{ item.id }}">{{ item.updatedAt|date('d-M-Y H:m:s') }}</td>
+                        <td >{{ item.creador }}</td>
+                        <td >{{ item.createdAt|date('d-M-Y H:m:s') }}</td>
+                        <td >{{ item.modificador }}</td>
+                        <td >{{ item.updatedAt|date('d-M-Y H:m:s') }}</td>
                         <td><div style="float:left;">{% if edit %}
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>{% endif %}
