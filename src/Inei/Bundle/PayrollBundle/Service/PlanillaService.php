@@ -190,6 +190,8 @@ class PlanillaService {
                 $html .='<td>' . $value['porcentaje_folios'] . '%</td>';
                 $html .='<td>' . $value['registros'] . '</td>';
                 $html .='<td>' . $value['digitados'] . '</td>';
+                $html .='<td>' . $value['tregistros'] . '</td>';
+                $html .='<td>' . $value['tdias'] . '</td>';
                 $html .='<td>' . $value['porcentaje_registros'] . '%</td>';
                 $html .='</tr>';
             }
@@ -278,26 +280,29 @@ class PlanillaService {
     public function generateMatrix($object, $autosave = false) {
         $array = array('payrolls' => array_map(
                     create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
-        if ($autosave) {
-            $_planillas = $this->
-                    loadAutoSave($object->getTomo()->getCodiTomo(), $object->getFolio());
-            if (null !== $_planillas) {
-                //$array = &$_planillas['payrolls'];
-//                if (count($array) > $object->getRegistrosFolio()) {
-//                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
-//                        //unset($array[$index]);
-//                    }
-//                }
-                //print_r($_planillas['payrolls']);
-                $plas = $_planillas['payrolls'];
-                foreach ($array['payrolls'] as $key => $value) {
-                    $array['payrolls'][$key] = array_key_exists($key, $plas)?
-                            $plas[$key]:array();
-                }
-                return $array;
-            }
-        } 
         $_planillas = $this->getPlanillas($object->getCodiFolio());
+        
+        if (!$_planillas) {
+            if ($autosave) {
+                $_planillas = $this->
+                        loadAutoSave($object->getTomo()->getCodiTomo(), $object->getFolio());
+                if (null !== $_planillas) {
+                    //$array = &$_planillas['payrolls'];
+    //                if (count($array) > $object->getRegistrosFolio()) {
+    //                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
+    //                        //unset($array[$index]);
+    //                    }
+    //                }
+                    //print_r($_planillas['payrolls']);
+                    $plas = $_planillas['payrolls'];
+                    foreach ($array['payrolls'] as $key => $value) {
+                        $array['payrolls'][$key] = array_key_exists($key, $plas)?
+                                $plas[$key]:array();
+                    }
+                    return $array;
+                }
+            }
+        }
         $planilla = array();
         
         $co = 0;
