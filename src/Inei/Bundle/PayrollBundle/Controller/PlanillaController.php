@@ -128,6 +128,32 @@ class PlanillaController extends Controller {
     }
 
     /**
+     * @Route("/reporte/print/", name="_planilla_digitador_ajax_print")
+     * @Template("")
+     */
+    public function printReporteDigitadorAction(Request $request) {
+        $form = $request->request->get('form');
+        if (!$form) {
+            $form = $request->query->get('form');
+        }
+        $service = $this->get('planilla_service');
+        $data = $this->get('planilla_service')->getReporteByUsername($form, false);
+        $excel = $service->printReporte($data, array(
+            'Digitador', 'Tomo', 'Total Folios', 'Folios No Digitables',
+            'Folios Digitables', 'Folios Digitados', '% Avance en Folios','Total de Registros',
+            'Registros Digitados (Por Fecha)', 'Registros Digitados (Acumulado)',
+            'Días Empleados', '% Avance en Registros'), 'Reporte de Avance por Digitador', 4);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"', 'repfolio'));
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+    
+    /**
      * @Route("/autosave/", name="_planilla_autosave")
      * @Template("")
      */

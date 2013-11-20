@@ -38,6 +38,7 @@
                     </div></div>
                     <div class="span4">
                     <input type="submit" value ="Consultar" class="btn btn-primary" id="ver"/>
+                    <input type="button" value ="Imprimir" class="btn btn-primary" id="print"/>
                     </div>
                     </div>
                 </form>
@@ -53,7 +54,9 @@
                             <th>Folios Digitados</th>
                             <th>% Avance en Folios</th>
                             <th>Total de Registros</th>
-                            <th>Registros Digitados</th>                            
+                            <th>Registros Digitados (Por Fecha)</th>
+                            <th>Registros Digitados (Acumulado)</th>
+                            <th>Días Empleados</th>
                             <th>% Avance en Registros</th>
                         </tr>
                     </thead>
@@ -95,6 +98,8 @@
 <script src="{{ asset('bundles/inei/prototype.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
 function sendForm(event){
+    jQuery.noConflict();
+
         var n = jQuery('#tiempo').val();
         Event.stop(event);
         var data = Form.serialize("form_reporte");
@@ -120,5 +125,12 @@ function sendForm(event){
     document.observe('dom:loaded', function() {
         Event.observe('ver', 'click', sendForm, false);
     });
+    
+    jQuery('#print').on('click', function(event){        
+            event.preventDefault();
+            var data = jQuery('form_reporte').serialize(),
+            url = '{{ path('_planilla_digitador_ajax_print') }}?';
+            location.href = url+data;
+        });
 </script>
 {% endblock %}
