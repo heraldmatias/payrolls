@@ -128,7 +128,7 @@ function sendForm(event){
     
     jQuery('#print').on('click', function(event){        
             event.preventDefault();
-            var data = jQuery('form_reporte').serialize(),
+            var data = jQuery('#form_reporte').serialize(),
             url = '{{ path('_planilla_digitador_ajax_print') }}?';
             location.href = url+data;
         });
