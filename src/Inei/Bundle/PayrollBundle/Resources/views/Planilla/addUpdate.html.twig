@@ -197,8 +197,9 @@ font-family: arial;
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
             var campo_siguiente = jQuery(this).parent().parent().find('.monto:eq(0)');
-            campo_siguiente.select();
+            
             campo_siguiente.focus();
+            campo_siguiente.select();
         }
     });
     /*
@@ -279,8 +280,9 @@ font-family: arial;
                 jQuery(this).trigger('focus');
             }else{
                 var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
-                campo_siguiente.select();
+                
                 campo_siguiente.focus();
+                campo_siguiente.select();
             }
         }
     });
@@ -295,8 +297,9 @@ font-family: arial;
                 jQuery(this).trigger('focus');
             }else{
                 var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
-                campo_siguiente.select();
+                
                 campo_siguiente.focus();
+                campo_siguiente.select();
             }
         }
     });
@@ -320,13 +323,13 @@ font-family: arial;
             if(campo.data('tipo')===1 || campo.data('tipo')===2){
             if(isNaN(campo.val())){
                 return false;
-            }else{
-                campo_siguiente.select();
+            }else{                
                 campo_siguiente.focus();
+                campo_siguiente.select();
             }
-            }else{
-                campo_siguiente.select();
+            }else{                
                 campo_siguiente.focus();
+                campo_siguiente.select();
             }
         }
     });
