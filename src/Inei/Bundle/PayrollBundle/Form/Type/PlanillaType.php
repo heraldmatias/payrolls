@@ -90,7 +90,7 @@ class PlanillaType extends AbstractType {
                             'data-tipo' => $tipo,
                             'class' => $class,
                             'style' => 'width:auto;font-size:15px;',
-                            'maxlength' => 20
+                            'maxlength' => 35
                         );
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
                         /*
