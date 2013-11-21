@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Inei\Bundle\PayrollBundle\Entity\Conceptos;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\DBAL\DBALException;
-
+use Symfony\Component\HttpFoundation\Response;
 /**
  * Description of InventarioController
  *
@@ -120,6 +120,48 @@ class ConceptoController extends Controller {
         return array(
             'form' => $form->createView()
         );
+    }
+    
+     /**
+     * @Route("/print/", name="_concepto_print")
+     * @Template("")
+     */
+    public function printAction(Request $request) {
+        if (!$this->get('usuario_service')->hasPermission('concepto', 'other')) {
+            throw $this->createNotFoundException();
+        }
+        //$form = $request->query->get('search_concepto');        
+        $form = $this->createForm('search_concepto', null);
+        $form->handleRequest($request);
+        $criteria = $form->getData() ? $form->getData() : array();
+        $filter = array();
+        $fields = array(
+            'descConcTco' => 'desc_conc_tco',
+            'descCortTco' => 'desc_cort_tco'
+        );
+        foreach ($criteria as $key => $value) {
+            if (!$value) {
+                unset($criteria[$key]);
+            }else{
+                $filter[$fields[$key]] = $value;
+            }
+        }
+        $service_xls = $this->get('excel_service');
+        $service = $this->get('concepto_service');
+        $data = $service->getReporte($filter);
+        $cols = array(
+            'Codigo', 'Descripción', 'Descripción Corta', 'Tipo'
+        );
+        $title = 'Reporte de Concepto';
+        $excel = $service_xls->printReporte($data, $cols, $title, 4);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="concepto.xlsx"');
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
     }
 
 }

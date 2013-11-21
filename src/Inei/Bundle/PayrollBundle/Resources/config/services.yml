@@ -20,6 +20,15 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: service, alias: tomos_service }
+    excel_service:
+        class: Inei\Bundle\PayrollBundle\Service\ExcelService
+        tags:
+            - { name: service, alias: excel_service }
+    concepto_service:
+        class: Inei\Bundle\PayrollBundle\Service\ConceptoService
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: service, alias: concepto_service }
     asignacion_service:
         class: Inei\Bundle\PayrollBundle\Service\AsignacionService
         arguments: ["@doctrine.orm.entity_manager", "@security.context"]

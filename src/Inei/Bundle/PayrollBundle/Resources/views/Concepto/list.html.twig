@@ -21,6 +21,7 @@
                     <div class="span1">{{ form_label(form.codiConcTco) }}</div><div class="span2"> {{ form_widget(form.codiConcTco) }} </div>
                     <div class="span2">{{ form_label(form.descConcTco) }}</div><div class="span4"> {{ form_widget(form.descConcTco) }} </div>
                 <div class="span1">{{ form_widget(form.search) }} </div>
+                <div class="span1"> <input type="button" class="btn btn-primary" value="A Excel" id="reporte"/> </div>
                 </div>
             </fieldset>
             </div></div>{{ form_end(form) }}
@@ -69,4 +70,14 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript">
+    $('#reporte').on('click', function(event){
+        event.preventDefault();
+        var data = $('form').serialize(),
+        url = '{{ path('_concepto_print') }}?';
+        location.href = url+data;
+    });
+</script>
 {% endblock %}

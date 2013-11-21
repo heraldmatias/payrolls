@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class ConceptosRepository extends EntityRepository
 {
-    public function findUsingLike($filter = array(), $orderBy=NULL) {
+    public function findUsingLike($filter = array(), $orderBy=NULL, $as_array=false) {
         array_walk($filter, function(&$v, &$k) {
                     if ($k === 'descConcTco') {
                         $v = " t.$k LIKE '%$v%'";
@@ -22,7 +22,24 @@ class ConceptosRepository extends EntityRepository
                 });
         $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
         $query = $this->getEntityManager()
-                ->createQuery('SELECT t FROM IneiPayrollBundle:Conceptos t ' . $filter.' '.$orderBy);
+                ->createQuery('SELECT t
+                    FROM IneiPayrollBundle:Conceptos t ' . $filter.' '.$orderBy);
+        if($as_array)
+            return $query->getArrayResult();
         return $query->getResult();
+    }    
+    
+    public function reporte($filter = array(), $orderBy=NULL){
+        $sql = "SELECT c.codi_conc_tco as codigo, c.desc_conc_tco as descripcionlarga, c.desc_cort_tco as descripcioncorta, (CASE c.tipo_conc_tco WHEN '0' THEN 'Tiempo' 
+WHEN '1' THEN 'Ingresos' WHEN '2' THEN 'Egresos' WHEN '3' THEN 'Aportaciones' WHEN '4' THEN 'Otros' END) as tipo from conceptos c ";
+        array_walk($filter, function(&$v, &$k) {
+                $v = " c.$k LIKE '%$v%'";
+        });
+        $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
+        $sql .=  $filter . $orderBy;
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }
