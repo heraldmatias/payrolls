@@ -114,3 +114,7 @@ services:
         arguments: ["@usuario_service"]
         tags:
             - { name: form.type, alias: asignacion }
+    inei_payroll.form.type.asignacion_search:
+        class: Inei\Bundle\PayrollBundle\Form\Type\AsignacionSearchType
+        tags:
+            - { name: form.type, alias: asignacion_search }

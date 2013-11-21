@@ -59,6 +59,15 @@ class TomosRepository extends EntityRepository {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+    
+    public function findTomo($tomo){
+        $sql = "select * from lv_asignacion WHERE tomo=$tomo";
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        //print_r($stmt->fetchAll());exit;
+        return $stmt->fetchAll();
+    }
 
     public function findResumenFolios(array $filtro = null) {
         $where1 = array();

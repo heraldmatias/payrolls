@@ -26,4 +26,9 @@ class TomosService {
         return $this->em->getRepository('IneiPayrollBundle:Tomos')
                 ->findAsignados($usuario);
     }
+    
+    public function findInfoTomo($tomo){
+        return $this->em->getRepository('IneiPayrollBundle:Tomos')
+                ->findTomo(is_numeric($tomo)?$tomo:0);
+    }
 }

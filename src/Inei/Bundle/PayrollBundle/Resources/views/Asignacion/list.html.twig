@@ -1,0 +1,210 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block csspage %}
+<style type="text/css" >
+</style>
+{% endblock %}
+{% block form %}
+<div class="span10">
+    <div class="row-fluid">
+    {{ form_start(form) }}
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Registrar Asignacion</h3>
+        </div>
+        <div class="modal-body"> 
+                    {% for flashMessage in app.session.flashbag.get('asignacion') %}
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {{ form_errors(form) }}
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.tomo) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tomo) }}
+                    {{ form_widget(form.tomo) }}
+                </div>
+                <div class="span2">
+                    {{ form_widget(form.add) }}
+                </div>
+            </div>
+            <div class="folio-options"></div>
+            <br>
+            <table id="tbltomos" class="table table-bordered table-condensed">
+                <thead><tr class="row-black">
+                <th>Item</th><th>Digitador</th><th>Tomo</th>
+                <th>Asignador</th><th>Asignador Cambio</th>
+                <th>Fecha Asignación</th><th>Fecha Modificación Asignación</th><th>Opciones</th></tr>
+                </thead>
+                <tbody id="feedback"></tbody>
+            </table>
+        </div>
+            <div class="modal-footer">
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
+            </div>            
+        </div>
+        {{ form_end(form) }}
+        </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        function asignacionEvent(event){
+            var tomo = $('#asignacion_search_tomo').val(),
+                url = '{{ path('_asignacion_tomo_asignado_ajax') }}';
+            var tabla = $('#tbltomos tbody');
+            tabla.find('tr').remove();
+            var data = {
+                tomo: tomo
+            };
+            var oOptions = {  
+                type: "POST",
+                url: url,
+                data: data,
+                dataType: 'json',
+                async: true,
+                ajaxSend : function(data, textStatus, jqXHR) {
+                    $('#feedback').html('Cargando...');
+                }
+            };
+            var posting = $.ajax(oOptions);
+            function getUsuarios(usuarios, pk){
+                var lista = '<select>', option='';
+                $.each(usuarios, function(k, v){
+                    option = (v['id']===pk)?'selected="selected"':'';
+                    lista +='<option value="'+v['id']+'"'+option+' >'+v['username']+'</option>';
+                });
+                lista += '</select>';
+                return lista;
+            }
+            posting.done(function(data, textStatus, jqXHR) {
+                var tomos = data['tomos'],
+                usuarios = data['usuarios'];
+                if(tomos.length>0){
+                    $.each(tomos, function(k, v){
+                        var fila = $('<tr></tr>');
+                        var columnas = '<td>'+(k+1)+'</td>'+                            
+                                '<td>'+(getUsuarios(usuarios, v['co_asignado']))+'</td>'+
+                                '<td>'+v['tomo']+
+                                '<td>'+v['asignador']+'</td>'+
+                                '<td>'+(v['asignadorcambio']?v['asignadorcambio']:'')+'</td>'+
+                                '<td>'+v['fe_asignacion']+'</td>'+
+                                '<td>'+(v['fe_modifica_asig']?v['fe_modifica_asig']:'')+'</td>';
+                        fila.append(columnas);
+                        fila.data('tomo', v['tomo']);
+                        fila.data('usuario', v['co_asignado']);
+                        addOptions(fila);
+                        tabla.append(fila);
+                    });
+                }else{
+                    var fila = $('<tr></tr>'),
+                        td= '<td colspan="5"><h3>El tomo no ha sido asignado</h3></td>';
+                    fila.append(td);
+                    tabla.append(fila);
+                }
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#feedback').html(textStatus);
+            });
+        }
+        $('#asignacion_search_add').on('click', function(event){
+            asignacionEvent(event);
+        });
+        $('#asignacion_search_tomo').on('keypress', function(event){
+            if(event.which===13){
+                event.preventDefault();
+                asignacionEvent(event);
+            }
+        });
+        function addOptions($newForm) {
+            var $deleteopt = $('<a href="#" title="Eliminar tomo"><i class="icon-trash"></i> </a>'),
+                    $saveopt = $('<a href="#" title="Guardar tomo"><i class="icon-refresh"></i> </a>');
+            var $options = $('<td></td>');
+            $options.append($deleteopt);
+            $options.append($saveopt);
+            $newForm.append($options);//
+            $deleteopt.on('click', function(e) {
+                e.preventDefault();
+                if(confirm('¿Desea desasignar el tomo asignado?')){
+                    var tabla = $('#tbltomos tbody'),
+                    tomo=$newForm.data('tomo'),
+                    url = '{{ path('_asignacion_tomo_quitar_ajax') }}',
+                    usuario = $newForm.data('usuario');
+                    var data = {
+                        usuario: usuario,
+                        tomo: tomo
+                    };
+                    var oOptions = {  
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        dataType: 'json',
+                        async: true,
+                        ajaxSend : function(data, textStatus, jqXHR) {
+                            $('#feedback').html('Cargando...');
+                        }
+                    };
+                    var posting = $.ajax(oOptions);
+                    posting.done(function(data, textStatus, jqXHR) {
+                        if(data['success']){
+                            $newForm.remove();
+                        }else{
+                            alert('No se puede eliminar el tomo');
+                        }
+                    })
+                    .fail(function(data, textStatus, jqXHR) {
+                        $('#feedback').html(textStatus);
+                    });
+                }
+            });
+            $saveopt.on('click', function(e) {
+                e.preventDefault();
+                var tabla = $('#tbltomos tbody'),
+                tomo=$newForm.data('tomo'),
+                url = '{{ path('_asignacion_tomo_reasignar_ajax') }}',
+                usuarioactual = $newForm.data('usuario'),
+                usuarios = $newForm.find('select'),
+                usuarionuevo = parseInt(usuarios.val());
+                if(usuarioactual === usuarionuevo){
+                    alert('Debe seleccionar otro usuario');
+                    usuarios.focus();
+                    return false;
+                }
+                if(confirm('¿Desea reasignar el tomo?')){
+                    var data = {
+                        usuario: usuarioactual,
+                        tomo: tomo,
+                        nuevousuario: usuarionuevo
+                    };
+                    var oOptions = {  
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        dataType: 'json',
+                        async: true,
+                        ajaxSend : function(data, textStatus, jqXHR) {
+                            $('#feedback').html('Cargando...');
+                        }
+                    };
+                    var posting = $.ajax(oOptions);
+                    posting.done(function(data, textStatus, jqXHR) {
+                        if(data['success']){
+                            alert('El tomo ha sido reasignado con éxito');
+                            $newForm.data('usuario', usuarionuevo);
+                        }else{
+                            alert('No se pudo reasignar el tomo');
+                        }
+                    })
+                    .fail(function(data, textStatus, jqXHR) {
+                        $('#feedback').html(textStatus);
+                    });
+                }
+            });
+        }
+        
+    </script>
+{% endblock %}

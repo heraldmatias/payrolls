@@ -23,7 +23,6 @@ class PlanillaHistoricasRepository extends EntityRepository
         if($user)
             $_where[] = "usu_crea_id = $user";
         $where = (count($_where))?' WHERE '.implode(' and ', $_where):'';
-        //Digitador 	Tomo 	Total Folios 	Folios no digitables 	Folios digitables 	Folios Digitados 	% Avance en Folios 	Total de Registros 	Registros Digitados (Por Fecha) 	Registros Digitados (Acumulado) 	Días Empleados 	% Avance en Registros
         $sql = "select tabla.digitador, tabla.tomo, tabla.folios, tabla.resumen,
             tabla.folios-tabla.resumen as digitables, tabla.folios_digitados,            
             round((folios_digitados/(folios-resumen))*100,2) as porcentaje_folios,
