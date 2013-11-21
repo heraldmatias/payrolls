@@ -15,9 +15,9 @@ class ConceptosRepository extends EntityRepository
     public function findUsingLike($filter = array(), $orderBy=NULL, $as_array=false) {
         array_walk($filter, function(&$v, &$k) {
                     if ($k === 'descConcTco') {
-                        $v = " t.$k LIKE '%$v%'";
+                        $v = " UPPER(t.$k) LIKE UPPER('%$v%')";
                     } else {
-                        $v = "t.$k = '$v'";
+                        $v = "UPPER(t.$k) = UPPER('$v')";
                     }
                 });
         $filter = count($filter) > 0 ? 'WHERE ' . implode(' AND ', $filter) : '';
