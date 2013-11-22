@@ -76,7 +76,9 @@ class UsuarioService {
     public function listaTomosAsignados() {
         $user = $this->sc->getToken()->getUser();
         //print_r($user->getRoles());
-        if ($this->hasRole('ROLE_AUDITOR') || $this->hasRole('ROLE_ADMINISTRADOR')) {
+        if ($this->hasRole('ROLE_AUDITOR') 
+                | $this->hasRole('ROLE_ADMINISTRADOR') |
+                $this->hasRole('ROLE_SUPERVISOR')) {
             $tomos = array_combine(range(1, 419), range(1, 419));
         } else {
             $tomos = $this->em->getRepository('IneiAuthBundle:Usuarios')
