@@ -57,7 +57,7 @@ ORDER BY empleado;';
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalEncontrado pd ";
         $where = array();
         if (array_key_exists('soundex', $criteria))
-            $where[] = 'soundex(pd.nombCortPer) = soundex(' . $criteria['soundex'].')';
+            $where[] = "soundex(pd.nombCortPer) = soundex('" . $criteria['soundex']."')";
         if (array_key_exists('nombres', $criteria))
             $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
         if (array_key_exists('codigo', $criteria))
@@ -73,7 +73,7 @@ ORDER BY empleado;';
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalDigitado pd ";
         $where = array();
         if (array_key_exists('soundex', $criteria))
-            $where[] = 'pd.soundex = soundex(' . $criteria['soundex'].')';
+            $where[] = "pd.soundex = soundex('" . $criteria['soundex']."')";
         if (array_key_exists('nombres', $criteria))
             $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
         if (array_key_exists('codigo', $criteria))

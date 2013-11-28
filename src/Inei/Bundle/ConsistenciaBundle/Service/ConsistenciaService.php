@@ -81,12 +81,24 @@ class ConsistenciaService {
     
     public function asociarPersonal($nombres, $persona){
         //INTENTAR INSERTAR EN PERSONAL ENCONTRADO
+        $obj = $this->em->getRepository('IneiConsistenciaBundle:PersonalEncontrado')
+                ->find($persona);
+        $sqli = 'INSERT INTO personal_encontrado
+            SELECT mp.codi_empl_per, mp.ape_pat_per, mp.ape_mat_per, 
+            mp.nom_emp_per, mp.nomb_cort_per, mp.libr_elec_per 
+            FROM maestro_personal mp WHERE mp.codi_empl_per=:persona';
         $nombres = "('".implode("','", $nombres)."')";
         $sql = 'UPDATE personal_digitado 
             SET codi_empl_per_persona = :persona
             WHERE nomb_cort_per IN '.$nombres;
         try {
             $this->em->beginTransaction();
+            if(null === $obj){
+                $this->em->getConnection()->executeUpdate($sqli,
+                    array(
+                        'persona' => $persona
+                    ));
+            }
             $this->em->getConnection()->executeUpdate($sql,
                     array(
                         'persona' => $persona

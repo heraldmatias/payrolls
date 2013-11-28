@@ -196,8 +196,12 @@ font-family: arial;
         if(e.which === 13){
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
+            var reg = new RegExp('\\s+','g'),
+            reg2 = new RegExp('[^A-Za-z0-9 ]','g'),
+            valor = jQuery(this).val();
             var campo_siguiente = jQuery(this).parent().parent().find('.monto:eq(0)');
-            
+            valor = jQuery.trim(valor.replace(reg, ' ').replace(reg2,'').toUpperCase());
+            jQuery(this).val(valor);
             campo_siguiente.focus();
             campo_siguiente.select();
         }
