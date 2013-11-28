@@ -1,3 +1,7 @@
+inei_consistencia:
+    resource: "@IneiConsistenciaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 inei_auth:
     resource: "@IneiAuthBundle/Resources/config/routing.yml"
     prefix:   /

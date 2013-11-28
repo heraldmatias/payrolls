@@ -20,7 +20,8 @@ class AppKernel extends Kernel {
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new JMS\AopBundle\JMSAopBundle(),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
-            new JMS\DiExtraBundle\JMSDiExtraBundle($this)
+            new JMS\DiExtraBundle\JMSDiExtraBundle($this),
+            new Inei\Bundle\ConsistenciaBundle\IneiConsistenciaBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

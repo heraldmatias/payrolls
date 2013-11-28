@@ -1,0 +1,72 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block form %}
+<div class="span10">
+    
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Procesar los datos de Personal</h3>
+        </div>
+        <div class="modal-body">
+        {% for flashMessage in app.session.flashbag.get('usuario') %}
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        <input type="button" value="Iniciar Proceso" id="id_consistencia" class="btn btn-primary">
+        <a href="{{ path('_consistencia_index') }}" id="id_anterior" class="btn btn-primary">Anterior </a>
+        <a href="{{ path('_consistencia_manual_procesar') }}" id="id_siguiente" class="btn btn-primary">Siguiente </a>
+        <div id="feedback">
+            <img src="{{ asset('bundles/ineipayroll/images/cargando.gif') }}" style="display: none" id="cargando" />
+            <br>
+            <div class="alert alert-success" style="display: none">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h1></h1>
+            </div>
+            
+            
+        </div>
+        
+        </div>
+        <div class="modal-footer">
+        </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('#id_consistencia').on('click', function(e){
+            if(confirm('¿Esta seguro que desea iniciar la consistencia de personal?')){
+                start_consistencia();
+            }
+        });
+        
+        function start_consistencia(){
+            var oOptions = {
+                url: '{{ path('_consistencia_proceso_ajax') }}',
+                dataType: 'json',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                if(data['success']){
+                    $('#feedback .alert').show().html(
+                            'Se encontraron ' + data['data'] + ' nombres de empleados');
+                }else{
+                    $('#feedback .alert').show().html(data['error']);
+                }
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+
+            
+        }
+    </script>
+{% endblock %}

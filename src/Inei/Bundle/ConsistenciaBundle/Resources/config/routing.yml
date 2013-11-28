@@ -1,0 +1,4 @@
+_admin:
+    resource: "@IneiConsistenciaBundle/Controller/DefaultController.php"
+    type:     annotation
+    prefix:   /admin

@@ -1,0 +1,10 @@
+parameters:
+#    inei_consistencia.example.class: Inei\Bundle\ConsistenciaBundle\Example
+#"@security.encoder_factory", "@security.context",
+
+services:
+    consistencia_service:
+        class: Inei\Bundle\ConsistenciaBundle\Service\ConsistenciaService
+        arguments: ["@doctrine.orm.entity_manager"] 
+        tags:
+            - { name: service, alias: consistencia_service } 
