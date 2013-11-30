@@ -45,15 +45,15 @@
                 {% for folio in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ folio.tomo }}</td>
-                        <td>{{ folio.folio }}</td>
-                        <td>{{ folio.periodoFolio }}</td>
-                        <td>{{ folio.registrosFolio }}</td>
+                        <td>{{ folio.0.folio }}</td>
+                        <td>{{ folio.0.periodoFolio }}</td>
+                        <td>{{ folio.0.registrosFolio }}</td>
                         <td>{{ folio.descTipoTpl }}</td>
-                        <td>{{ folio.subtPlanStp }}</td>
+                        <td>{{ folio.0.subtPlanStp }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            {% if edit %}<a href="{{ path('_inventario_folio_edit', {'pk': folio.codiFolio}) }}" 
+                            {% if edit %}<a href="{{ path('_inventario_folio_edit', {'pk': folio.0.codiFolio}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
-                            {% if edit %}<a href="{{ path('_inventario_folio_delete', {'pk': folio.codiFolio}) }}" 
+                            {% if edit %}<a href="{{ path('_inventario_folio_delete', {'pk': folio.0.codiFolio}) }}" 
                                title="Eliminar Folio" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')"><i class="icon-trash"></i> </a>{% endif %}
                         </td>
                     </tr>

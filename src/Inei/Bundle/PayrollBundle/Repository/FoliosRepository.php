@@ -15,7 +15,7 @@ class FoliosRepository extends EntityRepository {
 
     public function findCustomBy($criteria) {
         $DQL = "
-            SELECT t.codiTomo as tomo, f.codiFolio, f.folio, pla.descTipoTpl, f.periodoFolio, f.registrosFolio, f.subtPlanStp
+            SELECT partial f.{codiFolio, folio, periodoFolio, registrosFolio, subtPlanStp},pla.descTipoTpl,t.codiTomo as tomo
             FROM IneiPayrollBundle:Folios f
             JOIN f.tomo t
             LEFT JOIN f.tipoPlanTpl pla
@@ -31,7 +31,7 @@ class FoliosRepository extends EntityRepository {
             $where[] = 'f.registrosFolio =' . $criteria['registrosFolio'];
         $DQL .= count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
         $qb = $this->getEntityManager()->createQuery($DQL.' ORDER BY f.folio');
-        return $qb->getResult();
+        return $qb;
     }
 
     public function findOneCustomBy($pk) {
