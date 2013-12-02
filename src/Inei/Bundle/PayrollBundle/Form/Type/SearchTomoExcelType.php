@@ -25,7 +25,7 @@ class SearchTomoExcelType extends AbstractType {
         $builder->add('title', 'text', array(
                     'attr' => array(
                         'class' => 'title',
-                        'style' => 'width:100%;'
+                        'style' => 'width:80%;'
                      ),
                     'required' => false,                    
                     'label' => 'Nombre'
