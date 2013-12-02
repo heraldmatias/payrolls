@@ -12,15 +12,15 @@ use \PHPExcel_IOFactory;
 use Doctrine\DBAL\DBALException;
 
 /**
- * ExcelTomo controller.
- * 
- */
+* ExcelTomo controller.
+*
+*/
 class ExcelTomoController extends Controller {
 
     /**
-     * @Route("/", name="admin_excel_list")
-     * @Template("")
-     */
+* @Route("/", name="admin_excel_list")
+* @Template("")
+*/
     public function listAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'query')) {
             throw $this->createNotFoundException();
@@ -49,9 +49,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-     * @Route("/add", name="admin_excel_add")
-     * @Template("")
-     */
+* @Route("/add", name="admin_excel_add")
+* @Template("")
+*/
     public function newAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'add')) {
             throw $this->createNotFoundException();
@@ -65,7 +65,7 @@ class ExcelTomoController extends Controller {
         if ($form->isValid()) {
             try {
                 $em = $this->getDoctrine()->getManager();
-                //$object->setRootDir( str_replace('/cards/app', $this->getRequest()->getBasePath(),  $this->get('kernel')->getRootDir()).'/' );
+                //$object->setRootDir( str_replace('/cards/app', $this->getRequest()->getBasePath(), $this->get('kernel')->getRootDir()).'/' );
                 $em->persist($object);
                 $em->flush();
                 $this->get('session')->getFlashBag()->add(
@@ -85,9 +85,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-     * @Route("/{pk}", name="admin_excel_edit")
-     * @Template("")
-     */
+* @Route("/{pk}", name="admin_excel_edit")
+* @Template("")
+*/
     public function editAction(Request $request, $pk) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'edit')) {
             throw $this->createNotFoundException();
@@ -124,9 +124,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-     * @Route("/delete/{pk}", name="admin_excel_delete")
-     * @Template("")
-     */
+* @Route("/delete/{pk}", name="admin_excel_delete")
+* @Template("")
+*/
     public function deleteAction(Request $request, $pk) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'del')) {
             throw $this->createNotFoundException();
@@ -166,20 +166,20 @@ class ExcelTomoController extends Controller {
             $data[] = sprintf("(%s, %s, '%s')", $colc - 3, $folio, $_conc);
             $colc++;
         }
-//        $_conceptos = array_count_values($data);
-//        $colc = 1;
-//        $conceptos = array();
-//        foreach ($_conceptos as $key => $value) {
-//            $conceptos[] = sprintf("(%s, %s, '%s', %s)", $colc, $folio, $key, $value);
-//            $colc++;
-//        }
+// $_conceptos = array_count_values($data);
+// $colc = 1;
+// $conceptos = array();
+// foreach ($_conceptos as $key => $value) {
+// $conceptos[] = sprintf("(%s, %s, '%s', %s)", $colc, $folio, $key, $value);
+// $colc++;
+// }
         return implode(',', $data);
     }
 
     /**
-     * @Route("/process/", name="admin_excel_process")
-     * @Template("")
-     */
+* @Route("/process/", name="admin_excel_process")
+* @Template("")
+*/
     public function processAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'other')) {
             throw $this->createNotFoundException();
@@ -187,26 +187,26 @@ class ExcelTomoController extends Controller {
         $pk = $request->query->get('pk');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
-        /*         * 0 BASED INDEX
-         * C  F
-         * 0, 1 => TITULO
-         * 0, 6 => CABECERA
-         * 0, 7 => EMPIEZA LOS DATOS
-         * 
-         * FILA 4 => DATOS DEL TOMO
-         * 1, 4 => PERIODO DEL TOMO
-         * 4, 4 => ANO DEL TOMO
-         * 6, 4 => CODIGO DEL TOMO
-         * 8, 4 => FOLIOS DEL TOMO
-         * 
-         * FILA 7 => EMPIEZAN LOS VALORES
-         * COL 0 => FOLIO
-         * COL 1 => PERIODO
-         * COL 2 => REGISTRO
-         * COL 3 => TIPO
-         * COL 4 => EMPIEZAN LOS CAMPOS
-         */
-        /*         * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
+        /* * 0 BASED INDEX
+* C F
+* 0, 1 => TITULO
+* 0, 6 => CABECERA
+* 0, 7 => EMPIEZA LOS DATOS
+*
+* FILA 4 => DATOS DEL TOMO
+* 1, 4 => PERIODO DEL TOMO
+* 4, 4 => ANO DEL TOMO
+* 6, 4 => CODIGO DEL TOMO
+* 8, 4 => FOLIOS DEL TOMO
+*
+* FILA 7 => EMPIEZAN LOS VALORES
+* COL 0 => FOLIO
+* COL 1 => PERIODO
+* COL 2 => REGISTRO
+* COL 3 => TIPO
+* COL 4 => EMPIEZAN LOS CAMPOS
+*/
+        /* * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
         $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
         $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
         $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
@@ -214,13 +214,13 @@ class ExcelTomoController extends Controller {
                     ->getToken()->getUser()->getId();
         $date = new \DateTime();
         $fecha = $date->format('Y-m-d H:i:s');
-        /*         * *************************SE GUARDA EL TOMO********************* */
+        /* * *************************SE GUARDA EL TOMO********************* */
         $insertFolio = 'INSERT INTO folios(
-            per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, 
-            num_folio,usu_crea_id,fec_creac) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
-            returning codi_folio;';
+per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl,
+num_folio,usu_crea_id,fec_creac) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
+returning codi_folio;';
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
-            codi_folio, codi_conc_tco) values ';
+codi_folio, codi_conc_tco) values ';
         try {
             
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
