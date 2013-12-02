@@ -53,7 +53,7 @@
                         <td><!--- LINK A LAS PLANILLAS--->
                             {% if edit %}<a href="{{ path('_inventario_folio_edit', {'pk': folio.0.codiFolio}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
-                            {% if edit %}<a href="{{ path('_inventario_folio_delete', {'pk': folio.0.codiFolio}) }}" 
+                            {% if del %}<a href="{{ path('_inventario_folio_delete', {'pk': folio.0.codiFolio}) }}" 
                                title="Eliminar Folio" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')"><i class="icon-trash"></i> </a>{% endif %}
                         </td>
                     </tr>
