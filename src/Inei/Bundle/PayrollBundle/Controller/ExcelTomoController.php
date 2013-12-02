@@ -188,24 +188,24 @@ class ExcelTomoController extends Controller {
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
         /* * 0 BASED INDEX
-* C F
-* 0, 1 => TITULO
-* 0, 6 => CABECERA
-* 0, 7 => EMPIEZA LOS DATOS
-*
-* FILA 4 => DATOS DEL TOMO
-* 1, 4 => PERIODO DEL TOMO
-* 4, 4 => ANO DEL TOMO
-* 6, 4 => CODIGO DEL TOMO
-* 8, 4 => FOLIOS DEL TOMO
-*
-* FILA 7 => EMPIEZAN LOS VALORES
-* COL 0 => FOLIO
-* COL 1 => PERIODO
-* COL 2 => REGISTRO
-* COL 3 => TIPO
-* COL 4 => EMPIEZAN LOS CAMPOS
-*/
+            * C F
+            * 0, 1 => TITULO
+            * 0, 6 => CABECERA
+            * 0, 7 => EMPIEZA LOS DATOS
+            *
+            * FILA 4 => DATOS DEL TOMO
+            * 1, 4 => PERIODO DEL TOMO
+            * 4, 4 => ANO DEL TOMO
+            * 6, 4 => CODIGO DEL TOMO
+            * 8, 4 => FOLIOS DEL TOMO
+            *
+            * FILA 7 => EMPIEZAN LOS VALORES
+            * COL 0 => FOLIO
+            * COL 1 => PERIODO
+            * COL 2 => REGISTRO
+            * COL 3 => TIPO
+            * COL 4 => EMPIEZAN LOS CAMPOS
+        */
         /* * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
         $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
         $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
