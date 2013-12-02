@@ -3,6 +3,7 @@
 /web/bundles/ineiauth
 /web/bundles/sensiodistribution
 /web/upload/
+/web/*.json
 /app/bootstrap*
 /app/cache/*
 /app/sessions/*
