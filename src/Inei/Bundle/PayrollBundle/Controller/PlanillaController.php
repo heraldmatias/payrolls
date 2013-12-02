@@ -468,29 +468,30 @@ class PlanillaController extends Controller {
                     ->getRepository('IneiPayrollBundle:Folios');
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
+        $data = array();
+        if($request->request->has('form')){
+            $form = $request->request->get('form');
+            if(array_key_exists('payrolls', $form)){
+                $data = $form['payrolls'];
+            }
+        }
         $service = $this->get('planilla_service');//SERVICIO
         $session = $this->get('session');//SESSION
         if ($object && $object->getRegistrosFolio()) {
-            $_form = $this->createPlanillaForm(array(), $object);
-            $_form->handleRequest($request);
-            if ($_form->isValid()) {
-                /*
-                 * AL GUARDAR LA PLANILLA SE ALMACENA EL NUMERO DE TOMO
-                 * PARA LUEGO OBTENER EL SIGUIENTE FOLIO A DIGITAR EN
-                 * DICHO TOMO
-                 */
-                $_data = $_form->getData();
-                $data = $_data['payrolls'];
-                if ($service->saveMatrix($object, $data)) {
-                    $session->set('tomo', $tomo);
-                    $session->getFlashBag()->add(
-                            'planilla', 'Registro grabado satisfactoriamente'
-                    );
-                } else {
-                    $this->get('session')->getFlashBag()->add(
-                            'planilla', 'Ocurrio un error al grabar la planilla'
-                    );
-                }
+            /*
+             * AL GUARDAR LA PLANILLA SE ALMACENA EL NUMERO DE TOMO
+             * PARA LUEGO OBTENER EL SIGUIENTE FOLIO A DIGITAR EN
+             * DICHO TOMO
+             */
+            if ($service->saveMatrix($object, $data)) {
+                $session->set('tomo', $tomo);
+                $session->getFlashBag()->add(
+                        'planilla', 'Registro grabado satisfactoriamente'
+                );
+            } else {
+                $this->get('session')->getFlashBag()->add(
+                        'planilla', 'Ocurrio un error al grabar la planilla'
+                );
             }
         }
         /*
@@ -553,10 +554,15 @@ class PlanillaController extends Controller {
                     'tomo' => $tomo,
                     'folio' => $folio));
         $sform->handleRequest($request);
+        $estado = null;
         if ($object && $object->getRegistrosFolio()) {
             $array = $service->generateMatrix($object, true);
-            $_form = $this->createPlanillaForm($array, $object);
+            $_form = $this->createPlanillaForm($array['data'], $object);
             $form = $_form->createView();
+//            $estado = $array['estado']===1?'PLANILLA GUARDADA EN LA BASE DE DATOS':
+//                      ($array['estado']===2?'PLANILLA GUARDADA TEMPORALMENTE':
+//                      'PLANILLA POR DIGITAR');
+            $estado = $array['estado'];
         }
         $view = 'IneiPayrollBundle:Planilla:addUpdateOld.html.twig';
         if($tomo>=89)
@@ -564,7 +570,8 @@ class PlanillaController extends Controller {
         return $this->render($view, array(
             'form' => $form,
             'sform' => $sform->createView(),
-            'folio' => $object
+            'folio' => $object,
+            'estado' => $estado
         ));
     }
 

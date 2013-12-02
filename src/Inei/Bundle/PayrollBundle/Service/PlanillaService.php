@@ -280,33 +280,29 @@ class PlanillaService {
     public function generateMatrix($object, $autosave = false) {
         $array = array('payrolls' => array_map(
                     create_function('$item', 'return array();'), range(1, $object->getRegistrosFolio())));
+        $estado = 1;//1 = GRABADO, 2=AUTOGUARDADO
         $_planillas = $this->getPlanillas($object->getCodiFolio());
-        
-        if (!$_planillas) {
+//        print_r(count($_planillas));exit;
+        if (count($_planillas)===0) {
+            $estado = 3;
             if ($autosave) {
                 $_planillas = $this->
                         loadAutoSave($object->getTomo()->getCodiTomo(), $object->getFolio());
                 if (null !== $_planillas) {
-                    //$array = &$_planillas['payrolls'];
-    //                if (count($array) > $object->getRegistrosFolio()) {
-    //                    for ($index = $object->getRegistrosFolio(); $index <= count($array); $index++) {
-    //                        //unset($array[$index]);
-    //                    }
-    //                }
-                    //print_r($_planillas['payrolls']);
                     $plas = $_planillas['payrolls'];
                     foreach ($array['payrolls'] as $key => $value) {
                         $array['payrolls'][$key] = array_key_exists($key, $plas)?
                                 $plas[$key]:array();
                     }
-                    return $array;
+                    $estado = 2;
+                    //return $array;
                 }
             }
         }
-        $planilla = array();
         
+        $planilla = array();
         $co = 0;
-        if ($_planillas) {
+        if (count($_planillas) && $estado === 1) {
             $reg = $_planillas[0]->getRegistro();
             $codigos = array();
             foreach ($_planillas as $key => $value) {
@@ -337,7 +333,10 @@ class PlanillaService {
                 $planilla['codigos'] = implode(',', $codigos);
             $array['payrolls'][$co] = $planilla;
         }
-        return $array;
+        return array(
+            'data' => $array,
+            'estado' => $estado
+        );
     }
 
     public function saveMatrix($object, $data) {

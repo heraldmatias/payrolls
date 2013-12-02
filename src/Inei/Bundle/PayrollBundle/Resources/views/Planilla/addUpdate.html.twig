@@ -64,13 +64,28 @@ font-family: arial;
                         {% endif %}
                     {{ form_end(sform) }}
                     </div>
+                    <div style="float: right;">
+                        {% if estado ==1 %}
+                            <div class="alert alert-success">
+                                <h3>FOLIO GUARDADO</h3>
+                            </div>
+                        {% elseif estado ==2 %}
+                            <div class="alert alert-error">
+                                <h3>FOLIO NO GUARDADO</h3>
+                            </div>
+                        {% elseif estado ==3 %}
+                            <div class="alert alert-info">
+                                <h3>FOLIO POR DIGITAR</h3>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>{% if folio %}
                 <div class="row-fluid">
                     <div class="span12"><h4>Información del Folio</h4></div></div>
                     <div class="row-fluid"><div class="span12">                            
                     <div class="span2"> <h2>{{ folio.tomo }}</h2> </div>
                     <div class="span2"> <h2>FOLIO - {{ folio.folio }}</h2> </div>
-                    <div class="span3"> <h2>REGISTROS:</h4> </div><div class="span1"> <h2>{{ folio.registrosFolio }}</h2> </div>
+                    <div class="span3"> <h2>REGISTROS:</h2> </div><div class="span1"> <h2>{{ folio.registrosFolio }}</h2> </div>
                     <div class="span4"><b id="feedback"></b></div>
                     </div></div>
                 
@@ -197,7 +212,7 @@ font-family: arial;
             e.preventDefault();
             //jQuery(this).parent().next().find('textarea').focus();
             var reg = new RegExp('\\s+','g'),
-            reg2 = new RegExp('[^A-Za-z0-9 ]','g'),
+            reg2 = new RegExp('[^A-Za-zñÑ ]','g'),
             valor = jQuery(this).val();
             var campo_siguiente = jQuery(this).parent().parent().find('.monto:eq(0)');
             valor = jQuery.trim(valor.replace(reg, ' ').replace(reg2,'').toUpperCase());
@@ -364,7 +379,9 @@ font-family: arial;
         if(nextRow.hasClass('fila_totales')){
             jQuery('form:eq(1)').submit();
         }else{
-            nextRow.find('input[type="text"]:eq(0)').focus();
+            var campo_siguiente = nextRow.find('input[type="text"]:eq(0)');
+            campo_siguiente.focus();
+            campo_siguiente.select();
             var iScroll = jQuery(window).scrollTop();
             iScroll = iScroll + 40;
             jQuery('html, body').animate({  scrollTop: iScroll }, 200);
