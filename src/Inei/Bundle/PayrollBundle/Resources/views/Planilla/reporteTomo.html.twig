@@ -2,6 +2,11 @@
 {% block csspage %}
 <link href="{{ asset('bundles/inei/datepicker/css/datepicker.css') }}" rel="stylesheet" />
 <link href="{{ asset('bundles/inei/DT_bootstrap.css') }}" rel="stylesheet" />
+<style type="text/css">
+.espera{
+    cursor: wait;
+}
+</style>
 {% endblock %}
 {% block form %}
     <div class="span10">
@@ -62,8 +67,7 @@
                             <th>Estado</th>
                         </tr>
                     </thead>
-                    <tbody id="feedback">
-                    
+                    <tbody id="feedback" >
                     </tbody>
                 </table>
             </div>
@@ -108,23 +112,25 @@
             data: data,
             dataType: 'json',
             async: true,
-            ajaxSend : function(data, textStatus, jqXHR) {
+            beforeSend : function(data, textStatus, jqXHR) {
+                $('body').addClass('espera');
                 $('#feedback').html('Cargando...');
             }
         };
         var posting = $.ajax(oOptions);
         // Put the results in a div
         posting.done(function(data, textStatus, jqXHR) {
-            //$('#feedback').html(data);
+            $('body').removeClass('espera');
             $('#tbltomos').dataTable( {
                 "aaData": data,
                 "bDestroy": true, 
                 "sWrapper": "dataTables_wrapper form-inline",
                 "bFilter": false
-            });
+            });            
         })
         .fail(function(data, textStatus, jqXHR) {
             $('#feedback').html(textStatus);
+            $('body').removeClass('espera');
         })
         });
         $('#reporte').on('click', function(event){        

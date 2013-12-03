@@ -2,6 +2,11 @@
 {% block csspage %}
 <link href="{{ asset('bundles/inei/datepicker/css/datepicker.css') }}" rel="stylesheet" />
 <link href="{{ asset('bundles/inei/DT_bootstrap.css') }}" rel="stylesheet" />
+<style type="text/css">
+.espera{
+    cursor: wait;
+}
+</style>
 {% endblock %}
 {% block form %}
     <div class="span10">
@@ -105,7 +110,8 @@
             data: data,
             dataType: 'json',
             async: true,
-            ajaxSend : function(data, textStatus, jqXHR) {
+            beforeSend : function(data, textStatus, jqXHR) {
+                $('body').addClass('espera');
                 $('#feedback').html('Cargando...');
             }
         };
@@ -119,9 +125,11 @@
                 "sWrapper": "dataTables_wrapper form-inline",
                 "bFilter": false
             });
+            $('body').removeClass('espera');
         })
         .fail(function(data, textStatus, jqXHR) {
             $('#feedback').html(textStatus);
+            $('body').removeClass('espera');
         })
         });
         $('#reporte').on('click', function(event){        
