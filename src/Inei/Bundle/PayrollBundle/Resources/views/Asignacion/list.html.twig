@@ -67,7 +67,7 @@
                 data: data,
                 dataType: 'json',
                 async: true,
-                ajaxSend : function(data, textStatus, jqXHR) {
+                beforeSend : function(data, textStatus, jqXHR) {
                     $('#feedback').html('Cargando...');
                 }
             };
@@ -84,6 +84,7 @@
             posting.done(function(data, textStatus, jqXHR) {
                 var tomos = data['tomos'],
                 usuarios = data['usuarios'];
+                tabla.empty();
                 if(tomos.length>0){
                     $.each(tomos, function(k, v){
                         var fila = $('<tr></tr>');
@@ -144,7 +145,7 @@
                         data: data,
                         dataType: 'json',
                         async: true,
-                        ajaxSend : function(data, textStatus, jqXHR) {
+                        beforeSend : function(data, textStatus, jqXHR) {
                             $('#feedback').html('Cargando...');
                         }
                     };
@@ -186,7 +187,7 @@
                         data: data,
                         dataType: 'json',
                         async: true,
-                        ajaxSend : function(data, textStatus, jqXHR) {
+                        beforeSend : function(data, textStatus, jqXHR) {
                             $('#feedback').html('Cargando...');
                         }
                     };
