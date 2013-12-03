@@ -98,13 +98,14 @@
                 data: data,
                 dataType: 'json',
                 async: true,
-                ajaxSend : function(data, textStatus, jqXHR) {
+                beforeSend : function(data, textStatus, jqXHR) {
                     $('#feedback').html('Cargando...');
                 }
             };
             var posting = $.ajax(oOptions);                
             posting.done(function(data, textStatus, jqXHR) {
                 if(data){
+                    tabla.empty();
                     tabla.data('tomos').push(data['tomo']);
                     var fila = $('<tr class="'+((item%2!==0)?'info':'')+'"></tr>');
                     var columnas = '<td>'+item+'</td>'+
@@ -143,12 +144,13 @@
                 data: data,
                 dataType: 'json',
                 async: true,
-                ajaxSend : function(data, textStatus, jqXHR) {
+                beforeSend : function(data, textStatus, jqXHR) {
                     $('#feedback').html('Cargando...');
                 }
             };
             var posting = $.ajax(oOptions);
             posting.done(function(data, textStatus, jqXHR) {
+                tabla.empty();
                 $.each(data, function(k, v){
                     var fila = $('<tr class="'+((k%2===0)?'info':'')+'"></tr>');
                     var columnas = '<td>'+(k+1)+'</td>'+
@@ -192,7 +194,7 @@
                         data: data,
                         dataType: 'json',
                         async: true,
-                        ajaxSend : function(data, textStatus, jqXHR) {
+                        beforeSend : function(data, textStatus, jqXHR) {
                             $('#feedback').html('Cargando...');
                         }
                     };
