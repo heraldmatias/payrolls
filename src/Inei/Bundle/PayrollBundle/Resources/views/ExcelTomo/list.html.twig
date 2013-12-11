@@ -80,8 +80,9 @@
 <script type="text/javascript">
     
     function process(pk){
+        var rpt = false;
         $('#opt-process'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
-        $.get('{{ path('admin_excel_process') }}', {'pk': pk}
+        $.get('{{ path('admin_excel_process') }}', {'pk': pk, 'del': rpt}
         ).done(function(data){
             $('#opt-process'+pk).html("<i class='icon-refresh'></i>");
             if(data['success']){
