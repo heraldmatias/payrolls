@@ -329,7 +329,9 @@ class InventarioController extends Controller {
         }
         try {
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($pk);
-
+            $conn = $this->get('database_connection');
+            $st = $conn->prepare('DELETE FROM asignacion where co_tomo=' . $pk);
+            $st->execute();
             $em = $this->getDoctrine()->getEntityManager();
             $em->remove($object);
             $em->flush();
@@ -338,7 +340,7 @@ class InventarioController extends Controller {
             );
         } catch (DBALException $e) {
             $this->get('session')->getFlashBag()->add(
-                    'tomo', 'Ocurrio un error al grabar el registro'
+                    'tomo', 'Ocurrio un error al eliminar el registro'
             );
         }
         $nextAction = '_inventario_list';
@@ -363,7 +365,7 @@ class InventarioController extends Controller {
             );
         }else{
             $this->get('session')->getFlashBag()->add(
-                    'folio', 'Ocurrio un error al grabar el registro'
+                    'folio', 'Ocurrio un error al eliminar el registro'
             );
         }
         $nextAction = '_inventario_folio_list';
