@@ -60,7 +60,7 @@
                             {% if process %}<a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
                                 <i class="icon-refresh"></i> </a>
                                 <a href="javascript: process2({{ item.id }})" id="opt-process2{{ item.id }}" title="Eliminar Existente y Procesar">
-                                <i class="icon-repeat"></i> </a>{% endif %}
+                                <i class="icon-remove-sign"></i> </a>{% endif %}
                             {% if del %}<a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
                                 <i class="icon-trash"></i> </a>{% endif %}</div>
                         </td>
@@ -101,7 +101,7 @@
             $('#opt-process2'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
             $.get('{{ path('admin_excel_process') }}', {'pk': pk, 'del': true}
             ).done(function(data){
-                $('#opt-process2'+pk).html("<i class='icon-repeat'></i>");
+                $('#opt-process2'+pk).html("<i class='icon-remove-sign'></i>");
                 if(data['success']){
                     $('#message'+pk).html(data['data']);
                 }else{
