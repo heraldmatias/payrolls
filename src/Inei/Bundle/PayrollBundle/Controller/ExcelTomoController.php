@@ -179,7 +179,7 @@ class ExcelTomoController extends Controller {
             throw $this->createNotFoundException();
         }
         $pk = $request->query->get('pk');
-        $del = false;
+        $del = $request->query->get('del');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
         /*         * 0 BASED INDEX
@@ -236,7 +236,7 @@ codi_folio, codi_conc_tco) values ';
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
             $nfolio = 1;
-            if (!$object->getTomo()) {
+            if (!$object->getTomo() | $del !== '') {
                 $conn->insert('tomos', array(
                     'codi_tomo' => $tomo,
                     'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
