@@ -12,15 +12,15 @@ use \PHPExcel_IOFactory;
 use Doctrine\DBAL\DBALException;
 
 /**
-* ExcelTomo controller.
-*
-*/
+ * ExcelTomo controller.
+ *
+ */
 class ExcelTomoController extends Controller {
 
     /**
-* @Route("/", name="admin_excel_list")
-* @Template("")
-*/
+     * @Route("/", name="admin_excel_list")
+     * @Template("")
+     */
     public function listAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'query')) {
             throw $this->createNotFoundException();
@@ -49,9 +49,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-* @Route("/add", name="admin_excel_add")
-* @Template("")
-*/
+     * @Route("/add", name="admin_excel_add")
+     * @Template("")
+     */
     public function newAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'add')) {
             throw $this->createNotFoundException();
@@ -85,9 +85,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-* @Route("/{pk}", name="admin_excel_edit")
-* @Template("")
-*/
+     * @Route("/{pk}", name="admin_excel_edit")
+     * @Template("")
+     */
     public function editAction(Request $request, $pk) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'edit')) {
             throw $this->createNotFoundException();
@@ -124,9 +124,9 @@ class ExcelTomoController extends Controller {
     }
 
     /**
-* @Route("/delete/{pk}", name="admin_excel_delete")
-* @Template("")
-*/
+     * @Route("/delete/{pk}", name="admin_excel_delete")
+     * @Template("")
+     */
     public function deleteAction(Request $request, $pk) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'del')) {
             throw $this->createNotFoundException();
@@ -135,10 +135,11 @@ class ExcelTomoController extends Controller {
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
             if (!null == $object->getTomo()) {
                 $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
-
-                $emt = $this->getDoctrine()->getEntityManager();
-                $emt->remove($tomo);
-                $emt->flush();
+                if (null !== $tomo) {
+                    $emt = $this->getDoctrine()->getEntityManager();
+                    $emt->remove($tomo);
+                    $emt->flush();
+                }
             }
             $em = $this->getDoctrine()->getEntityManager();
             $em->remove($object);
@@ -166,72 +167,67 @@ class ExcelTomoController extends Controller {
             $data[] = sprintf("(%s, %s, '%s')", $colc - 3, $folio, $_conc);
             $colc++;
         }
-// $_conceptos = array_count_values($data);
-// $colc = 1;
-// $conceptos = array();
-// foreach ($_conceptos as $key => $value) {
-// $conceptos[] = sprintf("(%s, %s, '%s', %s)", $colc, $folio, $key, $value);
-// $colc++;
-// }
         return implode(',', $data);
     }
 
     /**
-* @Route("/process/", name="admin_excel_process")
-* @Template("")
-*/
+     * @Route("/process/", name="admin_excel_process")
+     * @Template("")
+     */
     public function processAction(Request $request) {
         if (!$this->get('usuario_service')->hasPermission('tomo_excel', 'other')) {
             throw $this->createNotFoundException();
         }
         $pk = $request->query->get('pk');
+        $del = false;
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
-        /* * 0 BASED INDEX
-            * C F
-            * 0, 1 => TITULO
-            * 0, 6 => CABECERA
-            * 0, 7 => EMPIEZA LOS DATOS
-            *
-            * FILA 4 => DATOS DEL TOMO
-            * 1, 4 => PERIODO DEL TOMO
-            * 4, 4 => ANO DEL TOMO
-            * 6, 4 => CODIGO DEL TOMO
-            * 8, 4 => FOLIOS DEL TOMO
-            *
-            * FILA 7 => EMPIEZAN LOS VALORES
-            * COL 0 => FOLIO
-            * COL 1 => PERIODO
-            * COL 2 => REGISTRO
-            * COL 3 => TIPO
-            * COL 4 => EMPIEZAN LOS CAMPOS
-        */
-        /* * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
+        /*         * 0 BASED INDEX
+         * C F
+         * 0, 1 => TITULO
+         * 0, 6 => CABECERA
+         * 0, 7 => EMPIEZA LOS DATOS
+         *
+         * FILA 4 => DATOS DEL TOMO
+         * 1, 4 => PERIODO DEL TOMO
+         * 4, 4 => ANO DEL TOMO
+         * 6, 4 => CODIGO DEL TOMO
+         * 8, 4 => FOLIOS DEL TOMO
+         *
+         * FILA 7 => EMPIEZAN LOS VALORES
+         * COL 0 => FOLIO
+         * COL 1 => PERIODO
+         * COL 2 => REGISTRO
+         * COL 3 => TIPO
+         * COL 4 => EMPIEZAN LOS CAMPOS
+         */
+        /*         * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
         $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
         $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
         $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
         $userid = $this->get('security.context')
-                    ->getToken()->getUser()->getId();
+                        ->getToken()->getUser()->getId();
         $date = new \DateTime();
         $fecha = $date->format('Y-m-d H:i:s');
-        /* * *************************SE GUARDA EL TOMO********************* */
-        $insertFolio = 'INSERT INTO folios(
-per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl,
-num_folio,usu_crea_id,fec_creac) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
-returning codi_folio;';
+        /*         * *************************SE GUARDA EL TOMO********************* */
+        $insertFolio = 'SELECT fn_folio(
+:aper_folio, :areg_folio, :asubt_plan_stp, :acodi_tomo, :atipo_plan_tpl,
+:anum_folio,:ausu_crea_id) as pk;';
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
 codi_folio, codi_conc_tco) values ';
         try {
-            
+
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
-            if (!null == $object->getTomo()) {
-                $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
-                $emt = $this->getDoctrine()->getEntityManager();
-                $st = $conn->prepare('DELETE FROM asignacion where co_tomo='.$object->getTomo());
-                $st->execute();
-                if (null !== $tomo) {
-                    $emt->remove($tomo);
-                    $emt->flush();
+            if ($del) {
+                if (!null == $object->getTomo()) {
+                    $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
+                    $emt = $this->getDoctrine()->getEntityManager();
+                    $st = $conn->prepare('DELETE FROM asignacion where co_tomo=' . $object->getTomo());
+                    $st->execute();
+                    if (null !== $tomo) {
+                        $emt->remove($tomo);
+                        $emt->flush();
+                    }
                 }
             }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
@@ -239,22 +235,22 @@ codi_folio, codi_conc_tco) values ';
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
-            $conn->insert('tomos', array(
-                'codi_tomo' => $tomo,
-                'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
-                'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
-                'folios_tomo' => $folios,
-                'desc_tomo' => NULL,
-                'fec_creac' => $fecha,
-                'usu_crea_id' => $userid
-            ));
-            while (true) {
-                $nfolio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
+            $nfolio = 1;
+            if (!$object->getTomo()) {
+                $conn->insert('tomos', array(
+                    'codi_tomo' => $tomo,
+                    'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
+                    'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
+                    'folios_tomo' => $folios,
+                    'desc_tomo' => NULL,
+                    'fec_creac' => $fecha,
+                    'usu_crea_id' => $userid
+                ));
+            }
+            while ($nfolio <= $folios) {
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
                 $periodo = ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
-                if ((null === $nfolio | trim($nfolio) === '') )
-                    break;
                 $stmt = $conn->prepare($insertFolio);
                 $stmt->bindValue(1, $periodo);
                 $stmt->bindValue(2, $registros ? $registros : NULL);
@@ -263,16 +259,18 @@ codi_folio, codi_conc_tco) values ';
                 $stmt->bindValue(5, $tplanilla ? str_replace(' ', '', strtoupper($tplanilla)) : NULL);
                 $stmt->bindValue(6, $nfolio);
                 $stmt->bindValue(7, $userid);
-                $stmt->bindValue(8, $fecha);
                 $stmt->execute();
                 $_folio = $stmt->fetch();
-                $folio = $_folio['codi_folio'];
-                $conceptos = $this->getUniqueConceptos($sheet, $colc, $filaf, $folio);
-                if ($conceptos) {
-                    $stmt2 = $conn->prepare($insertConceptos . $conceptos);
-                    $stmt2->execute();
+                $folio = $_folio['pk'];
+                if ($folio > 0) {
+                    $conceptos = $this->getUniqueConceptos($sheet, $colc, $filaf, $folio);
+                    if ($conceptos) {
+                        $stmt2 = $conn->prepare($insertConceptos . $conceptos);
+                        $stmt2->execute();
+                    }
                 }
                 $filaf++;
+                $nfolio++;
             }
             $data['success'] = true;
             $data['data'] = 'Almacenado con exito';
