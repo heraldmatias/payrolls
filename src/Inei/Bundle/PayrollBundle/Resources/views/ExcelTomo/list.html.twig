@@ -58,7 +58,9 @@
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>{% endif %}
                             {% if process %}<a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
-                                <i class="icon-refresh"></i> </a>{% endif %}
+                                <i class="icon-refresh"></i> </a>
+                                <a href="javascript: process2({{ item.id }})" id="opt-process2{{ item.id }}" title="Eliminar Existente y Procesar">
+                                <i class="icon-repeat"></i> </a>{% endif %}
                             {% if del %}<a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
                                 <i class="icon-trash"></i> </a>{% endif %}</div>
                         </td>
@@ -80,17 +82,33 @@
 <script type="text/javascript">
     
     function process(pk){
-        var rpt = false;
-        $('#opt-process'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
-        $.get('{{ path('admin_excel_process') }}', {'pk': pk, 'del': rpt}
-        ).done(function(data){
-            $('#opt-process'+pk).html("<i class='icon-refresh'></i>");
-            if(data['success']){
-                $('#message'+pk).html(data['data']);
-            }else{
-                $('#message'+pk).html(data['error']);
-            }
-        });
+        if(confirm('¿Desea cargar el tomo al sistema?')){
+            $('#opt-process'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
+            $.get('{{ path('admin_excel_process') }}', {'pk': pk, 'del': ''}
+            ).done(function(data){
+                $('#opt-process'+pk).html("<i class='icon-refresh'></i>");
+                if(data['success']){
+                    $('#message'+pk).html(data['data']);
+                }else{
+                    $('#message'+pk).html(data['error']);
+                }
+            });
+        }
+    }
+    
+    function process2(pk){
+        if(confirm('¿Desea eliminar las planillas digitadas y volver a cargar el tomo?')){
+            $('#opt-process2'+pk).html("<img src='{{ asset('bundles/ineipayroll/images/load.gif') }}' />");
+            $.get('{{ path('admin_excel_process') }}', {'pk': pk, 'del': true}
+            ).done(function(data){
+                $('#opt-process2'+pk).html("<i class='icon-repeat'></i>");
+                if(data['success']){
+                    $('#message'+pk).html(data['data']);
+                }else{
+                    $('#message'+pk).html(data['error']);
+                }
+            });
+        }
     }
 </script>
 {% endblock %}
