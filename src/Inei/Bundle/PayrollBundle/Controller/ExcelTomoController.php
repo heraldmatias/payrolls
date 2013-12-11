@@ -232,6 +232,11 @@ codi_folio, codi_conc_tco) values ';
             }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
+            $errors = $this->validateTomoExcel($sheet, $filaf, $colc, $filat);
+            if(count($errors)>0){
+                $msgerror = implode('<br>', $errors);
+                throw new \Exception($msgerror);
+            }
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
@@ -276,15 +281,14 @@ codi_folio, codi_conc_tco) values ';
             $data['data'] = 'Almacenado con exito';
             $conn->commit();
             $this->updateTomo($object, $tomo, $data['data']);
-        } catch (DBALException $e) {
-            echo $e->getMessage();
-            $data['error'] = "Ocurrio un error al grabar a la Base de Datos \nRevise la fila $filaf y la Columna $colc";
+        } catch (DBALException $e) {            
+            $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>". $e->getMessage();
             $conn->rollback();
             if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
         } catch (\Exception $e) {
-            $data['error'] = "Ocurrio un error inesperado " . $e->getMessage() . " \nRevise la fila $filaf y la Columna $colc";
+            $data['error'] = "Por favor corrija la(s) siguiente(s) fila(s) <br>" . $e->getMessage();
             if (isset($object)) {
                 $this->updateTomo($object, null, $data['error']);
             }
@@ -304,6 +308,52 @@ codi_folio, codi_conc_tco) values ';
         $em = $this->getDoctrine()->getEntityManager();
         $em->persist($object);
         $em->flush();
+    }
+    
+    private function validateTomoExcel($sheet, $filaf, $colc, $filat){
+        $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
+        $nfolio = 1;
+        $errors = array();
+        $_conceptos = $this->getDoctrine()->getManager()->createQuery(
+                        'SELECT c.codiConcTco FROM IneiPayrollBundle:Conceptos c'
+                )->getArrayResult();
+        $conceptos = array_map(
+                create_function('$item', 'return $item["codiConcTco"];'), $_conceptos);
+        $conceptos[] = null;
+        $_planillas = $this->getDoctrine()->getManager()->createQuery(
+                        'SELECT c.tipoPlanTpl FROM IneiPayrollBundle:Tplanilla c'
+                )->getArrayResult();
+        $planillas = array_map(
+                create_function('$item', 'return $item["tipoPlanTpl"];'), $_planillas);
+        for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
+            $_colc = $colc;
+            $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
+            $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
+            $periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
+            if(!in_array($periodo, array('copia', 'resumen', 
+                'anulado', 'oficios anulados'))){
+                if(!in_array($tplanilla, $planillas)){
+                    $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                }
+                while (true) {
+                    $conc = $sheet->getCellByColumnAndRow($_colc, $filaf)->getValue();
+                    if (null === $conc | '' === trim($conc))
+                        break;
+                    $_conc = str_replace(' ', '', strtoupper($conc));                
+                    if(!in_array($_conc, $conceptos)){
+                        $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                    }
+                    $_colc++;
+                }
+                if($_colc !== $colc){
+                    if(!is_numeric($registros) | $registros <=0 ){
+                        $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                    }
+                }                
+            }
+            $filaf++;
+        }
+        return $errors;
     }
 
 }
