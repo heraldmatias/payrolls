@@ -30,10 +30,6 @@ class FoliosType extends AbstractType {
                     'empty_value' => '---SELECCIONE---',
                     'label' => 'Tomo'
                 ))
-                ->add('periodoFolio', null, array(
-                    'attr' => array('style' => 'width: 100%'),
-                    'label' => 'Periodo'
-                ))
                 ->add('registrosFolio', null, array(
                     'attr' => array('style' => 'width: 100%'),
                     'label' => 'Registros'
@@ -44,10 +40,10 @@ class FoliosType extends AbstractType {
                     'empty_value' => '---SELECCIONE---',
                     'required' => false
                 ))
-                /*->add('subtPlanStp', null, array(
-                    'label' => 'Sub Tipo Planilla',
-                    'max_length' => 40
-                ))*/
+                /* ->add('subtPlanStp', null, array(
+                  'label' => 'Sub Tipo Planilla',
+                  'max_length' => 40
+                  )) */
                 ->add($builder->create('conceptos', 'collection', array(
                             'type' => new ConceptoFoliosType(),
                             'allow_add' => true,
@@ -66,8 +62,8 @@ class FoliosType extends AbstractType {
                     $form = $event->getForm();
 
                     $formOptions = array(
-                    'attr' => array('class' => 'num_folio'),
-                    'choices' => $self->getFolios($event->getData(), $entityManager),
+                        'attr' => array('class' => 'num_folio'),
+                        'choices' => $self->getFolios($event->getData(), $entityManager),
                     );
                     $form->add('folio', 'choice', $formOptions)
                             ->add('subtPlanStp', 'choice', array(
@@ -75,6 +71,11 @@ class FoliosType extends AbstractType {
                                 'choices' => $self->getSubPlanilla($event->getData(), $entityManager),
                                 'empty_value' => '---SELECCIONE---',
                                 'required' => false
+                            ))
+                            ->add('periodoFolio', 'choice', array(
+                                'attr' => array('style' => 'width: 100%'),
+                                'choices' => $self->getPeriodo($event->getData()),
+                                'label' => 'Periodo'
                     ));
                 }
         );
@@ -83,8 +84,8 @@ class FoliosType extends AbstractType {
                     $form = $event->getForm();
 
                     $formOptions = array(
-                    'attr' => array('class' => 'num_folio'),
-                    'choices' => $self->getFolios($event->getData(), $entityManager),
+                        'attr' => array('class' => 'num_folio'),
+                        'choices' => $self->getFolios($event->getData(), $entityManager),
                     );
                     $form->add('folio', 'choice', $formOptions)
                             ->add('subtPlanStp', 'choice', array(
@@ -92,11 +93,16 @@ class FoliosType extends AbstractType {
                                 'choices' => $self->getSubPlanilla($event->getData(), $entityManager),
                                 'empty_value' => '---SELECCIONE---',
                                 'required' => false
+                    ))
+                        ->add('periodoFolio', 'choice', array(
+                                'attr' => array('style' => 'width: 100%'),
+                                'choices' => $self->getPeriodo($event->getData()),
+                                'label' => 'Periodo'
                     ));
                 }
         );
     }
-    
+
     public function getSubPlanilla($data, $em) {
         if (null === $data) {
             return;
@@ -105,23 +111,23 @@ class FoliosType extends AbstractType {
             $planilla = $data->getTipoPlanTpl();
             if (null === $planilla) {
                 $_pk = null;
-            }else{
+            } else {
                 $_pk = $planilla->getTipoPlanTpl();
             }
         } else {
             $planilla = $data['tipoPlanTpl'];
             if (null === $planilla) {
                 $_pk = null;
-            }else{
-                $_pk = $planilla;    
+            } else {
+                $_pk = $planilla;
             }
         }
         $qb = $em->createQuery(
-                            "SELECT s.subtPlanStp, s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
+                        "SELECT s.subtPlanStp, s.descSubtStp FROM IneiPayrollBundle:Subtplanilla s 
                         WHERE s.tipoPlanTpl = :pla ")
-                    ->setParameters(array(                
-                'pla' => $_pk,
-            ));
+                ->setParameters(array(
+            'pla' => $_pk,
+        ));
         $subt = $qb->getResult();
         $_subt = array();
         foreach ($subt as $value) {
@@ -134,26 +140,55 @@ class FoliosType extends AbstractType {
         if (null === $data) {
             return;
         }
-        if($data instanceof \Inei\Bundle\PayrollBundle\Entity\Folios){
+        if ($data instanceof \Inei\Bundle\PayrollBundle\Entity\Folios) {
             $tomo = $data->getTomo();
-            if (null === $tomo){
+            if (null === $tomo) {
                 return;
             }
             $nfolios = $tomo->getFoliosTomo();
-        }else{
+        } else {
             $tomo = $data['tomo'];
             $_tomo = $em->getRepository('IneiPayrollBundle:Tomos')->find($tomo);
-            if (null === $_tomo){
+            if (null === $_tomo) {
                 return;
             }
             $nfolios = $_tomo->getFoliosTomo();
         }
-        
+
         $folios = array();
         foreach (range(1, $nfolios) as $value) {
             $folios[$value] = 'FOLIO - ' . $value;
         }
         return $folios;
+    }
+
+    public function getPeriodo($data) {
+        if (null === $data) {
+            return;
+        }
+        if ($data instanceof \Inei\Bundle\PayrollBundle\Entity\Folios) {
+            $periodo = $data->getPeriodoFolio();
+        } else {
+            $periodo = $data['periodoFolio'];
+        }
+        $periodos = array(
+            '01' => 'ENERO',
+            '02' => 'FEBRERO',
+            '03' => 'MARZO',
+            '04' => 'ABRIL',
+            '05' => 'MAYO',
+            '06' => 'JUNIO',
+            '07' => 'JULIO',
+            '08' => 'AGOSTO',
+            '09' => 'SETIEMBRE',
+            '10' => 'OCTUBRE',
+            '11' => 'NOVIEMBRE',
+            '12' => 'DICIEMBRE'
+        );
+        if(!array_key_exists($periodo, $periodos)){
+            $periodos[$periodo] = $periodo;
+        }
+        return $periodos;
     }
 
     public function getName() {
