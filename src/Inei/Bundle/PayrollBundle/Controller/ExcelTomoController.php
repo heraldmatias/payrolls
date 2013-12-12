@@ -336,8 +336,8 @@ codi_folio, codi_conc_tco) values ';
             $tplanilla = strtolower($sheet->
                     getCellByColumnAndRow(3, $filaf)->getValue());
             $periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
-            if(!in_array($periodo, array('copia', 'resumen', 
-                'anulado', 'oficios anulados'))){
+            if(!in_array($periodo, array('copia', 'resumen', 'anexo',
+                'anulado', 'oficios anulados', 'oficio', 'sin registro'))){
                 if(!in_array($tplanilla, $planillas)){
                     $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
                 }
