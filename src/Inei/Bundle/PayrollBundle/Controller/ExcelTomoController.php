@@ -287,7 +287,6 @@ codi_folio, codi_conc_tco) values ';
             $conn->commit();
             $this->updateTomo($object, $tomo, $data['data']);
         } catch (DBALException $e) {
-            echo $e->getMessage();
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>". $e->getMessage();
             $conn->rollback();
             if (isset($object)) {
