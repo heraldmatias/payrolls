@@ -335,28 +335,28 @@ codi_folio, codi_conc_tco) values ';
             $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
             $tplanilla = strtolower($sheet->
                     getCellByColumnAndRow(3, $filaf)->getValue());
-            $periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
-            if(!in_array($periodo, array('copia', 'resumen', 'anexo',
-                'anulado', 'oficios anulados', 'oficio', 'sin registro'))){
+            //$periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());            
+            while (true) {
+                $conc = $sheet->
+                        getCellByColumnAndRow($_colc, $filaf)->getValue();
+                if (null === $conc | '' === trim($conc))
+                    break;
+                $_conc = str_replace(' ', '', strtolower($conc));
+                if(!in_array($_conc, $conceptos)){
+                    $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                }
+                $_colc++;
+            }
+            /*SI HAY CONCEPTOS*/
+            if($_colc !== $colc){
+                /*VALIDA SI EXISTE EL CONCEPTO*/
+                if(!is_numeric($registros) | $registros <=0 ){
+                    $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'C');
+                }
+                /*VALIDA SI EXISTE LA PLANILLA*/
                 if(!in_array($tplanilla, $planillas)){
                     $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
                 }
-                while (true) {
-                    $conc = $sheet->
-                            getCellByColumnAndRow($_colc, $filaf)->getValue();
-                    if (null === $conc | '' === trim($conc))
-                        break;
-                    $_conc = str_replace(' ', '', strtolower($conc));
-                    if(!in_array($_conc, $conceptos)){
-                        $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
-                    }
-                    $_colc++;
-                }
-                if($_colc !== $colc){
-                    if(!is_numeric($registros) | $registros <=0 ){
-                        $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'C');
-                    }
-                }                
             }
             $filaf++;
         }
