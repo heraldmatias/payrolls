@@ -218,24 +218,29 @@ codi_folio, codi_conc_tco) values ';
         try {
 
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
-            if ($del) {
-                if (!null == $object->getTomo()) {
-                    $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
-                    $emt = $this->getDoctrine()->getEntityManager();
-                    $st = $conn->prepare('DELETE FROM asignacion where co_tomo=' . $object->getTomo());
-                    $st->execute();
-                    if (null !== $tomo) {
-                        $emt->remove($tomo);
-                        $emt->flush();
-                    }
-                }
-            }
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
             $errors = $this->validateTomoExcel($sheet, $filaf, $colc, $filat);
             if(count($errors)>0){
                 $msgerror = implode('<br>', $errors);
                 throw new \Exception($msgerror);
+            }
+            if ($del) {
+                
+                if (null !== $object->getTomo()) {
+//                    $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
+//                    $emt = $this->getDoctrine()->getEntityManager();
+//                    $st = $conn->prepare('DELETE FROM asignacion where co_tomo=' . $object->getTomo());
+//                    $st->execute();
+//                    print_r($tomo);
+//                    echo 'elimno'; exit;
+//                    if (null !== $tomo) {
+//                        $emt->remove($tomo);
+//                        $emt->flush();
+//                    }
+//                    echo 'elimno todo'; exit;
+                    $this->get('tomos_service')->deleteTomo($object->getTomo());
+                }
             }
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
@@ -281,7 +286,8 @@ codi_folio, codi_conc_tco) values ';
             $data['data'] = 'Almacenado con exito';
             $conn->commit();
             $this->updateTomo($object, $tomo, $data['data']);
-        } catch (DBALException $e) {            
+        } catch (DBALException $e) {
+            echo $e->getMessage();
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>". $e->getMessage();
             $conn->rollback();
             if (isset($object)) {
@@ -318,17 +324,18 @@ codi_folio, codi_conc_tco) values ';
                         'SELECT c.codiConcTco FROM IneiPayrollBundle:Conceptos c'
                 )->getArrayResult();
         $conceptos = array_map(
-                create_function('$item', 'return $item["codiConcTco"];'), $_conceptos);
+                create_function('$item', 'return strtolower($item["codiConcTco"]);'), $_conceptos);
         $conceptos[] = null;
         $_planillas = $this->getDoctrine()->getManager()->createQuery(
                         'SELECT c.tipoPlanTpl FROM IneiPayrollBundle:Tplanilla c'
                 )->getArrayResult();
         $planillas = array_map(
-                create_function('$item', 'return $item["tipoPlanTpl"];'), $_planillas);
+                create_function('$item', 'return strtolower($item["tipoPlanTpl"]);'), $_planillas);
         for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
             $_colc = $colc;
             $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
-            $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
+            $tplanilla = strtolower($sheet->
+                    getCellByColumnAndRow(3, $filaf)->getValue());
             $periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
             if(!in_array($periodo, array('copia', 'resumen', 
                 'anulado', 'oficios anulados'))){
@@ -336,10 +343,11 @@ codi_folio, codi_conc_tco) values ';
                     $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
                 }
                 while (true) {
-                    $conc = $sheet->getCellByColumnAndRow($_colc, $filaf)->getValue();
+                    $conc = $sheet->
+                            getCellByColumnAndRow($_colc, $filaf)->getValue();
                     if (null === $conc | '' === trim($conc))
                         break;
-                    $_conc = str_replace(' ', '', strtoupper($conc));                
+                    $_conc = str_replace(' ', '', strtolower($conc));
                     if(!in_array($_conc, $conceptos)){
                         $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
                     }
@@ -347,7 +355,7 @@ codi_folio, codi_conc_tco) values ';
                 }
                 if($_colc !== $colc){
                     if(!is_numeric($registros) | $registros <=0 ){
-                        $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                        $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'C');
                     }
                 }                
             }
