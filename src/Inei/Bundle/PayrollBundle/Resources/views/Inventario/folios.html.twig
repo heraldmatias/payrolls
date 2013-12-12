@@ -46,7 +46,7 @@
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ folio.tomo }}</td>
                         <td>{{ folio.0.folio }}</td>
-                        <td>{{ folio.0.periodoFolio }}</td>
+                        <td>{{ folio.0.getPeriodoDisplayFolio }}</td>
                         <td>{{ folio.0.registrosFolio }}</td>
                         <td>{{ folio.descTipoTpl }}</td>
                         <td>{{ folio.0.subtPlanStp }}</td>
