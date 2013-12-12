@@ -58,7 +58,7 @@ class Folios {
      */
     private $tipoPlanTpl;
 
-    /**              
+    /**
      * @ORM\Column(name="SUBT_PLAN_STP", type="string", length=2, nullable=true)     
      */
     private $subtPlanStp;
@@ -70,49 +70,68 @@ class Folios {
      */
     private $conceptos;
     private $rmconceptos;
+
     /**
      * @var \Inei\Bundle\PayrollBundle\Entity\PlanillaHistoricas
      * 
      */
     //@ORM\OneToMany(targetEntity="PlanillaHistoricas", mappedBy="folio", cascade={"persist"}, fetch="EXTRA_LAZY")
     private $planillas;
-
     private $descSubtStp;
-    
+
     /**
      * @var Inei\Bundle\AuthBundle\Entity\Usuarios
      * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
      * @ORM\JoinColumn(name="USU_CREA_ID",referencedColumnName="id", nullable=true)
      */
     private $creador;
-    
+
     /**
      * @var Inei\Bundle\AuthBundle\Entity\Usuarios
      * @ORM\ManyToOne(targetEntity="Inei\Bundle\AuthBundle\Entity\Usuarios")
      * @ORM\JoinColumn(name="USU_MOD_ID",referencedColumnName="id", nullable=true)
      */
     private $modificador;
-    
+
     /**
      * @var datetime
      * @ORM\Column(name="FEC_CREAC", type="datetime", nullable=true)
      */
     private $fec_creac;
-    
+
     /**
      * @var datetime
      * @ORM\Column(name="FEC_MOD", type="datetime", nullable=true)
      */
     private $fec_mod;
+    private static $PERIODOS = array(
+        '01' => 'ENERO',
+        '02' => 'FEBRERO',
+        '03' => 'MARZO',
+        '04' => 'ABRIL',
+        '05' => 'MAYO',
+        '06' => 'JUNIO',
+        '07' => 'JULIO',
+        '08' => 'AGOSTO',
+        '09' => 'SETIEMBRE',
+        '10' => 'OCTUBRE',
+        '11' => 'NOVIEMBRE',
+        '12' => 'DICIEMBRE'
+    );
     
-    public function setDescSubtStp($descSubtStp){
+    public function getPeriodoDisplayFolio() {
+        return array_key_exists($this->periodoFolio, self::$PERIODOS)?
+        self::$PERIODOS[$this->periodoFolio]:$this->periodoFolio;
+    }
+
+    public function setDescSubtStp($descSubtStp) {
         $this->descSubtStp = $descSubtStp;
     }
-    
-    public function getDescSubtStp(){
+
+    public function getDescSubtStp() {
         return $this->descSubtStp;
     }
-    
+
     public function __construct() {
         $this->conceptos = new ArrayCollection();
         $this->rmconceptos = array();
@@ -281,7 +300,7 @@ class Folios {
     public function getConceptos() {
         return $this->conceptos;
     }
-    
+
     /**
      * Get conceptos
      *
@@ -355,10 +374,10 @@ class Folios {
         if (null === $this->planillas) {
             $qb = $em->createQueryBuilder();
             $qb->select('c')
-                ->from('IneiPayrollBundle:PlanillaHistoricas', 'c')
-                ->where('c.folio = :folio')
-                ->orderBy('c.id', 'ASC')
-                ->setParameter('folio', $this->codiFolio);
+                    ->from('IneiPayrollBundle:PlanillaHistoricas', 'c')
+                    ->where('c.folio = :folio')
+                    ->orderBy('c.id', 'ASC')
+                    ->setParameter('folio', $this->codiFolio);
             $this->planillas = $qb->getQuery()->getResult();
         }
         return $this->planillas;
@@ -382,8 +401,7 @@ class Folios {
      * @param \DateTime $fecCreac
      * @return Folios
      */
-    public function setFecCreac($fecCreac)
-    {
+    public function setFecCreac($fecCreac) {
         $this->fec_creac = $fecCreac;
 
         return $this;
@@ -394,8 +412,7 @@ class Folios {
      *
      * @return \DateTime 
      */
-    public function getFecCreac()
-    {
+    public function getFecCreac() {
         return $this->fec_creac;
     }
 
@@ -405,8 +422,7 @@ class Folios {
      * @param \DateTime $fecMod
      * @return Folios
      */
-    public function setFecMod($fecMod)
-    {
+    public function setFecMod($fecMod) {
         $this->fec_mod = $fecMod;
 
         return $this;
@@ -417,8 +433,7 @@ class Folios {
      *
      * @return \DateTime 
      */
-    public function getFecMod()
-    {
+    public function getFecMod() {
         return $this->fec_mod;
     }
 
@@ -428,8 +443,7 @@ class Folios {
      * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $creador
      * @return Folios
      */
-    public function setCreador(\Inei\Bundle\AuthBundle\Entity\Usuarios $creador = null)
-    {
+    public function setCreador(\Inei\Bundle\AuthBundle\Entity\Usuarios $creador = null) {
         $this->creador = $creador;
 
         return $this;
@@ -440,8 +454,7 @@ class Folios {
      *
      * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
      */
-    public function getCreador()
-    {
+    public function getCreador() {
         return $this->creador;
     }
 
@@ -451,8 +464,7 @@ class Folios {
      * @param \Inei\Bundle\AuthBundle\Entity\Usuarios $modificador
      * @return Folios
      */
-    public function setModificador(\Inei\Bundle\AuthBundle\Entity\Usuarios $modificador = null)
-    {
+    public function setModificador(\Inei\Bundle\AuthBundle\Entity\Usuarios $modificador = null) {
         $this->modificador = $modificador;
 
         return $this;
@@ -463,8 +475,8 @@ class Folios {
      *
      * @return \Inei\Bundle\AuthBundle\Entity\Usuarios 
      */
-    public function getModificador()
-    {
+    public function getModificador() {
         return $this->modificador;
     }
+
 }
