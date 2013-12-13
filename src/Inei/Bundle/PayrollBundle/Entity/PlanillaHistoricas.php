@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="PLANILLA_HISTORICAS",
  * indexes={@ORM\Index(name="CODI_EMPL_PER_idx", columns={"CODI_EMPL_PER"}),
  * @ORM\Index(name="USU_CREA_ID_idx", columns={"USU_CREA_ID"}),
+ * @ORM\Index(name="codi_folio_idx", columns={"CODI_FOLIO"}),
  * @ORM\Index(name="NUM_REG_idx", columns={"NUM_REG"})})
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\PlanillaHistoricasRepository")
  */
