@@ -53,7 +53,7 @@ class PlanillaController extends Controller {
         $data = $service->getReporteByTomo($form);
         $excel = $service->printReporte($data, array(
             'Numero de Tomo', 'Total de Folios', 'Folios de Resumen', 'Folios Digitables',
-            'Folios Digitados', 'Folios por Digitar', 'Estado'), 'Reporte de Avance por Tomos', 4);
+            'Folios Digitados', 'Folios por Digitar', 'Total Registros', 'Estado'), 'Reporte de Avance por Tomos', 4);
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"', 'reptomo'));
@@ -140,7 +140,7 @@ class PlanillaController extends Controller {
         $data = $this->get('planilla_service')->getReporteByUsername($form, false);
         $excel = $service->printReporte($data, array(
             'Digitador', 'Tomo', 'Total Folios', 'Folios No Digitables',
-            'Folios Digitables', 'Folios Digitados', '% Avance en Folios','Total de Registros',
+            'Folios Digitables', 'Folios Digitados', '% Avance en Folios', 'Total de Registros',
             'Registros Digitados (Por Fecha)', 'Registros Digitados (Acumulado)',
             'Días Empleados', '% Avance en Registros'), 'Reporte de Avance por Digitador', 4);
         $response = new Response();
@@ -152,7 +152,7 @@ class PlanillaController extends Controller {
         $objWriter->save('php://output');
         exit;
     }
-    
+
     /**
      * @Route("/autosave/", name="_planilla_autosave")
      * @Template("")
@@ -469,14 +469,14 @@ class PlanillaController extends Controller {
             $object = $em->findOneCustomByNum($folio, $tomo);
         }
         $data = array();
-        if($request->request->has('form')){
+        if ($request->request->has('form')) {
             $form = $request->request->get('form');
-            if(array_key_exists('payrolls', $form)){
+            if (array_key_exists('payrolls', $form)) {
                 $data = $form['payrolls'];
             }
         }
-        $service = $this->get('planilla_service');//SERVICIO
-        $session = $this->get('session');//SESSION
+        $service = $this->get('planilla_service'); //SERVICIO
+        $session = $this->get('session'); //SESSION
         if ($object && $object->getRegistrosFolio()) {
             /*
              * AL GUARDAR LA PLANILLA SE ALMACENA EL NUMERO DE TOMO
@@ -500,8 +500,8 @@ class PlanillaController extends Controller {
          * FOLIO ACTUAL, EL USUARIO ES LIBRE DE ELEGIR OTRO TOMO Y FOLIO 
          * MOTIVO POR EL CUAL SE DESTRUYEN LAS VARIABLES DE SESION
          */
-        $nextFolio = $folio+1;//$this->get('folios_service')->
-                //siguienteFolioDigitable($tomo, $folio);
+        $nextFolio = $folio + 1; //$this->get('folios_service')->
+        //siguienteFolioDigitable($tomo, $folio);
         $session->set('folio', $nextFolio);
         if (!$nextFolio) {
             $session->remove('tomo');
@@ -549,10 +549,9 @@ class PlanillaController extends Controller {
         }
         $service = $this->get('planilla_service');
         /*         * **************FORMULARIOS*********************** */
-        $sform = $this->createForm('registrar_planilla', null, 
-                array('em' => $this->getDoctrine()->getManager(),
-                    'tomo' => $tomo,
-                    'folio' => $folio));
+        $sform = $this->createForm('registrar_planilla', null, array('em' => $this->getDoctrine()->getManager(),
+            'tomo' => $tomo,
+            'folio' => $folio));
         $sform->handleRequest($request);
         $estado = null;
         if ($object && $object->getRegistrosFolio()) {
@@ -565,13 +564,13 @@ class PlanillaController extends Controller {
             $estado = $array['estado'];
         }
         $view = 'IneiPayrollBundle:Planilla:addUpdateOld.html.twig';
-        if($tomo>=89)
+        if ($tomo >= 89)
             $view = 'IneiPayrollBundle:Planilla:addUpdate.html.twig';
         return $this->render($view, array(
-            'form' => $form,
-            'sform' => $sform->createView(),
-            'folio' => $object,
-            'estado' => $estado
+                    'form' => $form,
+                    'sform' => $sform->createView(),
+                    'folio' => $object,
+                    'estado' => $estado
         ));
     }
 
