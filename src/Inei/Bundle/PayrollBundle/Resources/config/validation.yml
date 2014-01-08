@@ -3,6 +3,11 @@ Inei\Bundle\PayrollBundle\Entity\Tomos:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [codiTomo]
             message: 'Ya existe un tomo con este número de tomo.'
+Inei\Bundle\PayrollBundle\Entity\Tplanilla:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [tipoPlanTpl]
+            message: 'Ya existe un tipo de planilla con el mismo código.'
 Inei\Bundle\PayrollBundle\Entity\ConceptosFolios:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
