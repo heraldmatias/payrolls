@@ -262,7 +262,8 @@ codi_folio, codi_conc_tco) values ';
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
                 $periodo = ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
                 $stmt = $conn->prepare($insertFolio);
-                $stmt->bindValue(1, $periodo);
+                $stmt->bindValue(1, is_numeric($periodo) & count_chars($periodo) === 1 ?
+                        str_pad($periodo, 2, '0', STR_PAD_LEFT):$periodo);
                 $stmt->bindValue(2, $registros ? $registros : NULL);
                 $stmt->bindValue(3, NULL);
                 $stmt->bindValue(4, $tomo);
@@ -355,7 +356,7 @@ codi_folio, codi_conc_tco) values ';
                 }
                 /*VALIDA SI EXISTE LA PLANILLA*/
                 if(!in_array($tplanilla, $planillas)){
-                    $errors[] = sprintf('Fila: %s, Campo: Campo%s', $filaf, $_colc-3);
+                    $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'D');
                 }
             }
             $filaf++;
