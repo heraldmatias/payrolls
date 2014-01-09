@@ -74,9 +74,9 @@ class ConsistenciaService {
                 ->findFamiliasNombres();
     }
     
-    public function findPersonalSiga($nombres){
+    public function findPersonalSiga($nombre){
         return $this->em->getRepository('IneiConsistenciaBundle:PersonalDigitado')
-                ->findPersonalSiga($nombres);
+                ->findPersonalSiga2($nombre);
     }
     
     public function asociarPersonal($nombres, $persona){
@@ -155,4 +155,12 @@ class ConsistenciaService {
         return ob_get_clean();
     }
 
+    public function actualizaPeriodo($new, $old){
+        $sql = "UPDATE folios SET per_folio=:new 
+            WHERE per_folio=:old";
+        $this->em->getConnection()->executeUpdate($sql,
+                array('new' => str_pad($new, 2, '0', STR_PAD_LEFT),
+                    'old' => $old)
+                );
+    }
 }
