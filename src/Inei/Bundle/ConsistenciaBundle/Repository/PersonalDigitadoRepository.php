@@ -230,13 +230,40 @@ concat(t.nom_emp_per, ' ', t.ape_pat_per, ' ', t.ape_mat_per);";
     
     public function findPersonalSiga($nombres){
         $filtro = array();
-        foreach ($nombres as $nombre){
-            $filtro[] = "SOUNDEX(nomb_cort_per) = SOUNDEX('$nombre')";
+        foreach ($nombres as $nombre){            
+            $_nombre = explode(' ', $nombre);
+            $palabras = array();
+            foreach ($_nombre as $palabra){
+                if(!in_array(strtolower($palabra), array('de', 'del','los','las')) 
+                        & strlen($palabra)>2){
+                    $f = "nomb_cort_per LIKE '%$palabra%'";
+                    if(!in_array($f, $filtro)){
+                        $palabras[] = $f;
+                    }
+                }
+            }
+            $filtro[] = implode(' AND ', $palabras);
         }
+//        print_r($filtro);exit;
         $nombres = implode(' OR ', $filtro);
         $sql = "SELECT codi_empl_per as codigo, 
             concat(codi_empl_per, ' - ',nomb_cort_per) as nombres 
-            FROM maestro_personal Where ".$nombres;
+            FROM maestro_personal Where ".$nombres.' ORDER BY nomb_cort_per';
+        $con = $this->getEntityManager()->getConnection();
+        $stmt1 = $con->prepare($sql);
+        $stmt1->execute();
+        $result = $stmt1->fetchAll();
+        return $result;
+    }
+    
+    public function findPersonalSiga2($nombre){
+        $filtro = "nomb_cort_per ILIKE '%$nombre%'";
+        
+//        print_r($filtro);exit;
+        
+        $sql = "SELECT codi_empl_per as value, 
+            concat(codi_empl_per, ' - ',nomb_cort_per) as label
+            FROM maestro_personal Where ".$filtro.' ORDER BY nomb_cort_per LIMIT 5';
         $con = $this->getEntityManager()->getConnection();
         $stmt1 = $con->prepare($sql);
         $stmt1->execute();
