@@ -255,9 +255,10 @@
             if(personas.length===0){
                 alert('Debe seleccionar al menos una persona');
                 return false;
+            }else{
+                $('#dialog').dialog("open");
+                return true;
             }
-            $('#dialog').dialog("open");
-            return true;
         }
         
         function asocia_personal(){
