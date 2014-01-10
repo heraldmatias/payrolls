@@ -137,7 +137,6 @@ class ConsistenciaService {
             $result = true;
             $this->em->commit();
         } catch (Doctrine\DBAL\DBALException $e) {
-            echo $e->getMessage();
             $this->em->rollback();
             $result = false;
         }
@@ -156,13 +155,16 @@ class ConsistenciaService {
     }
 
     public function actualizaPeriodo($new, $old){
-        $this->em->beginTransaction();
-        $sql = "UPDATE folios SET per_folio=:new 
+        try {
+            $this->em->beginTransaction();
+            $sql = "UPDATE folios SET per_folio=:new 
             WHERE per_folio=:old";
-        $this->em->getConnection()->executeUpdate($sql,
-                array('new' => $new,
-                    'old' => $old)
-                );
-        $this->em->commit();
+            $this->em->getConnection()->executeUpdate($sql, array('new' => $new,
+                'old' => $old)
+            );
+            $this->em->commit();
+        } catch (Doctrine\DBAL\DBALException $e) {
+            $this->em->rollback();
+        }
     }
 }
