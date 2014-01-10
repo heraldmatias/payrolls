@@ -124,7 +124,11 @@ class DefaultController extends Controller {
                         break;
                     }
                     if ($nperiodo !== '' | $nperiodo !== null) {
-                        $service->actualizaPeriodo($nperiodo, $periodo);
+                        if(is_numeric($nperiodo)){
+                            $nperiodo = strlen($nperiodo) === 1 ?
+                                str_pad($nperiodo, 2, '0', STR_PAD_LEFT):$nperiodo;
+                            $service->actualizaPeriodo($nperiodo, $periodo);
+                        }
                     }
                     $fila++;
                 }
