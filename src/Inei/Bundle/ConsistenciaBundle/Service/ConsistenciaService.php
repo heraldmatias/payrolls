@@ -156,11 +156,13 @@ class ConsistenciaService {
     }
 
     public function actualizaPeriodo($new, $old){
+        $this->em->beginTransaction();
         $sql = "UPDATE folios SET per_folio=:new 
             WHERE per_folio=:old";
         $this->em->getConnection()->executeUpdate($sql,
-                array('new' => str_pad($new, 2, '0', STR_PAD_LEFT),
+                array('new' => $new,
                     'old' => $old)
                 );
+        $this->em->commit();
     }
 }
