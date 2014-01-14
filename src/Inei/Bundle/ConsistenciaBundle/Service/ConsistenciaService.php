@@ -154,14 +154,25 @@ class ConsistenciaService {
         return ob_get_clean();
     }
 
-    public function actualizaPeriodo($new, $old){
+    public function actualizaPeriodoSQL($new, $old){
+        return sprintf("UPDATE folios SET per_folio='%s' WHERE per_folio='%s';\n",$new, $old);
+//        try {
+//            $this->em->beginTransaction();
+//            $sql = "UPDATE folios SET per_folio=:new 
+//            WHERE per_folio=:old";
+//            $this->em->getConnection()->executeUpdate($sql, array('new' => $new,
+//                'old' => $old)
+//            );
+//            $this->em->commit();
+//        } catch (Doctrine\DBAL\DBALException $e) {
+//            $this->em->rollback();
+//        }
+    }
+    
+    public function actualizaPeriodo($sql){        
         try {
-            $this->em->beginTransaction();
-            $sql = "UPDATE folios SET per_folio=:new 
-            WHERE per_folio=:old";
-            $this->em->getConnection()->executeUpdate($sql, array('new' => $new,
-                'old' => $old)
-            );
+            $this->em->beginTransaction();            
+            $this->em->getConnection()->executeUpdate($sql);
             $this->em->commit();
         } catch (Doctrine\DBAL\DBALException $e) {
             $this->em->rollback();
