@@ -105,7 +105,7 @@ class DefaultController extends Controller {
             $gestor = @opendir($target_path);
             if ($gestor) {
                 while (false !== ($entrada = readdir($gestor))) {
-                    if ($entrada !== '.' & $entrada !== null)
+                    if ($entrada !== '.' & $entrada !== null & $entrada !== '..')
                         $file = $target_path. $entrada;
                 }
                 closedir($gestor);
