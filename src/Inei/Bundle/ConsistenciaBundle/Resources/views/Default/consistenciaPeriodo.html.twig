@@ -5,7 +5,7 @@
     <div class="modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Procesar los datos de Personal</h3>
+            <h3>Procesar los periodos</h3>
         </div>
         <div class="modal-body">
         {% for flashMessage in app.session.flashbag.get('usuario') %}
@@ -14,134 +14,18 @@
                 {{ flashMessage }}
             </div>
         {% endfor %}
-        <form method="GET" name="form">
-        <div class="row-fluid">
-            <div class="span8">
-            <fieldset>
-                <legend>Opciones de Busqueda</legend>
-                <div class="row-fluid">
-                    <div class="span2">
-                        <label for="id_tipo_busqueda">Tipo de Busqueda</label>
-                    </div>
-                    <div class="span3">
-                        <select name="tipo_busqueda" id="id_tipo_busqueda">
-                            <option value="1" {% if form['tipo_busqueda'] == '1' %} selected {% endif %}>
-                                Personal No Encontrado en Siga
-                            </option>
-                            <option value="2" {% if form['tipo_busqueda'] == '2' %} selected {% endif %}>
-                                Personal Encontrado en Siga
-                            </option>
-                            <option value="3" {% if form['tipo_busqueda'] == '3' %} selected {% endif %}>
-                                Todo el Personal en Planillas
-                            </option>
-                        </select>
-                    </div>
-                    <div class="span2">
-                        <label for="id_soundex">Que suene A:</label>
-                    </div>
-                    <div class="span3">
-                        <input type="text" name='form[soundex]' id="id_soundex" value="{{ form['soundex'] }}">
-                    </div>
-                    <div class="span1">
-                        <input type="button" value="Imprimir" name="imprimir" id="id_imprimir"class="btn btn-primary">
-                    </div>
-                </div>
-                <div class="row-fluid">
-                    <div class="span2">
-                        <label for="id_nombres">Nombres:</label>
-                    </div>
-                    <div class="span3">
-                        <input type="text" name='form[nombres]' id="id_nombres" value="{{ form['nombres'] }}">
-                    </div>
-                    <div class="span2">
-                        <label for="id_codigo">Codigo:</label>
-                    </div>
-                    <div class="span3">
-                        <input type="text" name='form[codigo]' id="id_codigo" value="{{ form['codigo'] }}">
-                    </div>
-                    <div class="span1">
-                        <input type="submit" value="Buscar" name="buscar" class="btn btn-primary">
-                    </div>
-                </div>
-            </fieldset>
-            </div></div>
-        
-        
-        </form>
-        <a href="{{ path('_consistencia_procesar') }}" id="id_anterior" class="btn btn-primary">Anterior </a>
-        <div style="float: right" id="busca_personal">
-            <input type="button" value="Buscar Personas" id="id_btnbuscar" class="btn btn-primary">
-        </div>
-        <h4>Listado de Personal</h4>
-        <form name="frm_personal" id="id_frm_personal">
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr class="row-black">
-                        <th>Item</th>
-                        <th>Marcar Todos &nbsp; <input type="checkbox" id="chk_todos" ></th>
-                        <th>Codigo Empleado</th>
-                        <th>Nombre Corto</th>
-                        <th>Personal Relacionado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for item in pagination %}
-                    <tr {% if loop.index is odd %}class="info"{% endif %}>
-                        <td>{{ loop.index }}</td>
-                        <td style="text-align: center;">
-                            <input type="checkbox" name="personal[]" value="{{ item.nombCortPer }}" class="personal">
-                        </td>
-                        <td>{{ item.codiEmplPer }}</td>
-                        <td>{{ item.nombCortPer }}</td>
-                        {% if item.persona is defined %}<td>{{ item.persona }}</td>
-                        {% else %}
-                        <td> {{ item.codiEmplPer }} </td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <div id="dialog" title="Basic dialog">
-                <div class="row-fluid">
-                    <div class="span3"><label>Buscar en Siga</label></div>
-                    <div class="span1"><input type="radio" value="1" id="opt_siga" name="optbusqueda[]" checked></div>
-                    <div class="span3"><label>Buscar en Reniec</label></div>
-                    <div class="span1"><input type="radio" value="2" id="opt_nueva" name="optbusqueda[]"></div>
-                </div>
-                <div class="row-fluid" id="persona_siga">
-                    <div class="span3"><label>Buscar Personal Asociado</label></div>
-                    <div class="span9"><select name="persona" id="id_personal_siga" ></select>&nbsp;&nbsp;</div>
-                </div>
-                <div class="row-fluid" id="persona_nueva" style="display: none;">
-                    <div class="row-fluid">
-                        <div class="span3"><label>Codigo</label></div>
-                        <div class="span9"><input type="text" name="formregistro[codigo]" id="formregistro_codigo"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Apellido Paterno</label></div>
-                        <div class="span9"><input type="text" name="formregistro[ape_paterno]" id="formregistro_ape_paterno"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Apellido Materno</label></div>
-                        <div class="span9"><input type="text" name="formregistro[ape_materno]" id="formregistro_ape_materno"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Nombres</label></div>
-                        <div class="span9"><input type="text" name="formregistro[nombres]" id="formregistro_nombres"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>DNI</label></div>
-                        <div class="span9"><input type="text" name="formregistro[dni]" id="formregistro_dni"></div>
-                    </div>
+        <form method="POST" name="form" enctype="multipart/form-data">
+            <div class="row-fluid">
+                <div class="span8">
+                    <input type="file" class="" name="periodo" id="periodo_id">
+                    <input type="submit" class="btn btn-primary">
                 </div>
             </div>
-            
         </form>
-        
-        <div class="navigation">
-            {{ knp_pagination_render(pagination) }}
-            </div>
-        </div>
+        <br><br>
+        <h4>Archivo de Periodos</h4>
+        <a href="{{ asset('upload/consistencia/') }}{{ file}}">Archivo Periodo</a>&nbsp;&nbsp;&nbsp;
+        <input type="button" class="btn btn-primary" value="Sincronizar Periodos" id="process_periodo">
         <div id="feedback">
             <img src="{{ asset('bundles/ineipayroll/images/cargando.gif') }}" style="display: none" id="cargando" />
             <br>
@@ -149,24 +33,45 @@
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                 <h1></h1>
             </div>
-            
-            
         </div>
-        
         </div>
         <div class="modal-footer">
         </div>
 </div>
 {% endblock %}
-{% block csspage %} 
-<link rel="stylesheet" href="{{ asset('bundles/inei/jqueryui/css/smoothness/jquery-ui-1.9.2.custom.css') }}" />
-{% endblock %}
 {% block js %}
-<script src="{{ asset('bundles/inei/jqueryui/js/jquery-ui-1.9.2.custom.min.js') }}" type="text/javascript"></script>
-
     <script type="text/javascript">
-        $('#id_btnbuscar').on('click', function(e){
-            load_personal();
+        
+        function actualizar_periodos(){            
+            if(confirm('¿DESEA ASOCIAR LOS NOMBRES SELECCIONADOS AL PERSONAL SELECCIONADO?')){
+                var data = $('#id_frm_personal').serialize(),
+                    personas = $('.personal:checked');
+                
+                var oOptions = {
+                    url: '{{ path('_consistencia_periodo_ajax') }}',
+                    dataType: 'json',
+                    async: true,
+                    data: data,
+                    beforeSend: function() {
+                        $('#cargando').show();
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data['success']){
+                        $('#cargando').hide();
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    alert('Ocurrio un error al asociar');
+                    $('#cargando').hide();
+                });
+            }
+        }
+        
+        $('#process_periodo').on('click', function(e){
+            actualizar_periodos();
         });
         
         $('#chk_todos').on('change', function(e){
@@ -177,14 +82,7 @@
                $('.personal').removeAttr('checked');
            }
         });
-        
-        $('#id_imprimir').on('click', function(e){
-            //event.preventDefault();
-            var data = $('form').serialize(true),
-            url = '{{ path('_personal_print') }}?';
-            location.href = url+data;
-        });
-        
+                
         $('#opt_siga').on('click', function(e){
             $('#persona_siga').show();        
             $('#persona_nueva').hide();
@@ -195,173 +93,7 @@
             $('#persona_nueva').show();
         });
         
-        function registra_persona(){
-            var codigo = $('#formregistro_codigo'),
-                ape_paterno = $('#formregistro_ape_paterno'),
-                ape_materno = $('#formregistro_ape_materno'),
-                nombres = $('#formregistro_nombres'),
-                dni = $('#formregistro_dni');
-            if(codigo.val()===''){
-                alert('Ingrese el codigo');
-                codigo.focus();
-                return false;
-            }else if(ape_paterno.val()===''){
-                alert('Ingrese el Apellido Paterno');
-                ape_paterno.focus();
-                return false;
-            }else if(ape_materno.val()===''){
-                alert('Ingrese el Apellido Materno');
-                ape_materno.focus();
-                return false;
-            }
-            else if(nombres.val()===''){
-                alert('Ingrese los Nombres');
-                nombres.focus();
-                return false;
-            }
-            var data = {
-                form: {
-                    codigo: codigo.val(),
-                    ape_paterno: ape_paterno.val(),
-                    ape_materno: ape_materno.val(),
-                    nombres: nombres.val(),
-                    dni: dni.val()
-                }
-            };
-            var oOptions = {
-                url: '{{ path('_personal_registra_ajax') }}',
-                dataType: 'json',
-                async: true,
-                data: data,
-                beforeSend: function() {
-                    
-                }
-            };
-            var posting = $.ajax(oOptions),
-                    rpta=codigo.val();
-            posting.done(function(data, textStatus, jqXHR) {
-            })
-            .fail(function(data, textStatus, jqXHR) {
-                rpta = false;
-            });
-            return rpta;
-        }
         
-        function load_personal(){
-            
-            var data = $('#id_frm_personal').serialize(),
-                    personas = $('.personal:checked');
-            if(personas.length===0){
-                alert('Debe seleccionar al menos una persona');
-                return false;
-            }
-            $('#dialog').dialog("open");
-            var oOptions = {
-                url: '{{ path('_maestro_personal_ajax') }}',
-                dataType: 'json',
-                async: true,
-                data: data,
-                beforeSend: function() {
-                    
-                }
-            };
-            var posting = $.ajax(oOptions);
         
-            posting.done(function(data, textStatus, jqXHR) {
-                var personal = $('#id_personal_siga');
-                personal.empty();
-                $.each(data['data'], function(i, v){
-                    personal.append('<option value="'+v['codigo']+'">'+ v['nombres'] +'</option>')
-                });
-                $('#busca_personal').show();
-                $('#id_personal_siga').chosen(
-                    {
-                        no_results_text: "No hay coincidencias para",                    
-                        width: "95%"
-                    }
-                );
-            })
-            .fail(function(data, textStatus, jqXHR) {
-                $('#cargando').hide();
-                $('#feedback .alert').show().html(textStatus);
-            });
-            return true;
-        }
-        
-        function asocia_personal(){
-            var rpta = true, nuevo = $('#opt_nueva').is(':checked');
-            
-            if(!nuevo){
-                if(!$('#id_personal_siga').val()){
-                    alert('Debe seleccionar una persona');
-                    return false;
-                }
-            }
-            if(confirm('¿DESEA ASOCIAR LOS NOMBRES SELECCIONADOS AL PERSONAL SELECCIONADO?')){
-                var data = $('#id_frm_personal').serialize(),
-                    personas = $('.personal:checked');
-                if(nuevo){
-                    var reg = registra_persona();
-                    if(!reg){
-                        return false;
-                    }
-                    data += '&persona=' + reg;
-                }else{
-                    data += '&persona=' + $('#id_personal_siga').val();
-                }
-                
-                var oOptions = {
-                    url: '{{ path('_personal_asocia_ajax') }}',
-                    dataType: 'json',
-                    async: true,
-                    data: data,
-                    beforeSend: function() {
-
-                    }
-                };
-                var posting = $.ajax(oOptions);
-
-                posting.done(function(data, textStatus, jqXHR) {
-                    if(data['success']){
-                        alert('Personal Asociado con éxito');
-                        $.each(personas, function(k,v){
-                            $(this).parent().parent().remove();
-                        });
-                    }
-                })
-                .fail(function(data, textStatus, jqXHR) {
-                    alert('Ocurrio un error al asociar');
-                    rpta = false;
-                });
-            }
-            return rpta;
-        }
-        
-        $(document).on('ready', function(e){
-             $( "#dialog" ).dialog({
-                autoOpen: false,
-                title: 'Buscar Personas',
-                width: '600',
-                height: '400',
-                show: {
-                    effect: "blind",
-                    duration: 1000
-                },
-                hide: {
-                    effect: "explode",
-                    duration: 1000
-                },
-                 buttons: {
-                    "Asociar": function() {
-                        if(asocia_personal()){
-                            $( this ).dialog( "close" );
-                        }
-                    },
-                    "Cancelar": function() {
-                        $( this ).dialog( "close" );
-                    }
-                }
-            });
-        });
     </script>
 {% endblock %}
