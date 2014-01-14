@@ -116,6 +116,7 @@ class DefaultController extends Controller {
                 $service = $this->get('consistencia_service');
                 $periodo = null;
                 $fila = 1;
+                $sql = '';
                 while (true) {
                     $periodo = $sheet->getCellByColumnAndRow(0, $fila)->getValue();
                     $nperiodo = $sheet->getCellByColumnAndRow(1, $fila)->getValue();
@@ -127,11 +128,12 @@ class DefaultController extends Controller {
                         if(is_numeric($nperiodo)){
                             $nperiodo = strlen($nperiodo) === 1 ?
                                 str_pad($nperiodo, 2, '0', STR_PAD_LEFT):$nperiodo;
-                            $service->actualizaPeriodo($nperiodo, $periodo);
+                             $sql .= $service->actualizaPeriodoSQL($nperiodo, $periodo);
                         }
                     }
                     $fila++;
                 }
+                $service->actualizaPeriodo($sql);
             }
         } catch (Exception $e) {
             $data['error'] = $e->getMessage();
