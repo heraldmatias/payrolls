@@ -353,6 +353,10 @@ class PlanillaService {
                                 :adesc_plan_stp, :aflag_folio, :anum_reg,
                                 :ausu_crea_id, :ausu_mod_id)'
             );
+            $_periodo = $object->getPeriodoFolio();
+            $periodo = strlen($_periodo)<2?
+                    str_pad($_periodo, 2, '0', STR_PAD_LEFT):
+                    strlen($_periodo)===2?$_periodo:'00';
             foreach ($data as $key1 => $planilla) {
                 if ($key1 >= $object->getRegistrosFolio())
                     break;
@@ -370,7 +374,7 @@ class PlanillaService {
                     $stmt->bindValue('aid', array_key_exists($co, $codigos) ?
                                     is_numeric($codigos[$co]) ? $codigos[$co] : null : null);
                     $stmt->bindValue('aano_peri_tpe', $object->getTomo()->getAnoTomo());
-                    $stmt->bindValue('anume_peri_tpe', '01');
+                    $stmt->bindValue('anume_peri_tpe', $periodo);
                     $stmt->bindValue('avalo_calc_phi', $valor);
                     $stmt->bindValue('atipo_plan_tpl', is_object($object->getTipoPlanTpl()) ? $object->getTipoPlanTpl()->getTipoPlanTpl() : $object->getTipoPlanTpl());
                     $stmt->bindValue('asubt_plan_stp', $object->getSubtPlanStp());
