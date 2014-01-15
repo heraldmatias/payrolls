@@ -371,5 +371,28 @@ class InventarioController extends Controller {
         $nextAction = '_inventario_folio_list';
         return $this->redirect($this->generateUrl($nextAction));
     }
+    
+     /**
+     * @Route("/tomos/valida/", name="_inventario_tomo_validate")
+     * @Template("")
+     */
+    public function validateAction(Request $request) {
+        $service_xls = $this->get('excel_service');
+        $service = $this->get('tomos_service');
+        $data = $service->validateTomo();
+        $cols = array(
+            '', ''
+        );
+        $title = 'Reporte de Conceptos Repetidos';
+        $excel = $service_xls->printReporte($data, $cols, $title, 4);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="conceptos.xlsx"');
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
 
 }
