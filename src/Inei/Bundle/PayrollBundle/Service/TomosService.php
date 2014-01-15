@@ -49,4 +49,32 @@ class TomosService {
         $con->executeUpdate($del5);
     }
     
+    public function validateTomo(){
+        $sql = 'SELECT f.codi_tomo as tomo, f.num_folio as folio, 
+            fn_conceptos_repetidos(f.codi_folio) as concepto
+            FROM conceptos_folios cf JOIN folios f
+            ON cf.codi_folio = f.codi_folio
+            --WHERE f.codi_tomo = 89
+            GROUP BY cf.codi_conc_tco, f.num_folio, f.codi_tomo, f.codi_folio
+            HAVING COUNT(cf.codi_conc_tco)>=2
+            ORDER BY f.codi_tomo, f.num_folio;
+            ';
+        $stmt = $this->em->getConnection()->executeQuery($sql);
+        $data = $stmt->fetchAll();
+        $_data = array();
+        $tomos = array_unique(array_map(function($item) { return $item['tomo']; }, $data));
+        //$data = array_unique(array_map(function($item) { unset($item['tomo']); return $item; }, $data));
+        foreach ($tomos as &$tomo) {
+            $folios =  array_map(function($item) { unset($item['tomo']); return array_values($item); },
+                    array_filter($data, function($item) use ($tomo) { return $item['tomo']=== $tomo; }));
+            //$dtomo['tomo'] = $tomo;
+            //$dtomo['folios'] = $folios;
+            $_data[] = array('TOMO - '.$tomo);
+            $_data[] = array('FOLIOS', 'CONCEPTOS');
+            $_data = array_merge($_data, $folios);
+        }
+//        print_r($_data);
+//        exit;
+        return $_data;
+    }
 }
