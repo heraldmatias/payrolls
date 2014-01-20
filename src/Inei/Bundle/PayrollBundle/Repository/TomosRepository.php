@@ -49,7 +49,7 @@ class TomosRepository extends EntityRepository {
     }
     
     public function findAsignados($usuario){
-        $sql = "select * from lv_datos_tomo where tomo in(
+        $sql = "select * from lv_info_tomo where codi_tomo in(
             Select co_tomo from asignacion where co_asignado=:usuario);";
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
