@@ -153,8 +153,10 @@
                     posting.done(function(data, textStatus, jqXHR) {
                         if(data['success']){
                             $newForm.remove();
+                            $('#feedback').html('<td colspan="5"><h3>El tomo ha sido deasignado con éxito</h3></td>');
                         }else{
                             alert('No se puede eliminar el tomo');
+                            $('#feedback').html('');
                         }
                     })
                     .fail(function(data, textStatus, jqXHR) {

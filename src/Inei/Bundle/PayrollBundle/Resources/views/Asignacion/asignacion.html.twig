@@ -99,13 +99,13 @@
                 dataType: 'json',
                 async: true,
                 beforeSend : function(data, textStatus, jqXHR) {
-                    $('#feedback').html('Cargando...');
+                    //$('#feedback').html('Cargando...');
                 }
             };
             var posting = $.ajax(oOptions);                
             posting.done(function(data, textStatus, jqXHR) {
                 if(data){
-                    tabla.empty();
+                    //tabla.empty();
                     tabla.data('tomos').push(data['tomo']);
                     var fila = $('<tr class="'+((item%2!==0)?'info':'')+'"></tr>');
                     var columnas = '<td>'+item+'</td>'+
@@ -119,8 +119,10 @@
                     addOptions(fila);
                     tabla.append(fila);
                     resumen();
+                    alert('El tomo ha sido asignado con éxito');
                 }else{
                     alert('El tomo ya ha sido asignado o aun no esta cargado al sistema');
+                    $('#feedback').html('');
                 }
             })
             .fail(function(data, textStatus, jqXHR) {
@@ -154,13 +156,13 @@
                 $.each(data, function(k, v){
                     var fila = $('<tr class="'+((k%2===0)?'info':'')+'"></tr>');
                     var columnas = '<td>'+(k+1)+'</td>'+
-                            '<td>'+v['tomo']+
+                            '<td>'+v['codi_tomo']+
                             '<td>'+v['folios']+'</td>'+
-                            '<td>'+v['resumen']+'</td>'+
-                            '<td>'+v['digitables']+'</td>'+
+                            '<td>'+v['folios_resumen']+'</td>'+
+                            '<td>'+v['folios_digitables']+'</td>'+
                             '<td>'+v['registros']+'</td>';
                     fila.append(columnas);
-                    fila.data('tomo', v['tomo']);
+                    fila.data('tomo', v['codi_tomo']);
                     addOptions(fila);
                     tabla.append(fila);
                 });
@@ -203,8 +205,10 @@
                         if(data['success']){
                             $newForm.remove();
                             resumen();
+                            $('#feedback').html('');
                         }else{
                             alert('No se puede eliminar el tomo');
+                            $('#feedback').html('');
                         }
                     })
                     .fail(function(data, textStatus, jqXHR) {
