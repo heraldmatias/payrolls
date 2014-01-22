@@ -28,3 +28,8 @@ Inei\Bundle\PayrollBundle\Entity\MaestroPersonal:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [apePatPer, apeMatPer, nomEmpPer, librElecPer]
             message: 'Ya existe un personal con los mismos nombres y DNI.' 
+Inei\Bundle\PayrollBundle\Entity\Folios:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [tomo, folio]
+            message: 'Ya existe un folio con este número de tomo y folio.'
