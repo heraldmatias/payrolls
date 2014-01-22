@@ -28,7 +28,7 @@
                     <label class="control-label" for="tiempo">Digitador</label>
                     <div class="controls">
                         {% set usuarios = usuario_service.listaUsuariosPlanilla %}
-                        <select id="digitadores" class="span10" name="form[digitador]">
+                        <select id="digitadores" class="span9" name="form[digitador]">
                             <option value="">---TODOS---</option>
                         {% for usuario in usuarios %}
                             <option value="{{ usuario.id }}">{{ usuario.username }}</option>
@@ -36,9 +36,21 @@
                         </select>
                         </div>
                     </div></div>
-                    <div class="span4">
-                    <input type="submit" value ="Consultar" class="btn btn-primary" id="ver"/>
-                    <input type="button" value ="Imprimir" class="btn btn-primary" id="print"/>
+                    <div class="span3">                        
+                        <div class="control-group">
+                            <label class="span2" for="turno">Turno</label>
+                            
+                            <select id="turno" class="span9" name="form[turno]">
+                                <option value="">---TODOS---</option>                            
+                                <option value="1">MAÑANA</option>
+                                <option value="2">TARDE</option>
+                            </select>
+                            
+                        </div>
+                        <div class="control-group">
+                            <input type="submit" value ="Consultar" class="btn btn-primary" id="ver"/>
+                            <input type="button" value ="Imprimir" class="btn btn-primary" id="print"/>
+                        </div>
                     </div>
                     </div>
                 </form>
