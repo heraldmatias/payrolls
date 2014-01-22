@@ -157,7 +157,7 @@ class FoliosType extends AbstractType {
 
         $folios = array();
         foreach (range(1, $nfolios) as $value) {
-            $folios[$value] = 'FOLIO - ' . $value;
+            $folios[$value] = $value;
         }
         return $folios;
     }
