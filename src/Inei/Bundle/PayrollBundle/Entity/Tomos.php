@@ -81,7 +81,7 @@ class Tomos
     private $fec_mod;
 
     public function __toString() {
-        return 'TOMO - '.$this->codiTomo;
+        return ''.$this->codiTomo;
     }
     
     public function __construct()
