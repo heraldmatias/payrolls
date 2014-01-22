@@ -10,7 +10,10 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
  * Folios
  *
  * @ORM\Table(name="FOLIOS",
- * indexes={@ORM\Index(name="NUM_FOLIO_idx", columns={"NUM_FOLIO"})})
+ * indexes={
+ * @ORM\Index(name="NUM_FOLIO_idx", columns={"NUM_FOLIO"}),
+ * @ORM\Index(name="per_folio_idx", columns={"PER_FOLIO"})
+ * })
  * @ORM\Entity(repositoryClass="Inei\Bundle\PayrollBundle\Repository\FoliosRepository")
  * @HasLifecycleCallbacks
  */
@@ -48,6 +51,7 @@ class Folios {
      * @var \Inei\Bundle\PayrollBundle\Entity\Tomos
      * @ORM\ManyToOne(targetEntity="Tomos", inversedBy="folios")
      * @ORM\JoinColumn(name="CODI_TOMO", referencedColumnName="CODI_TOMO", nullable=true)
+     * @ORM\OrderBy({"codiTomo" = "ASC"})
      */
     private $tomo;
 
