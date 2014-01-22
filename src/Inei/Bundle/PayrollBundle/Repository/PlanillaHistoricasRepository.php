@@ -17,11 +17,28 @@ class PlanillaHistoricasRepository extends EntityRepository
         $fini = $filtro['fecha-ini'];
         $ffin = $filtro['fecha-fin'];
         $user = $filtro['digitador'];
+        $turno = isset($filtro['turno'])? $filtro['turno']:FALSE;
         //\DateTime()->format('Y-m-d')
-        if($fini & $ffin)
-            $_where[] = "date(fec_creac) between '$fini' and '$ffin'";
-        if($user)
+        if($fini & $ffin){
+            if($turno){
+                switch ($turno) {
+                    case '1':
+                        $fini = $fini . ' 08:00:00';
+                        $ffin = $ffin . ' 15:10:00';
+                        break;
+                    case '2':
+                        $fini = $fini . ' 15:10:01';
+                        $ffin = $ffin . ' 21:30:00';
+                        break;
+                }
+                $_where[] = "fec_creac between '$fini' and '$ffin'";
+            }else{
+                $_where[] = "date(fec_creac) between '$fini' and '$ffin'";
+            }
+        }        
+        if($user){
             $_where[] = "usu_crea_id = $user";
+        }
         $where = (count($_where))?' WHERE '.implode(' and ', $_where):'';
         $sql = "select tabla.digitador, tabla.tomo, tabla.folios, tabla.resumen,
             tabla.folios-tabla.resumen as digitables, tabla.folios_digitados,            
@@ -50,6 +67,7 @@ order by f.codi_tomo) as tabla
 join lv_acumulados_tomo lva
 on lva.tomo = tabla.tomo
 order by tabla.digitador, tabla.registros DESC;";
+        //echo $sql;exit;
         $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->prepare($sql);
         $stmt->execute();
