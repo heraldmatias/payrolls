@@ -361,9 +361,21 @@ font-family: arial;
              * tdescuentos = parseFloat(fila.find('.descuentos').val()),
              */
             var fila = jQuery(this).parent().parent(),
-                tremuneraciones = parseFloat(calculaTotales(fila, 1)),
-                tdescuentos = parseFloat(calculaTotales(fila, 2)),
-                total= tremuneraciones-tdescuentos;
+                txtRemuneracion = fila.find('.remuneraciones'),
+                txtdescuentos = fila.find('.descuentos'),
+                tremuneraciones = 0,//parseFloat(calculaTotales(fila, 1))
+                tdescuentos = 0,//parseFloat(calculaTotales(fila, 2))
+                total= 0;//tremuneraciones-tdescuentos
+                if(txtRemuneracion.length && txtdescuentos.length){
+                    tremuneraciones = parseFloat(calculaTotales(fila, 1));
+                    tdescuentos = parseFloat(calculaTotales(fila, 2));
+                    total = tremuneraciones-tdescuentos;
+                }else if(txtRemuneracion.length){
+                    tremuneraciones = parseFloat(calculaTotales(fila, 1));
+                    total = tremuneraciones;
+                }else{
+                    total = parseFloat(jQuery(this).val());
+                }
                 total = parseFloat(total.toFixed(2));
             if(total !== parseFloat(jQuery(this).val())){
                 jQuery(this).trigger('focus');
