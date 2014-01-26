@@ -56,6 +56,8 @@ class PlanillaType extends AbstractType {
                      * SE LEEN LOS CONCEPTOS DEL FOLIO PARA 
                      * CONSTRUIR LAS COLUMNAS Y FILAS DE LA PLANILLA
                      */
+                    $egr = 'border-color: #e9322d; -webkit-box-shadow: 0 0 6px #f8b9b7; -moz-box-shadow: 0 0 6px #f8b9b7; box-shadow: 0 0 6px #f8b9b7;';
+                    $ing = 'border-color: #e9322d; -webkit-box-shadow: 0 0 6px #2D78E9; -moz-box-shadow: 0 0 6px #2D78E9; box-shadow: 0 0 6px #2D78E9;';
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
                         $tomo = $folio->getTomo();
@@ -85,11 +87,12 @@ class PlanillaType extends AbstractType {
                         /*
                          * ATRIBUTOS PARA CADA CAMPO DE CONCEPTO A DIGITAR
                          */
+                        
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
                             'data-tipo' => $tipo,
                             'class' => $class,
-                            'style' => 'width:auto;font-size:15px;',
+                            'style' => 'width:auto;font-size:15px;'.($tipo==='1'?$ing:$egr),
                             'maxlength' => 35
                         );
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
