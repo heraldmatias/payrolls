@@ -334,8 +334,8 @@ codi_folio, codi_conc_tco) values ';
         for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
             $_colc = $colc;
             $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
-            $tplanilla = strtolower($sheet->
-                    getCellByColumnAndRow(3, $filaf)->getValue());
+            $tplanilla = trim(strtolower($sheet->
+                    getCellByColumnAndRow(3, $filaf)->getValue()));
             //$periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());            
             while (true) {
                 $conc = $sheet->
