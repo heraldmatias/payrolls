@@ -267,7 +267,7 @@ codi_folio, codi_conc_tco) values ';
                 $stmt->bindValue(2, $registros ? $registros : NULL);
                 $stmt->bindValue(3, NULL);
                 $stmt->bindValue(4, $tomo);
-                $stmt->bindValue(5, $tplanilla ? str_replace(' ', '', strtoupper($tplanilla)) : NULL);
+                $stmt->bindValue(5, $tplanilla ? trim(str_replace(' ', '', strtoupper($tplanilla))) : NULL);
                 $stmt->bindValue(6, $nfolio);
                 $stmt->bindValue(7, $userid);
                 $stmt->execute();
