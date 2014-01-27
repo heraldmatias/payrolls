@@ -45,8 +45,8 @@ class PlanillaType extends AbstractType {
                         'style' => 'width:200px;'
                     ),
                     'required' => false
-                ));
-        
+        ));
+
         $builder->addEventListener(
                 FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($folio) {
                     $form = $event->getForm();
@@ -57,7 +57,8 @@ class PlanillaType extends AbstractType {
                      * CONSTRUIR LAS COLUMNAS Y FILAS DE LA PLANILLA
                      */
                     $egr = 'border-color: #e9322d; -webkit-box-shadow: 0 0 6px #f8b9b7; -moz-box-shadow: 0 0 6px #f8b9b7; box-shadow: 0 0 6px #f8b9b7;';
-                    $ing = 'border-color: #e9322d; -webkit-box-shadow: 0 0 6px #2D78E9; -moz-box-shadow: 0 0 6px #2D78E9; box-shadow: 0 0 6px #2D78E9;';
+                    $ing = 'border-color: #2D78E9; -webkit-box-shadow: 0 0 6px #2D78E9; -moz-box-shadow: 0 0 6px #2D78E9; box-shadow: 0 0 6px #2D78E9;';
+                    $total = 'border-color: rgb(70, 136, 71); -webkit-box-shadow: 0 0 6px rgb(70, 136, 71); -moz-box-shadow: 0 0 6px rgb(70, 136, 71); box-shadow: 0 0 6px rgb(70, 136, 71);';
                     foreach ($folio->getConceptos() as $value) {
                         $concepto = $value->getCodiConcTco();
                         $tomo = $folio->getTomo();
@@ -66,33 +67,40 @@ class PlanillaType extends AbstractType {
                         $tipoCaja = 'text';
                         $formOptions['label'] = $codigoConcepto;
                         $class = 'monto';
-                        if($tomo->getCodiTomo()>=89){
-                        switch ($codigoConcepto) {
-                            case 'C373':
-                                $class = 'remuneraciones';
-                                break;
-                            case 'C374':
-                                $class = 'descuentos';
-                                break;
-                            case 'C12':
-                                $class = 'total';
-                                break;
-                            default:
-                                $class = 'monto';
-                                break;
-                        }}
+                        if ($tomo->getCodiTomo() >= 89) {
+                            switch ($codigoConcepto) {
+                                case 'C373':
+                                    $class = 'remuneraciones';
+                                    $tipo = '-1';
+                                    break;
+                                case 'C374':
+                                    $class = 'descuentos';
+                                    $tipo = '-1';
+                                    break;
+                                case 'C12':
+                                    $class = 'total';
+                                    $tipo = '-1';
+                                    break;
+                                default:
+                                    $class = 'monto';
+                                    break;
+                            }
+                        }
                         //echo in_array($tipo, array(1,2));
 //                        if($tipo === '1' || $tipo === '2')
 //                            $tipoCaja = 'integer';
                         /*
                          * ATRIBUTOS PARA CADA CAMPO DE CONCEPTO A DIGITAR
                          */
-                        
+
                         $formOptions['attr'] = array(
                             'data-title' => $concepto->getDescCortTco(),
                             'data-tipo' => $tipo,
                             'class' => $class,
-                            'style' => 'width:auto;font-size:15px;'.($tipo==='1'?$ing:$egr),
+                            'style' => 'width:auto;font-size:15px;' . 
+                                    ($tipo === '1' ? $ing : 
+                                    ($tipo === '2' ? $egr : 
+                                    ($tipo === '-1' ? $total : ''))),
                             'maxlength' => 35
                         );
                         $formOptions['attr']['placeholder'] = $concepto->getDescCortTco();
@@ -100,7 +108,7 @@ class PlanillaType extends AbstractType {
                          * CORRELATIVO PARA CONCEPTOS REPETIDOS EN LA 
                          * PLANILLA
                          */
-                        if(array_key_exists($concepto->getCodiConcTco(), $campos)){
+                        if (array_key_exists($concepto->getCodiConcTco(), $campos)) {
                             $campos[$concepto->getCodiConcTco()] += 1;
                         } else {
                             $campos[$concepto->getCodiConcTco()] = 1;
@@ -109,8 +117,8 @@ class PlanillaType extends AbstractType {
                          * SE AGREGA EL CAMPO AL FORMULARIO
                          */
                         $index = $campos[$concepto->getCodiConcTco()];
-                        $flag = '_'.$index;//($index>1)?'_'.$index:'';
-                        $form->add($concepto->getCodiConcTco().$flag, $tipoCaja, $formOptions);
+                        $flag = '_' . $index; //($index>1)?'_'.$index:'';
+                        $form->add($concepto->getCodiConcTco() . $flag, $tipoCaja, $formOptions);
                     }
                 }
         );
@@ -126,7 +134,7 @@ class PlanillaType extends AbstractType {
             'csrf_protection' => true,
             'csrf_field_name' => '_token',
             'method' => 'post',
-            // a unique key to help generate the secret token
+                // a unique key to help generate the secret token
         ));
 
         $resolver->setRequired(array(
