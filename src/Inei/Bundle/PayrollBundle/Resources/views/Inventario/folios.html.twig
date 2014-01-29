@@ -36,6 +36,10 @@
                         <th>Registros</th>
                         <th>Tipo Planilla</th>
                         <th>Sub Planilla</th>
+                        <th>Creador</th>
+                        <th>Fecha Creación</th>
+                        <th>Modificador</th>
+                        <th>Fecha Modificación</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
@@ -50,6 +54,10 @@
                         <td>{{ folio.0.registrosFolio }}</td>
                         <td>{{ folio.descTipoTpl }}</td>
                         <td>{{ folio.0.subtPlanStp }}</td>
+                        <td>{{ folio.crea }}</td>
+                        <td>{{ folio.0.getFecCreac|date('d-M-Y H:m:s') }}</td>
+                        <td>{{ folio.mod }}</td>
+                        <td>{{ folio.0.getFecMod|date('d-M-Y H:m:s') }}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
                             {% if edit %}<a href="{{ path('_inventario_folio_edit', {'pk': folio.0.codiFolio}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
