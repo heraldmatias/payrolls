@@ -15,9 +15,11 @@ class FoliosRepository extends EntityRepository {
 
     public function findCustomBy($criteria) {
         $DQL = "
-            SELECT partial f.{codiFolio, folio, periodoFolio, registrosFolio, subtPlanStp},pla.descTipoTpl,t.codiTomo as tomo
+            SELECT partial f.{codiFolio, folio, periodoFolio, registrosFolio, subtPlanStp, fec_creac, fec_mod},pla.descTipoTpl,t.codiTomo as tomo, c.username as crea, m.username as mod
             FROM IneiPayrollBundle:Folios f
             JOIN f.tomo t
+            LEFT JOIN f.creador c
+            LEFT JOIN f.modificador m
             LEFT JOIN f.tipoPlanTpl pla
         ";
         $where = array();
