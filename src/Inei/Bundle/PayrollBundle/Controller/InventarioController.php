@@ -373,7 +373,7 @@ class InventarioController extends Controller {
     }
     
      /**
-     * @Route("/tomos/valida/", name="_inventario_tomo_validate")
+     * @Route("/tomos/valida/{tomo}", name="_inventario_tomo_validate")
      * @Template("")
      */
     public function validateAction(Request $request) {
@@ -388,6 +388,24 @@ class InventarioController extends Controller {
         $response = new Response();
         $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $response->headers->set('Content-Disposition', 'attachment;filename="conceptos.xlsx"');
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+    
+    /**
+     * @Route("/tomos/descarga/{pk}", name="_inventario_tomo_download")
+     * @Template("")
+     */
+    public function descargaTomoAction(Request $request, $pk) {
+        $service = $this->get('tomos_service');
+        $title = 'Tomo '. $pk;
+        $excel = $service->getReporte($pk, $title, 7);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', 'attachment;filename="Tomo '.$pk.'.xlsx"');
         $response->prepare($request);
         $response->sendHeaders();
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
