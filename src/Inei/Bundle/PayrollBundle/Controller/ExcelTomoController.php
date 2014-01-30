@@ -169,6 +169,19 @@ class ExcelTomoController extends Controller {
         }
         return implode(',', $data);
     }
+    
+    function getUniqueArrayConceptos($sheet, $colc, $filaf) {
+        $data = array();
+        while (true) {
+            $conc = $sheet->getCellByColumnAndRow($colc, $filaf)->getValue();
+            if (null === $conc | '' === trim($conc))
+                break;
+            $_conc = str_replace(' ', '', strtoupper($conc));
+            $data[] = $_conc;
+            $colc++;
+        }
+        return $data;
+    }
 
     /**
      * @Route("/process/", name="admin_excel_process")
@@ -179,7 +192,6 @@ class ExcelTomoController extends Controller {
             throw $this->createNotFoundException();
         }
         $pk = $request->query->get('pk');
-        $del = $request->query->get('del');
         $data = array('success' => false, 'error' => NULL, 'data' => NULL);
         $conn = $this->get('database_connection');
         /*         * 0 BASED INDEX
@@ -207,14 +219,17 @@ class ExcelTomoController extends Controller {
         $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
         $userid = $this->get('security.context')
                         ->getToken()->getUser()->getId();
-        $date = new \DateTime();
-        $fecha = $date->format('Y-m-d H:i:s');
         /*         * *************************SE GUARDA EL TOMO********************* */
+        $sptomo = 'SELECT fn_tomo(:tomo, :periodo, :ano, :folios, :desc, :usuario);';
         $insertFolio = 'SELECT fn_folio(
 :aper_folio, :areg_folio, :asubt_plan_stp, :acodi_tomo, :atipo_plan_tpl,
 :anum_folio,:ausu_crea_id) as pk;';
         $insertConceptos = 'insert into conceptos_folios(orden_conc_folio,
 codi_folio, codi_conc_tco) values ';
+        $updateConceptos = 'update conceptos_folios SET orden_conc_folio = :orden,
+            codi_conc_tco=:concepto WHERE id = :folio';
+        $deleteConceptos = 'DELETE FROM conceptos_folios WHERE id = :folio';
+        
         try {
 
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
@@ -225,42 +240,23 @@ codi_folio, codi_conc_tco) values ';
                 $msgerror = implode('<br>', $errors);
                 throw new \Exception($msgerror);
             }
-            if ($del) {
-                
-                if (null !== $object->getTomo()) {
-//                    $tomo = $this->getDoctrine()->getRepository('IneiPayrollBundle:Tomos')->find($object->getTomo());
-//                    $emt = $this->getDoctrine()->getEntityManager();
-//                    $st = $conn->prepare('DELETE FROM asignacion where co_tomo=' . $object->getTomo());
-//                    $st->execute();
-//                    print_r($tomo);
-//                    echo 'elimno'; exit;
-//                    if (null !== $tomo) {
-//                        $emt->remove($tomo);
-//                        $emt->flush();
-//                    }
-//                    echo 'elimno todo'; exit;
-                    $this->get('tomos_service')->deleteTomo($object->getTomo());
-                }
-            }
             $conn->beginTransaction();
             $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
             $nfolio = 1;
-            if (!$object->getTomo() | $del !== '') {
-                $conn->insert('tomos', array(
-                    'codi_tomo' => $tomo,
-                    'per_tomo' => ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()),
-                    'ano_tomo' => $sheet->getCellByColumnAndRow(1, $filat)->getValue(),
-                    'folios_tomo' => $folios,
-                    'desc_tomo' => NULL,
-                    'fec_creac' => $fecha,
-                    'usu_crea_id' => $userid
-                ));
-            }
+            $stmt = $conn->prepare($sptomo);
+            $stmt->bindValue(1, $tomo);
+            $stmt->bindValue(2, ucwords($sheet->getCellByColumnAndRow(2, $filat)->getValue()));
+            $stmt->bindValue(3, $sheet->getCellByColumnAndRow(1, $filat)->getValue());
+            $stmt->bindValue(4, $folios);
+            $stmt->bindValue(5, NULL);            
+            $stmt->bindValue(6, $userid);
+            $stmt->execute();
             while ($nfolio <= $folios) {
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
-                $periodo = ucwords($sheet->getCellByColumnAndRow(1, $filaf)->getValue());
+                $periodo = $sheet->getCellByColumnAndRow(1, $filaf)->getValue();
+                /*BUSCAR SI HAY DIFERENCIA ENTRES LOS FOLIOS*/
                 $stmt = $conn->prepare($insertFolio);
                 $stmt->bindValue(1, is_numeric($periodo) & strlen($periodo) === 1 ?
                         str_pad($periodo, 2, '0', STR_PAD_LEFT):$periodo);
@@ -273,11 +269,53 @@ codi_folio, codi_conc_tco) values ';
                 $stmt->execute();
                 $_folio = $stmt->fetch();
                 $folio = $_folio['pk'];
-                if ($folio > 0) {
+                if ($folio > 0) {                    
+                    /**
+                     * Si el folio no existe entonces los conceptos 
+                     * de los folios tampoco y se deben insertar a la base de datos
+                     **/
                     $conceptos = $this->getUniqueConceptos($sheet, $colc, $filaf, $folio);
                     if ($conceptos) {
                         $stmt2 = $conn->prepare($insertConceptos . $conceptos);
                         $stmt2->execute();
+                    }                    
+                }else{
+                    /**
+                     * Si el folio existe entonces se deben reemplazar los conceptos 
+                     * en el mismo orden que se van enconctrando en el inventario
+                     * la diferencia entre los que hay actualmente y los nuevos debe
+                     * eliminarse
+                    **/
+                    $conceptos = $this->getUniqueArrayConceptos($sheet, $colc, $filaf);
+                    $_data = $this->getDoctrine()->getRepository('IneiPayrollBundle:Folios')
+                            ->findCustomByNum($nfolio, $object->getTomo());
+                    $conceptosdb = $_data['conceptos'];
+                    $codifolio = $_data['folio'];
+                    $toupdate = array_filter(array_map(create_function('$cdb, $c', 'return $cdb[0]===$c?null:array(0=>$c,1=>$cdb);'), $conceptosdb, $conceptos),
+                        create_function('$item', 'return is_array($item);'));
+                    if($toupdate){
+                        $supd = $conn->prepare($updateConceptos);
+                        $sdel = $conn->prepare($deleteConceptos);
+                        foreach ($toupdate as $key => $value) {
+                            if($value[0] === NULL){
+                                /*ELIMINAR CONCEPTOS*/
+                                if(is_array($value[1])){
+                                    $sdel->bindValue(1, $value[1][1]);
+                                    $sdel->execute();
+                                }
+                            }elseif(is_array($value[1])){
+                                /*ACTUALIZAR CONCEPTO*/
+                                $supd->bindValue(1, ($key+1));
+                                $supd->bindValue(2, $value[0]);
+                                $supd->bindValue(3, $value[1][1]);
+                                $supd->execute();
+                            }else{
+                                /*INSERTAR CONCEPTO*/
+                                $conn->prepare($insertConceptos . sprintf("(%s, %s, '%s')", ($key+1), $codifolio, $value[0]))->execute();
+                            }
+                        }
+                        unset($supd);
+                        unset($sdel);
                     }
                 }
                 $filaf++;
@@ -334,6 +372,7 @@ codi_folio, codi_conc_tco) values ';
         for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
             $_colc = $colc;
             $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
+            $periodo = $sheet->getCellByColumnAndRow(1, $filaf)->getValue();
             $tplanilla = trim(strtolower($sheet->
                     getCellByColumnAndRow(3, $filaf)->getValue()));
             //$periodo = strtolower($sheet->getCellByColumnAndRow(1, $filaf)->getValue());            
@@ -357,6 +396,12 @@ codi_folio, codi_conc_tco) values ';
                 /*VALIDA SI EXISTE LA PLANILLA*/
                 if(!in_array($tplanilla, $planillas)){
                     $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'D');
+                }
+            }
+            /*VALIDA QUE EL PERIDO SEA CORRECTO*/
+            if(!is_numeric($periodo) | strlen($periodo)>2){
+                if((is_numeric($registros) | $registros <=0) & (in_array($tplanilla, $planillas))){
+                    $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'B');
                 }
             }
             $filaf++;
