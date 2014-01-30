@@ -43,6 +43,7 @@
                 <tbody>
                 {% set edit = usuario_service.hasPermission('tomo', 'edit') %}
                 {% set delete = usuario_service.hasPermission('tomo', 'del') %}
+                {% set other = usuario_service.hasPermission('tomo', 'other') %}
                 {% for tomo in pagination %}
                     <tr {% if loop.index is odd %}class="info"{% endif %}>
                         <td>{{ tomo.codiTomo }}</td>
@@ -55,6 +56,9 @@
                             {% if delete %}
                             <a href="{{ path('_inventario_tomo_delete', {'pk': tomo.codiTomo}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar Tomo">
                                 <i class="icon-trash"></i> </a>{% endif %}
+                            {% if other %}
+                            <a href="{{ path('_inventario_tomo_download', {'pk': tomo.codiTomo}) }}" title="Descargar Inventario">
+                                <i class="icon-download-alt"></i> </a>{% endif %}
                         </td>
                     </tr>
                 {% endfor %}
