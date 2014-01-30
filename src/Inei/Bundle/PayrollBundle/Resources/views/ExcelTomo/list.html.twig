@@ -58,9 +58,7 @@
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>{% endif %}
                             {% if process %}<a href="javascript: process({{ item.id }})" id="opt-process{{ item.id }}" title="Procesar">
-                                <i class="icon-refresh"></i> </a>
-                                <a href="javascript: process2({{ item.id }})" id="opt-process2{{ item.id }}" title="Eliminar Existente y Procesar">
-                                <i class="icon-remove-sign"></i> </a>{% endif %}
+                                <i class="icon-refresh"></i> </a> {% endif %}
                             {% if del %}<a href="{{ path('admin_excel_delete', {'pk': item.id}) }}" onclick="javascript: return confirm('¿Esta seguro que desea eliminar este registro?')" title="Eliminar">
                                 <i class="icon-trash"></i> </a>{% endif %}</div>
                         </td>
