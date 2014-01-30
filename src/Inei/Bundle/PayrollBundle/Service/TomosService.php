@@ -77,4 +77,76 @@ class TomosService {
 //        exit;
         return $_data;
     }
+        
+    public function getReporte($ntomo, $title, $from){
+        $tomo = $this->em->getRepository('IneiPayrollBundle:Tomos')->find($ntomo);
+        $rfolio = $this->em->getRepository('IneiPayrollBundle:Folios');
+        $data = array();
+        for ($index = 1; $index <= $tomo->getFoliosTomo(); $index++) {
+            $row = $rfolio->findFolioInventarioByNum($index, $ntomo);
+            if($row !== NULL){
+                $data[] = $row;
+            }
+        }
+        return $this->printReporte($data, $title, $tomo, $from);
+    }
+    
+    public function printReporte(array $rows, $title, $tomo, $from = 4) {
+        $objPHPExcel = new \PHPExcel();
+
+// Set document properties
+        $objPHPExcel->getProperties()->setCreator("INEI")
+                ->setLastModifiedBy("INEI")
+                ->setTitle($title)
+                ->setSubject($title)
+                ->setDescription("Reporte")
+                ->setCategory("Reporte");
+// Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet = $objPHPExcel->getActiveSheet();
+        $sheet->mergeCells('A1:C1');
+        $sheet->setCellValueByColumnAndRow(0, 1, $title);
+        /*FOLIOS */
+        foreach (array('Año', 'Periodo', 'Tomo', 'Folios') as $key => $value) {
+            $sheet->setCellValueByColumnAndRow($key>1?$key*2:$key+1, 3, $value)
+                    ->getStyle()->getFont()->setBold(true);
+            switch ($key){
+                case 0:
+                    $sheet->setCellValueByColumnAndRow($key>1?$key*2:$key+1, 4, $tomo->getAnoTomo())
+                    ->getStyle()->getFont()->setBold(true);
+                    break;
+                case 1:
+                    $sheet->setCellValueByColumnAndRow($key>1?$key*2:$key+1, 4, $tomo->getPeriodoTomo())
+                    ->getStyle()->getFont()->setBold(true);
+                    break;
+                case 2:
+                    $sheet->setCellValueByColumnAndRow($key>1?$key*2:$key+1, 4, $tomo->getCodiTomo())
+                    ->getStyle()->getFont()->setBold(true);
+                    break;
+                case 3:
+                    $sheet->setCellValueByColumnAndRow($key>1?$key*2:$key+1, 4, $tomo->getFoliosTomo())
+                    ->getStyle()->getFont()->setBold(true);
+                    break;
+            }
+        }
+        /**cabecera del folio*/
+        foreach (array('Folio', 'Periodo', 'Registro', 'Tipo') as $key => $value) {
+            $sheet->setCellValueByColumnAndRow($key, 6, $value)
+                    ->getStyle()->getFont()->setBold(true);
+        }
+        for ($index = 1; $index <= 40; $index++) {
+            $sheet->setCellValueByColumnAndRow($index+3, 6, 'Campo '. $index)
+                    ->getStyle()->getFont()->setBold(true);
+        }
+        foreach ($rows as $row => $rcell) {
+            foreach ($rcell as $col => $cell) {
+                $sheet->setCellValueByColumnAndRow($col, $row + $from, $cell);
+            }
+        }
+// Rename worksheet
+        $objPHPExcel->getActiveSheet()->setTitle($title);
+// Set active sheet index to the first sheet, so Excel opens this as the first sheet
+        $objPHPExcel->setActiveSheetIndex(0);
+        return $objPHPExcel;
+    }
 }
