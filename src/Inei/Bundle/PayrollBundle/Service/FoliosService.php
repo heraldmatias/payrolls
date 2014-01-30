@@ -77,11 +77,7 @@ class FoliosService {
         $stmt->bindValue('folio', $concepto->getCodiFolio()->getCodiFolio());
         $stmt->bindValue('id', $concepto->getId());
         $stmt->execute();
-        echo $concepto->getCodiConcTco()->getCodiConcTco().'<br>';
-        echo $concepto->getCodiFolio()->getCodiFolio().'<br>';
-        echo $concepto->getId();
         $pos = $stmt->fetch();
-        print_r($pos);
         $pos = ($pos['c']===null)?0:$pos['c'];
         //exit;
         $conn->executeQuery('DELETE FROM planilla_historicas WHERE 
