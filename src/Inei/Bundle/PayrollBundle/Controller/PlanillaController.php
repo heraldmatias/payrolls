@@ -107,6 +107,46 @@ class PlanillaController extends Controller {
         $objWriter->save('php://output');
         exit;
     }
+    
+    /*REPORTE DE CONSOLIDADO DE TOMOS*/
+    /**
+     * @Route("/reporte-totales/", name="_planilla_totales_reporte")
+     * @Template("")
+     */
+    public function reporteTotalesAction() {
+        return array();
+    }
+
+    /**
+     * @Route("/reporte-totales/ajax/", name="_planilla_totales_ajax")
+     * @Template("")
+     */
+    public function ajaxReporteTotalesAction(Request $request) {
+        $msg = $this->get('planilla_service')->getReporteTotal();
+        $response = new Response(json_encode($msg));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/reporte-totales/print/", name="_planilla_totales_reporte_print")
+     * @Template("")
+     */
+    public function printTotalesReporteAction(Request $request) {        
+        $service = $this->get('planilla_service');
+        $data = $service->getReporteTotal();
+        $excel = $service->printReporte($data, array(
+            'Estado', 'Tomos', 'Total de Folios','Total de Folios Resumen', 'Total de Folios Digitables',
+             'Total de Folios Digitados', 'Total de Folios Digitar', 'Total Registros'), 'Reporte de Resumen', 4, true);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        $response->headers->set('Content-Disposition', sprintf('attachment;filename="%s.xlsx"', 'tomos_digitados'));
+        $response->prepare($request);
+        $response->sendHeaders();
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
 
     /**
      * @Route("/reporte/", name="_planilla_digitador")
