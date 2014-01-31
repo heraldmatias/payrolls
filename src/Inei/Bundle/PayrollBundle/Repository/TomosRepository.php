@@ -120,4 +120,18 @@ GROUP BY t.codi_tomo) as r) as t %s;";
         return $tomos;
     }
 
+    /**
+     * 
+     */
+    public function getTotalTomos(){
+        $sql = 'SELECT estado, count(tomo) as "tomos", sum(folios) as "folios", sum(resumen) as "foliosr", 
+            sum(folios) - sum(resumen) as "foliosdd", sum(digitados) as "foliosd", 
+            sum(por_digitar) as "foliosdg", sum(registros) as "registros"
+    FROM (select * from lv_datos_tomo) as t
+    GROUP BY estado;';
+        $stm = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stm->execute();
+        $data = $stm->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        return $data;
+    }
 }
