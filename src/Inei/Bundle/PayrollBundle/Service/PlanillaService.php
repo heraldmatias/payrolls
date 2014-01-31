@@ -201,6 +201,14 @@ class PlanillaService {
         }
         return $rows;
     }
+    
+    /**
+     * 
+     */
+    public function getReporteTotal(){
+        $rows = $this->em->getRepository('IneiPayrollBundle:Tomos')->getTotalTomos();
+        return $rows;
+    }
 
     /**
      * 
@@ -242,9 +250,9 @@ class PlanillaService {
      * @param integer $from
      * @return \PHPExcel
      */
-    public function printReporte(array $rows, array $cols, $title, $from = 4) {
+    public function printReporte(array $rows, array $cols, $title, $from = 4, $caltotal=false) {
         $objPHPExcel = new \PHPExcel();
-
+        $totales = array('TOTAL',0,0,0,0,0,0,0);
 // Set document properties
         $objPHPExcel->getProperties()->setCreator("INEI")
                 ->setLastModifiedBy("INEI")
@@ -266,6 +274,19 @@ class PlanillaService {
             $count = count($rcell);
             foreach ($cols as $col => $ccell) {
                 $sheet->setCellValueByColumnAndRow($col, $row + $from, ($col < $count) ? $rcell[$col] : null);
+                if($caltotal){
+                    if(array_key_exists($col, $rcell)){
+                        if(is_numeric($rcell[$col])){
+                            $totales[$col] += $rcell[$col];
+                        }
+                    }
+                }
+            }
+        }
+        if($caltotal){
+            $row = (count($rows)+$from);
+            foreach ($totales as $key => $value) {
+                $sheet->setCellValueByColumnAndRow($key, $row, $value);
             }
         }
 // Rename worksheet
