@@ -235,13 +235,13 @@ codi_folio, codi_conc_tco) values ';
             $object = $this->getDoctrine()->getRepository('IneiPayrollBundle:ExcelTomo')->find($pk);
             $objPHPExcel = PHPExcel_IOFactory::load($object->getFullPath());
             $sheet = $objPHPExcel->getSheet(0);
-            $errors = $this->validateTomoExcel($sheet, $filaf, $colc, $filat);
+            $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
+            $errors = $this->validateTomoExcel($sheet, $filaf, $colc, $filat, $tomo);
             if(count($errors)>0){
                 $msgerror = implode('<br>', $errors);
                 throw new \Exception($msgerror);
             }
             $conn->beginTransaction();
-            $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
             $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
             $nfolio = 1;
             $stmt = $conn->prepare($sptomo);
@@ -354,7 +354,7 @@ codi_folio, codi_conc_tco) values ';
         $em->flush();
     }
     
-    private function validateTomoExcel($sheet, $filaf, $colc, $filat){
+    private function validateTomoExcel($sheet, $filaf, $colc, $filat, $tomo){
         $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
         $nfolio = 1;
         $errors = array();
@@ -399,8 +399,14 @@ codi_folio, codi_conc_tco) values ';
                 }
             }
             /*VALIDA QUE EL PERIDO SEA CORRECTO*/
-            if(!is_numeric($periodo) | strlen($periodo)>2){
-                if((is_numeric($registros) | $registros <=0) & (in_array($tplanilla, $planillas))){
+            if($tomo > 88){
+                if(!is_numeric($periodo) | strlen($periodo)>2){
+                    if((is_numeric($registros) | $registros <=0) & (in_array($tplanilla, $planillas))){
+                        $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'B');
+                    }
+                }
+            }else{
+                if($periodo === null | $periodo ===''){
                     $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'B');
                 }
             }
