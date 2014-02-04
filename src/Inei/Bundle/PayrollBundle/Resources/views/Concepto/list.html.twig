@@ -53,7 +53,7 @@
                         <td>{{ item.creador }}</td>
                         <td>{{ item.fecCreac|date('d-M-Y H:m:s') }}</td>
                         <td>{{ item.modificador }}</td>
-                        <td>{{ item.fecMod|date('d-M-Y H:m:s') }}</td>
+                        <td>{% if item.fecMod %}{{ item.fecMod|date('d-M-Y H:m:s') }}{% endif %}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
                             {% if perm %}<a href="{{ path('_concepto_edit', {'pk': item.codiConcTco}) }}" 
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
