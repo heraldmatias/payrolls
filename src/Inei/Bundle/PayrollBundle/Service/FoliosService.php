@@ -18,7 +18,7 @@ class FoliosService {
     }
 
     public function orderFolios($folio, $folioupdate, $tomo) {
-        $conn = $this->em->getConnection();
+        /*$conn = $this->em->getConnection();
         if (null === $folioupdate | trim($folioupdate) === '') {
             $sql = "SELECT codi_folio FROM folios 
                 WHERE codi_tomo=$tomo and num_folio=$folio";
@@ -41,7 +41,7 @@ class FoliosService {
             $sql3 = "UPDATE folios 
                 SET num_folio=$folioupdate WHERE codi_folio = $f";
             $conn->prepare($sql3)->execute();
-        }
+        }*/
         return true;
     }
 
