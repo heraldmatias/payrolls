@@ -53,7 +53,7 @@
                         <td >{{ item.creador }}</td>
                         <td >{{ item.createdAt|date('d-M-Y H:m:s') }}</td>
                         <td >{{ item.modificador }}</td>
-                        <td >{{ item.updatedAt|date('d-M-Y H:m:s') }}</td>
+                        <td >{% if item.updatedAt %}{{ item.updatedAt|date('d-M-Y H:m:s') }} {% endif %}</td>
                         <td><div style="float:left;">{% if edit %}
                             <a href="{{ path('admin_excel_edit', {'pk': item.id}) }}" id="opt-edit" title="Editar">
                                 <i class="icon-edit"></i> </a>{% endif %}
