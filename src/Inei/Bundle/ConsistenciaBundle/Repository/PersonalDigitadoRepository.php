@@ -18,18 +18,12 @@ class PersonalDigitadoRepository extends EntityRepository {
      * @return integer 0 en exito
      */
     public function getPersonalDigitado() {
-        $sql_del = 'DELETE FROM personal_digitado;';
-        $sql_del2 = 'DELETE FROM personal_encontrado;';
-        $sql = 'INSERT INTO personal_digitado(id, nomb_cort_per, codi_empl_per, nomb_soundex_per) 
-SELECT row_number() OVER(ORDER BY empleado ASC), empleado, codigo, soundex 
-FROM lv_personal_planillas
-ORDER BY empleado;';
+        
+        $sql = 'INSERT INTO personal_digitado(nomb_cort_per, codi_empl_per, nomb_soundex_per) 
+SELECT l.empleado, l.codigo, l.soundex 
+FROM lv_personal_planillas l left join personal_digitado p on p.nomb_cort_per = l.empleado where p.id is null
+ORDER BY l.empleado;';
         $con = $this->getEntityManager()->getConnection();
-
-        $stmt1 = $con->prepare($sql_del);
-        $stmt1->execute();
-
-        $con->executeUpdate($sql_del2);
         
         $stmt = $con->prepare($sql);
         $stmt->execute();
