@@ -109,30 +109,12 @@
                     <div class="span1"><input type="radio" value="2" id="opt_nueva" name="optbusqueda[]"></div>
                 </div>
                 <div class="row-fluid" id="persona_siga">
-                    <div class="span3"><label>Buscar Personal Asociado</label></div>
-                    <div class="span9"><input type="text" name="persona" id="id_personal_siga" >&nbsp;&nbsp;</div>
+                    <div class="span3"><label>Buscar Personal en Siga</label></div>
+                    <div class="span9"><input type="text" name="persona_siga" id="id_personal_siga" class="personal">&nbsp;&nbsp;</div>
                 </div>
                 <div class="row-fluid" id="persona_nueva" style="display: none;">
-                    <div class="row-fluid">
-                        <div class="span3"><label>Codigo</label></div>
-                        <div class="span9"><input type="text" name="formregistro[codigo]" id="formregistro_codigo"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Apellido Paterno</label></div>
-                        <div class="span9"><input type="text" name="formregistro[ape_paterno]" id="formregistro_ape_paterno"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Apellido Materno</label></div>
-                        <div class="span9"><input type="text" name="formregistro[ape_materno]" id="formregistro_ape_materno"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>Nombres</label></div>
-                        <div class="span9"><input type="text" name="formregistro[nombres]" id="formregistro_nombres"></div>
-                    </div>
-                    <div class="row-fluid">
-                        <div class="span3"><label>DNI</label></div>
-                        <div class="span9"><input type="text" name="formregistro[dni]" id="formregistro_dni"></div>
-                    </div>
+                    <div class="span3"><label>Buscar Personal en Reniec</label></div>
+                    <div class="span9"><input type="text" name="persona_reniec" id="id_personal_reniec" class="personal">&nbsp;&nbsp;</div>
                 </div>
             </div>
             
@@ -336,6 +318,8 @@
             });
             
             var cache = {};
+            var cachee = {};
+        
             $( "#id_personal_siga" ).autocomplete({
                 minLength: 4,
                 source: function( request, response ) {
@@ -343,13 +327,10 @@
                     if ( term in cache ) {
                         response( cache[ term ] );
                         return;
-                    }
-                    /*$.getJSON( "search.php", request, function( data, status, xhr ) {
-                        cache[ term ] = data;
-                        response( data );
-                    });*/
+                    }                    
                     var data = {
-                        personal: $('#id_personal_siga').val()
+                        personal: term,
+                        tipo: 1
                     };
                     var oOptions = {
                         url: '{{ path('_maestro_personal_ajax') }}',
@@ -363,6 +344,39 @@
 
                     posting.done(function(data, textStatus, jqXHR) {
                         cache[ term ] = data['data'];
+                        response( data['data'] );
+                    })
+                    .fail(function(data, textStatus, jqXHR) {
+                        $('#cargando').hide();
+                        $('#feedback .alert').show().html(textStatus);
+                    });
+                }
+            });
+            
+            $( "#id_personal_reniec" ).autocomplete({
+                minLength: 4,
+                source: function( request, response ) {
+                    var term = request.term;
+                    if ( term in cachee ) {
+                        response( cachee[ term ] );
+                        return;
+                    }                    
+                    var data = {
+                        personal: term,
+                        tipo: 2
+                    };
+                    var oOptions = {
+                        url: '{{ path('_maestro_personal_ajax') }}',
+                        dataType: 'json',
+                        async: true,
+                        data: data,
+                        beforeSend: function() {
+                        }
+                    };
+                    var posting = $.ajax(oOptions);
+
+                    posting.done(function(data, textStatus, jqXHR) {
+                        cachee[ term ] = data['data'];
                         response( data['data'] );
                     })
                     .fail(function(data, textStatus, jqXHR) {
