@@ -239,10 +239,20 @@ class DefaultController extends Controller {
     public function getPersonalSigaAction(Request $request) {
         $service = $this->get('consistencia_service');
         $nombres = '';
+        $tipo = $request->query->get('tipo');
         if ($request->query->has('personal')) {
             $nombres = $request->query->get('personal');
         }
-        $result = $service->findPersonalSiga($nombres);
+        if($tipo === '1'){
+            $result = $service->findPersonalSiga($nombres);
+        }else{
+            $cn = $this->get('doctrine')->getManager('siga')->getConnection();
+            $st = $cn->prepare("SELECT DNI as value, DNI || ' - ' || DES_NOMBRE as label 
+                FROM PER_RENIEC WHERE DES_NOMBRE LIKE :nombre AND rownum<=5");
+            $st->bindValue(':nombre', $nombres.'%');
+            $st->execute();
+            $result = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        }
         $data = array(
             'success' => true,
             'data' => $result,
