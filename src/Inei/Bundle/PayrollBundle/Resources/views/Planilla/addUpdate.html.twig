@@ -295,7 +295,7 @@ font-family: arial;
             var fila = jQuery(this).parent().parent();
             var total = parseFloat(calculaTotales(fila, 1));
             var monto = isNaN(jQuery(this).val())?0:parseFloat(jQuery(this).val());
-            if(total !== monto){
+            if(total !== monto | total<0){
                 jQuery(this).trigger('focus');
             }else{
                 var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
@@ -312,7 +312,7 @@ font-family: arial;
             var fila = jQuery(this).parent().parent();
             var total = parseFloat(calculaTotales(fila, 2));
             var monto = isNaN(jQuery(this).val())?0:parseFloat(jQuery(this).val());
-            if(total !== monto){
+            if(total !== monto | total<0){
                 jQuery(this).trigger('focus');
             }else{
                 var campo_siguiente = jQuery(this).parent().next().find('input[type="text"]');
@@ -340,7 +340,7 @@ font-family: arial;
             }
             var campo_siguiente = campo.parent().next().find('input[type="text"]:eq(0)');
             if(campo.data('tipo')===1 || campo.data('tipo')===2){
-            if(isNaN(campo.val())){
+            if(isNaN(campo.val()) | campo.val().indexOf('-')!==-1){
                 return false;
             }else{                
                 campo_siguiente.focus();
@@ -377,7 +377,7 @@ font-family: arial;
                     total = parseFloat(jQuery(this).val());
                 }
                 total = parseFloat(total.toFixed(2));
-            if(total !== parseFloat(jQuery(this).val())){
+            if(total !== parseFloat(jQuery(this).val()) | total<0){
                 jQuery(this).trigger('focus');
             }else{
                 nextRow(fila);
