@@ -27,7 +27,7 @@ class SearchFoliosType extends AbstractType {
                         'style' => 'width:100%;'
                      ),
                     'required' => false,
-                    'choices' => array_combine(range(1, 419),range(1, 419)),
+                    'choices' => array_combine(range(1, 421),range(1, 421)),
                     'empty_value' => '---SELECCIONE---'
                 ))
                 ->add('folio', 'choice', array(
