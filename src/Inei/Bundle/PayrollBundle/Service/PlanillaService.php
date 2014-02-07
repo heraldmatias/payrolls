@@ -372,7 +372,7 @@ class PlanillaService {
                                 :avalo_calc_phi, :atipo_plan_tpl, :asubt_plan_stp, 
                                 :acodi_empl_per, :acodi_conc_tco, :acodi_folio, 
                                 :adesc_plan_stp, :aflag_folio, :anum_reg,
-                                :ausu_crea_id, :ausu_mod_id)'
+                                :ausu_crea_id, :acodi_tomo, :anum_folio, :ausu_mod_id)'
             );
             $_periodo = $object->getPeriodoFolio();
             $periodo = strlen($_periodo)<2?
@@ -406,6 +406,8 @@ class PlanillaService {
                     $stmt->bindValue('aflag_folio', substr($key, $pos + 1));
                     $stmt->bindValue('anum_reg', $reg);
                     $stmt->bindValue('ausu_crea_id', $userid);
+                    $stmt->bindValue('acodi_tomo', $object->getTomo()->getCodiTomo());
+                    $stmt->bindValue('anum_folio', $object->getFolio());
                     $stmt->bindValue('ausu_mod_id', $userid);
                     $stmt->execute();
                     $codigos[$co] = -1;
