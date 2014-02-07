@@ -19,6 +19,49 @@ use Inei\Bundle\PayrollBundle\Entity\Subtplanilla;
 class PlanillaController extends Controller {
 
     private static $REPORTES = array('digitador', 'tomo');
+    
+    /**
+     * @Route("/migracion/", name="_planilla_migrar")
+     * @Template("")
+     */
+    public function migracionAction() {
+        return array();
+    }
+    
+    /**
+     * @Route("/migracion/inicia/", name="_planilla_migrar_inicia")
+     * @Template("")
+     */
+    public function migracionIniciaAction() {
+        $service = $this->get('migracion_service');
+        $data = $service->process();
+        $response = new Response($data);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/migracion/estado/", name="_planilla_migrar_estado")
+     * @Template("")
+     */
+    public function migracionEstadoAction() {
+        $service = $this->get('migracion_service');
+        $data = $service->get_proc_status();
+        $response = new Response($data);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/migracion/mensajes/", name="_planilla_migrar_mensajes")
+     * @Template("")
+     */
+    public function migracionMensajeAction() {
+        $service = $this->get('migracion_service');
+        $data = $service->get_log_messages();
+        $response = new Response($data);
+        return $response;
+    }
 
     /**
      * @Route("/reporte-tomo/", name="_planilla_tomo_reporte")
