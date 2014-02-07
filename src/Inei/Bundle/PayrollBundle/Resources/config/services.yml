@@ -2,9 +2,10 @@ parameters:
 #    inei_payroll.example.class: Inei\Bundle\PayrollBundle\Example
 
 services:
-#    inei_payroll.example:
-#        class: %inei_payroll.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    migracion_service:
+        class: Inei\Bundle\PayrollBundle\Service\MigracionService
+        tags:
+            - { name: service, alias: migracion_service }
     planilla_service:
         class: Inei\Bundle\PayrollBundle\Service\PlanillaService
         arguments: ["@doctrine.orm.entity_manager", "@security.context"]
