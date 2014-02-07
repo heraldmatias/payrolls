@@ -1,0 +1,98 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block csspage %}
+{% endblock %}
+{% block form %}
+<div class="span10">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Exportar Planillas</h3>
+        </div>
+        <div class="modal-body">
+            <a href='' onclick='StartProc(); return false'>Start Process</a>
+            <a href='' onclick='ShowLog(true); return false'>Show Log</a>
+            <a href='' onclick='ShowLog(false); return false'>Don't Show Log</a>Status:<SPAN id=status></SPAN>
+            Log Messages: <DIV style='border:1px solid; width:40em; height:20em; font-size:12px; overflow:auto'                  id=log_messages></DIV>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ asset('bundles/inei/prototype.js') }}" type="text/javascript"></script>
+<script type="text/javascript">
+    /* Display message inside the status box based on the status value */
+    function DisplayMessage(t) {
+        if (t.responseJSON) {
+            var json = t.responseJSON;
+            if (json['Status'] == 0) {
+                Element.update($('status'), 'Info: ' + json['Message']);
+            } else {
+                Element.update($('status'), 'Error: ' + json['Message']);
+            }
+        } else {
+            /* Update the whole content if it is not JSON */
+            Element.update($('status'), t.responseText);
+        }
+    }
+
+    /* Variable holding background process id */
+    var bgpid = null;
+
+    /* Start a background process and update the status box of the result */
+    function StartProc( ) {
+        Element.update($('log_messages'), '');
+        new Ajax.Request('{{ path('_planilla_migrar_inicia') }}', {
+            method: 'get',
+            parameters: 'bgpid=' + bgpid,
+            evalJSON: 'force',
+            onSuccess: function(t) {
+                if (t.responseJSON && t.responseJSON['Status'] === 0)
+                    bgpid = t.responseJSON['bgpid'];
+                DisplayMessage(t);
+            },
+            onFailure: DisplayMessage
+        });
+    }
+
+    /* ajax periodic updater */
+    var pu = null;
+
+    /* If show is true and pu is not instantiated, then create a PeriodicalUpdater
+     * to inspect the process status and display the log messages
+     * If show is true and pu is already instantiated, then restarts the PeriodicalUpdater
+     * If show is false and pu is already instantiated, then stops the PeriodicalUpdater   */
+    function ShowLog(show) {
+        if (show) {
+            if (!pu)
+                pu = new Ajax.PeriodicalUpdater('','{{ path('_planilla_migrar_estado') }}', {
+                    method: 'get',
+                    frequency: 3,
+                    parameters: 'bgpid=' + bgpid,
+                    evalJSON: 'force',
+                    onSuccess: function(t) {
+                        if (t.responseJSON) {
+                            /* Get the log message and display it */
+                            new Ajax.Updater('log_messages', '{{ path('_planilla_migrar_mensajes') }}', {
+                                onFailure: DisplayMessage(t)
+                            });
+                            /* Bg process finishes or have error - stop the updater */
+                            if (t.responseJSON['Running'] == 0 && pu) {
+                                pu.stop();
+                            }
+                        }
+                        /* Display the current status of the background process */
+                        DisplayMessage(t);
+                    },
+                    onFailure: DisplayMessage
+                });
+            else {
+                Element.update($('status'), 'Start showing log');
+                pu.start( );
+            }
+        } else if (pu) {
+            Element.update($('status'), 'Stop showing log');
+            pu.stop();
+        }
+    }
+    </script>
+{% endblock %}
+
