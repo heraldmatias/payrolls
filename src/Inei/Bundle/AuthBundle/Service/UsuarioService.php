@@ -79,7 +79,7 @@ class UsuarioService {
         if ($this->hasRole('ROLE_AUDITOR') 
                 | $this->hasRole('ROLE_ADMINISTRADOR') |
                 $this->hasRole('ROLE_SUPERVISOR')) {
-            $tomos = array_combine(range(1, 420), range(1, 420));
+            $tomos = array_combine(range(1, 421), range(1, 421));
         } else {
             $tomos = $this->em->getRepository('IneiAuthBundle:Usuarios')
                     ->listaTomosAsignados($user->getId());
