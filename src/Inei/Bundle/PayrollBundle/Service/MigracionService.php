@@ -23,7 +23,7 @@ class MigracionService {
         exec("bash -c '{$prog_name} >> /tmp/log_messages 2>&1 & echo $!'", $out, $rc);
         if (!$rc) {
            $pid = intval(trim($out[0]));
-           $errmsg = "Process has been started {$pid}";
+           $errmsg = "El proceso ya ha sido iniciado {$pid}";
         } else {
            foreach($out as $o)
               $errmsg .= $o;
@@ -33,7 +33,7 @@ class MigracionService {
     
     public function get_log_messages(){
         if (file_exists("/tmp/log_messages"))
-            return nl2br(file_get_contents("/tmp/log_messages"));
+            return sprintf("<div class='bar' style='width: %s%%;'></div>", (substr_count(file_get_contents("/tmp/log_messages"), "\n" )/421)*100);nl2br(file_get_contents("/tmp/log_messages"));//
     }
     
     public function get_proc_status(){        
@@ -42,11 +42,11 @@ class MigracionService {
         if ($this->is_proc_running($bgpid)) {
           $result['Status'] = 0;
           $result['Running'] = 1;
-          $result['Message'] = 'Process is still running';
+          $result['Message'] = 'Procesando...';
         } else {
           $result['Status'] = 0;
           $result['Running'] = 0;
-          $result['Message'] = "Process is finished. {$bgpid}";
+          $result['Message'] = "Proceso terminado. {$bgpid}";
         }
         return json_encode($result);
     }
