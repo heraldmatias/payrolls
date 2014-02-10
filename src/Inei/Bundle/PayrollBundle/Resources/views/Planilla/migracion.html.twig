@@ -8,10 +8,11 @@
             <h3>Exportar Planillas</h3>
         </div>
         <div class="modal-body">
-            <a href='' onclick='StartProc(); return false'>Start Process</a>
-            <a href='' onclick='ShowLog(true); return false'>Show Log</a>
-            <a href='' onclick='ShowLog(false); return false'>Don't Show Log</a>Status:<SPAN id=status></SPAN>
-            Log Messages: <DIV style='border:1px solid; width:40em; height:20em; font-size:12px; overflow:auto'                  id=log_messages></DIV>
+            <a href='' onclick='StartProc(); return false'>Exportar planillas (siga)</a>
+            <div class="progress progress-striped" id="tomos-bar">
+                <div class="bar" style="width: 0%;"></div>
+            </div>
+            Estado:<span id=status></span>            
         </div>
     </div>
 </div>
@@ -39,7 +40,7 @@
 
     /* Start a background process and update the status box of the result */
     function StartProc( ) {
-        Element.update($('log_messages'), '');
+        Element.update($('tomos-bar'), '<div class="bar" style="width: 0%;"></div>');
         new Ajax.Request('{{ path('_planilla_migrar_inicia') }}', {
             method: 'get',
             parameters: 'bgpid=' + bgpid,
@@ -48,11 +49,12 @@
                 if (t.responseJSON && t.responseJSON['Status'] === 0)
                     bgpid = t.responseJSON['bgpid'];
                 DisplayMessage(t);
+                ShowLog(true);
             },
             onFailure: DisplayMessage
         });
     }
-
+    jQuery.noConflict();
     /* ajax periodic updater */
     var pu = null;
 
@@ -71,12 +73,14 @@
                     onSuccess: function(t) {
                         if (t.responseJSON) {
                             /* Get the log message and display it */
-                            new Ajax.Updater('log_messages', '{{ path('_planilla_migrar_mensajes') }}', {
+                            new Ajax.Updater('tomos-bar', '{{ path('_planilla_migrar_mensajes') }}', {
                                 onFailure: DisplayMessage(t)
                             });
                             /* Bg process finishes or have error - stop the updater */
-                            if (t.responseJSON['Running'] == 0 && pu) {
+                            if (t.responseJSON['Running'] === 0 && pu) {
                                 pu.stop();
+                                bgpid = null;
+                                pu = null;
                             }
                         }
                         /* Display the current status of the background process */
@@ -85,11 +89,11 @@
                     onFailure: DisplayMessage
                 });
             else {
-                Element.update($('status'), 'Start showing log');
+                //Element.update($('status'), 'Start showing log');
                 pu.start( );
             }
         } else if (pu) {
-            Element.update($('status'), 'Stop showing log');
+            //Element.update($('status'), 'Stop showing log');
             pu.stop();
         }
     }
