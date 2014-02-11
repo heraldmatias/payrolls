@@ -178,4 +178,152 @@ class ConsistenciaService {
             $this->em->rollback();
         }
     }
+    
+    public function getTomosFoliosRepetidos(){
+        $st = $this->em->getConnection()->executeQuery('select codi_tomo, num_folio, count(num_folio) as repetidos from folios group by codi_tomo, num_folio having count(num_folio)>1;');
+        $rows = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        $data = array(
+            'columns' => array('Tomo', 'Folio', 'Repeticiones','Opciones'),
+            'rows' => $rows
+        );
+        return $data;
+    }
+    
+    public function getTomosFoliosInconsistentes(){
+        $st = $this->em->getConnection()->executeQuery('select fo.codi_tomo, fo.num_folio, fo.codi_folio, fo.existe 
+from tomos t join 
+(select f.codi_tomo, f.codi_folio, f.num_folio, EXISTS(select p.* from planilla_historicas p where p.codi_folio=f.codi_folio) as existe
+from folios f
+where (f.reg_folio = 0 OR f.reg_folio is null)) as fo
+on t.codi_tomo = fo.codi_tomo
+WHERE fo.existe=True;');
+        $rows = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        $data = array(
+            'columns' => array('Tomo', 'Folio', 'Codigo', 'En planillas','Opciones'),
+            'rows' => $rows
+        );
+        return $data;
+    }
+    
+    public function getTomosFoliosRepetidosInfo($tomo, $folio){
+        $st = $this->em->getConnection()->prepare('SELECT codi_folio, num_folio, codi_tomo, per_folio, 
+            (select count(p.id) from planilla_historicas p where p.codi_folio=folios.codi_folio) as registros from folios where codi_tomo=:tomo and num_folio=:folio;');
+        $st->bindValue(1, $tomo);
+        $st->bindValue(2, $folio);
+        $st->execute();
+        $rows = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        $data = array(
+            'columns' => array('Codigo', 'Folio', 'Tomo', 'Periodo', 'Registros en Planilla','Cambiar', 'Opciones'),
+            'rows' => $rows
+        );
+        return $data;
+    }
+    
+    public function getTomosInconsistentesInfo($tomo){
+        $st = $this->em->getConnection()->prepare('SELECT codi_tomo, folios_tomo, (select count(codi_folio) from folios f where f.codi_tomo=tomos.codi_tomo) as registrado,
+            (select max(num_folio) from folios f where f.codi_tomo=tomos.codi_tomo) as ultimo from tomos where codi_tomo=:tomo; ');        
+        $st->bindValue(1, $tomo);
+        $st->execute();
+        $rows = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        $data = array(
+            'columns' => array('Tomo', 'Folios Tomo', 'Folios Registrados', 'Ultimo Folio'),
+            'rows' => $rows
+        );
+        return $data;
+    }
+    
+    public function getTomosInconsistentes(){
+        $st = $this->em->getConnection()->prepare('SELECT t.codi_tomo, t.folios_tomo, t.registrado, t.ultimo FROM 
+            (SELECT codi_tomo, folios_tomo, (select count(codi_folio) from folios f where f.codi_tomo=tomos.codi_tomo) as registrado,
+            (select max(num_folio) from folios f where f.codi_tomo=tomos.codi_tomo) as ultimo from tomos) as t 
+            WHERE t.folios_tomo <> t.registrado OR t.folios_tomo <> t.ultimo; ');
+        $st->execute();
+        $rows = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_SCALAR);
+        $data = array(
+            'columns' => array('Tomo', 'Folios Tomo', 'Folios Registrados', 'Ultimo Folio', 'Opciones'),
+            'rows' => $rows
+        );
+        return $data;
+    }
+    
+    public function avanzarFolios($tomo, $folio){
+        $st = $this->em->getConnection()->prepare('UPDATE folios SET num_folio=num_folio+1 WHERE codi_tomo=:tomo and num_folio>:folio;');
+        $st->bindValue(1, $tomo);
+        $st->bindValue(2, $folio);
+        $st->execute();        
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
+    
+    public function retrocederFolios($tomo, $folio){
+        $st = $this->em->getConnection()->prepare('UPDATE folios SET num_folio=num_folio-1 WHERE codi_tomo=:tomo and num_folio>:folio;');
+        $st->bindValue(1, $tomo);
+        $st->bindValue(2, $folio);
+        $st->execute();        
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
+    
+    public function borrarFolio($codigo){
+        $st = $this->em->getConnection()->prepare('DELETE FROM folios WHERE codi_folio = :codigo;');
+        $st->bindValue(1, $codigo);        
+        $st->execute();        
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
+    
+    public function cambiarFolio($codigo, $nuevoFolio){
+        $st = $this->em->getConnection()->prepare('Update folios SET num_folio=:nuevo WHERE codi_folio=:codigo;');
+        $st->bindValue(1, $nuevoFolio);
+        $st->bindValue(2, $codigo);
+        $st->execute();        
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
+    
+    public function aumentarFoliosTomo($tomo, $folios){
+        $st = $this->em->getConnection()->prepare('UPDATE tomos SET folios_tomo=:folios WHERE codi_tomo=:tomo;');
+        $st->bindValue(1, $folios);
+        $st->bindValue(2, $tomo);
+        $st->execute();        
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
+    
+    public function disminuirFoliosTomo($tomo, $folio){
+        $st = $this->em->getConnection()->prepare('DELETE FROM folios WHERE codi_tomo=:tomo and num_folio>:folio;');
+        $st->bindValue(1, $tomo);
+        $st->bindValue(2, $folio);
+        $st->execute();
+        $st1 = $this->em->getConnection()->prepare('UPDATE tomos SET folios_tomo = :folio WHERE codi_tomo=:tomo;');
+        $st1->bindValue(1, $folio);
+        $st1->bindValue(2, $tomo);
+        $st1->execute();
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
 }
