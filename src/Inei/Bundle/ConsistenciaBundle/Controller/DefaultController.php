@@ -49,7 +49,148 @@ class DefaultController extends Controller {
                 #'pagination' => $pagination            
         );
     }
+    
+    /**
+     * 
+     * @param type $name
+     * @Route("/consistencia/tomos/", name="_consistencia_tomos_mal")
+     * @Template("")
+     */
+    public function inconsistenciaAction() {
+        return array();
+    }
 
+    /**
+     * @Route("/consistencia/repetidos/ajax", name="_consistencia_tomos_repetidos_ajax")
+     * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
+     */
+    public function buscarTomosFoliosRepetidosAjaxAction() {
+        $service = $this->get('consistencia_service');
+        $result = $service->getTomosFoliosRepetidos();
+        return $result;
+    }
+    
+    /**
+     * @Route("/consistencia/inconsistentes/ajax", name="_consistencia_tomos_inconsistentes_ajax")
+     * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
+     */
+    public function buscarTomosFoliosInconsistentesAjaxAction() {
+        $service = $this->get('consistencia_service');
+        $result = $service->getTomosFoliosInconsistentes();
+        return $result;
+    }
+    
+    /**
+     * @Route("/consistencia/info-tomo/ajax", name="_consistencia_tomos_info_ajax")
+     * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
+     */
+    public function buscarInfoTomoAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $result = $service->getTomosInconsistentesInfo($tomo);
+        return $result;
+    }
+    
+    /**
+     * @Route("/consistencia/tomo-inconsistentes/ajax", name="_consistencia_tomos_inconsistentes_list_ajax")
+     * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
+     */
+    public function buscarTomosInconsistentesAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $result = $service->getTomosInconsistentes();
+        return $result;
+    }
+    
+    /**
+     * @Route("/consistencia/info-folio/ajax", name="_consistencia_folios_info_ajax")
+     * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
+     */
+    public function buscarInfoFolioAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('folio');
+        $result = $service->getTomosFoliosRepetidosInfo($tomo, $folio);
+        return $result;
+    }
+    
+    /**
+     * @Route("/consistencia/plus-folio/ajax", name="_consistencia_folios_plus_ajax")
+     */
+    public function plusFoliosAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('folio');
+        $result = $service->avanzarFolios($tomo, $folio);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/minus-folio/ajax", name="_consistencia_folios_minus_ajax")
+     */
+    public function minusFoliosAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('folio');
+        $result = $service->avanzarFolios($tomo, $folio);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/delete-folio/ajax", name="_consistencia_folios_delete_ajax")
+     */
+    public function deleteFoliosAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $codigo = $request->request->get('codigo');
+        $result = $service->borrarFolio($codigo);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/plus-tomo/ajax", name="_consistencia_tomos_plus_ajax")
+     */
+    public function plusTomoAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('registrados');
+        $result = $service->aumentarFoliosTomo($tomo, $folio);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/minus-tomo/ajax", name="_consistencia_tomos_minus_ajax")
+     */
+    public function minusTomoAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('registrados');
+        $result = $service->disminuirFoliosTomo($tomo, $folio);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/change-folio/ajax", name="_consistencia_folios_change_ajax")
+     */
+    public function changeFoliosAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');        
+        $codigo = $request->request->get('codigo');
+        $nuevo = $request->request->get('nuevo');
+        $result = $service->cambiarFolio($codigo, $nuevo);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+    
     /**
      * 
      * @param type $name
