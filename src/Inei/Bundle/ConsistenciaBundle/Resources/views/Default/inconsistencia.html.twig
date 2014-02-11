@@ -1,0 +1,393 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block csspage %}
+<link href="{{ asset('bundles/inei/DT_bootstrap.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block form %}
+<div class="span10">
+    
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Tomos Inconsistentes</h3>
+        </div>
+        <div class="modal-body">
+            <div class="row-fluid">
+                <label>Folios Repetidos</label><input type="radio" value="1" name="tipo-busqueda" checked="checked">
+                <label>Folios Inconsistentes</label><input type="radio" value="2" name="tipo-busqueda">
+                <label>Tomos Inconsistentes</label><input type="radio" value="3" name="tipo-busqueda">
+            </div>
+        <input type="button" value="Buscar" id="id_buscar" class="btn btn-primary">        
+        <div id="feedback">
+            <img src="{{ asset('bundles/ineipayroll/images/cargando.gif') }}" style="display: none" id="cargando" />
+            <br>
+            <div class="alert alert-success" style="display: none">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h1></h1>
+            </div>
+            <div id="tabla">
+            </div>
+        </div>
+        
+        </div>
+        <div class="modal-footer">
+        </div>
+</div>
+{% endblock %}
+{% block js %}
+    <script src="{{ asset('bundles/inei/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('bundles/inei/DT_bootstrap.js') }}"  type="text/javascript"></script>
+    <script type="text/javascript">
+        var opcion=1;
+        
+        $('input[name="tipo-busqueda"]').on('click', function(e){
+            opcion = parseInt(e.target.value);
+        });
+        
+        $('#id_buscar').on('click', function(e){
+            buscar(opcion);
+        });
+        
+        function buscar(tipo){
+            if(tipo === 1){
+                buscar_folios_repetidos();
+            }else if(tipo === 2){
+                buscar_folios_inconsistentes();
+            }else if(tipo === 3){
+                buscar_tomos_inconsistentes();
+            }
+        }
+        
+        function buscar_folios_repetidos(){
+            var oOptions = {
+                method: 'GET',
+                url: '{{ path('_consistencia_tomos_repetidos_ajax') }}',
+                dataType: 'html',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#tabla').html(data);
+                configura_tabla();
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+        }
+        
+        function buscar_folios_inconsistentes(){
+            var oOptions = {
+                method: 'GET',
+                url: '{{ path('_consistencia_tomos_inconsistentes_ajax') }}',
+                dataType: 'html',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#tabla').html(data);
+                configura_tabla();
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+        }
+        
+        function buscar_tomos_inconsistentes(){
+            var oOptions = {
+                method: 'GET',
+                url: '{{ path('_consistencia_tomos_inconsistentes_list_ajax') }}',
+                dataType: 'html',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#tabla').html(data);
+                configura_tabla(3);
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+        }
+        
+        function buscar_info_tomo(data){
+            var oOptions = {
+                method: 'POST',
+                data: data,
+                url: '{{ path('_consistencia_tomos_info_ajax') }}',
+                dataType: 'html',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#tabla').html(data);
+                $('#tbl_data').dataTable();
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+        }
+        
+        function buscar_info_repetidos(data){
+            var oOptions = {
+                method: 'POST',
+                data: data,
+                url: '{{ path('_consistencia_folios_info_ajax') }}',
+                dataType: 'html',
+                async: true,
+                beforeSend: function() {
+                    $('#cargando').show();
+                }
+            };
+            var posting = $.ajax(oOptions);
+        
+            posting.done(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#tabla').html(data);
+                configura_tabla(2);
+            })
+            .fail(function(data, textStatus, jqXHR) {
+                $('#cargando').hide();
+                $('#feedback .alert').show().html(textStatus);
+            });
+        }
+        
+        function task_folio(tarea, data, nuevo){
+            var url = '', msg = '';
+            data['nuevo'] = nuevo.find('input').val();
+            switch(tarea){
+                case 1:{
+                    url = '{{ path('_consistencia_folios_plus_ajax') }}';
+                    msg = '¿Desea avanzar los folios desde el número actual?';
+                }break;
+                case 2:{
+                    url = '{{ path('_consistencia_folios_minus_ajax') }}';
+                    msg = '¿Desea retroceder los folios hasta el número actual?';
+                }break;
+                case 3:{
+                    url = '{{ path('_consistencia_folios_change_ajax') }}';
+                    msg = '¿Desea cambiar el número de folio actual?';
+                }break;
+                case 4:{
+                    url = '{{ path('_consistencia_folios_delete_ajax') }}';
+                    msg = '¿Desea eliminar el folio actual?';
+                }break;
+            }
+            if(confirm(msg)){
+                var oOptions = {
+                    method: 'POST',
+                    data: data,
+                    url: url,
+                    dataType: 'json',
+                    async: true,
+                    beforeSend: function() {
+                        $('#cargando').show();
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    $('#cargando').hide();
+                    if(data['success']){
+                        alert('Tarea realizada con éxito!');
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    $('#cargando').hide();
+                    alert(data);
+                });
+            }
+        }
+        
+        function task_tomo(tarea, data){
+            var url = '', msg = '';
+            switch(tarea){
+                case 1:{
+                    url = '{{ path('_consistencia_tomos_plus_ajax') }}';
+                    msg = '¿Desea cambiar el tamaño de folios a folios registrados?';
+                }break;
+                case 2:{
+                    url = '{{ path('_consistencia_tomos_minus_ajax') }}';
+                    msg = '¿Desea cambiar el tamaño de folios registrados a folios?';
+                }break;
+            }
+            if(confirm(msg)){
+                var oOptions = {
+                    method: 'POST',
+                    data: data,
+                    url: url,
+                    dataType: 'json',
+                    async: true,
+                    beforeSend: function() {
+                        $('#cargando').show();
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    $('#cargando').hide();
+                    if(data['success']){
+                        alert('Tarea realizada con éxito!');
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    $('#cargando').hide();
+                    alert(data);
+                });
+            }
+        }
+        
+        function configura_tabla(tipo){
+            if(tipo === 2){
+                agregaOpcionesFolios();
+                $('#tbl_data').dataTable();
+            }else if(tipo === 3){
+                agregaOpcionesTomos();
+                $('#tbl_data').dataTable();
+            }else{
+                agregaOpciones();
+                $('#tbl_data').dataTable();
+            }
+        }
+        
+        function agregaOpciones(){
+            var tbody = $('#tbl_data tbody');
+            tbody.find('tr').each(function() {
+                addOptions($(this));
+            });
+        }
+        
+        function agregaOpcionesFolios(){
+            var tbody = $('#tbl_data tbody');
+            tbody.find('tr').each(function() {
+                addOptions2($(this));
+            });
+        }
+        
+        function agregaOpcionesTomos(){
+            var tbody = $('#tbl_data tbody');
+            tbody.find('tr').each(function() {
+                addOptions3($(this));
+            });
+        }
+        
+        function addOptions($newForm) {
+            var $opttomo = $('<a href="#nuevoconcepoto" title="Ver Tomo"><i class="icon-folder-close"></i> </a>');
+            var $optfolio = $('<a href="#" title="Ver Folio"><i class="icon-folder-open"></i> </a>');
+            var $options = $('<td></td>');
+            var tomo = $newForm.find('td:eq(0)').html(),
+            folio = $newForm.find('td:eq(1)').html();
+            var data = {
+                tomo: tomo,
+                folio: folio
+            };
+            $options.append($opttomo);
+            $options.append($optfolio);
+            $newForm.append($options);
+            
+            $opttomo.on('click', function(e) {                
+                e.preventDefault();
+                buscar_info_tomo(data);
+            });
+            
+            $optfolio.on('click', function(e) {                
+                e.preventDefault();
+                buscar_info_repetidos(data);
+            });
+        }
+        
+        function addOptions2($newForm) {
+            var $optplus = $('<a href="#plus" title="Avanzar un folio a partir de aqui"><i class="icon-plus"></i> </a>');
+            var $optminus = $('<a href="#" title="Retroceder un folio hasta aqui"><i class="icon-minus"></i> </a>');
+            var $optchange = $('<a href="#" title="Cambiar el folio"><i class="icon-retweet"></i> </a>');
+            var $opttrash = $('<a href="#" title="Eliminar folio"><i class="icon-trash"></i> </a>');
+            var $options = $('<td></td>'),
+                $nuevoFolio = $('<td><input type="text"></td>');
+            var tomo = $newForm.find('td:eq(2)').html(),
+            folio = $newForm.find('td:eq(1)').html(),
+            codigo = $newForm.find('td:eq(0)').html();
+            var data = {
+                tomo: tomo,
+                folio: folio,
+                codigo: codigo
+            };
+            $options.append($optplus);
+            $options.append($optminus);
+            $options.append($optchange);
+            $options.append($opttrash);
+            
+            $newForm.append($nuevoFolio);
+            $newForm.append($options);
+            
+            $optplus.on('click', function(e) {
+                e.preventDefault();
+                task_folio(1, data, $nuevoFolio);
+            });
+            
+            $optminus.on('click', function(e) {
+                e.preventDefault();
+                task_folio(2, data, $nuevoFolio);
+            });
+            
+            $optchange.on('click', function(e) {
+                e.preventDefault();
+                task_folio(3, data, $nuevoFolio);
+            });
+            
+            $opttrash.on('click', function(e) {
+                e.preventDefault();
+                task_folio(4, data, $nuevoFolio);
+            });
+        }
+        
+        function addOptions3($newForm) {
+            var $optplus = $('<a href="#plus" title="Aumentar tamaño a folios registrados"><i class="icon-plus"></i> </a>');
+            var $optminus = $('<a href="#" title="Reducir folios registrados a folios del tomo"><i class="icon-minus"></i> </a>');            
+            var $options = $('<td></td>');
+            var tomo = $newForm.find('td:eq(0)').html(),
+            folios = $newForm.find('td:eq(1)').html(),
+            registrados = $newForm.find('td:eq(2)').html();
+            var data = {
+                tomo: tomo,
+                folios: folios,
+                registrados: registrados
+            };
+            $options.append($optplus);
+            $options.append($optminus);
+            $newForm.append($options);
+            
+            $optplus.on('click', function(e) {
+                e.preventDefault();
+                task_tomo(1, data);
+            });
+            
+            $optminus.on('click', function(e) {
+                e.preventDefault();
+                task_tomo(2, data);
+            });
+        }
+        
+    </script>
+{% endblock %}
