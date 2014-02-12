@@ -33,7 +33,7 @@ class MigracionService {
     
     public function get_log_messages(){
         if (file_exists("/tmp/log_messages"))
-            return sprintf("<div class='bar' style='width: %s%%;'></div>", (substr_count(file_get_contents("/tmp/log_messages"), "\n" )/421)*100);nl2br(file_get_contents("/tmp/log_messages"));//
+            return sprintf("<div class='bar' style='width: %s%%;'></div>", (substr_count(file_get_contents("/tmp/log_messages"), "\n" )/426)*100);nl2br(file_get_contents("/tmp/log_messages"));//
     }
     
     public function get_proc_status(){        
