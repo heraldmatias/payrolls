@@ -55,7 +55,7 @@ ORDER BY l.empleado;';
         if (array_key_exists('nombres', $criteria))
             $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
         if (array_key_exists('codigo', $criteria))
-            $where[] = "pe.codiEmplPer ='" . $criteria['codigo'] . "'";
+            $where[] = "pd.codiEmplPer ='" . $criteria['codigo'] . "'";
         
         $DQL .= count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
         $DQL .= ' ORDER BY pd.nombCortPer';
