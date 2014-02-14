@@ -38,7 +38,7 @@
                     <br>
                     <label class="control-label" for="tiempo">Tomo</label>
                     <div class="controls">
-                        {% set list = range(1, 420) %}
+                        {% set list = range(1, 421) %}
                         <select id="digitadores" class="span10" name="form[tomo][]" multiple="multiple" size=10>
                             <option value="">---TODOS---</option>
                         {% for item in list %}
@@ -126,7 +126,7 @@
                 "bDestroy": true, 
                 "sWrapper": "dataTables_wrapper form-inline",
                 "bFilter": false
-            });            
+            });
         })
         .fail(function(data, textStatus, jqXHR) {
             $('#feedback').html(textStatus);
