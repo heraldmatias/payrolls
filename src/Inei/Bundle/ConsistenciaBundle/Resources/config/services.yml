@@ -5,6 +5,6 @@ parameters:
 services:
     consistencia_service:
         class: Inei\Bundle\ConsistenciaBundle\Service\ConsistenciaService
-        arguments: ["@doctrine.orm.entity_manager"] 
+        arguments: ["@doctrine.orm.entity_manager", "@doctrine"] 
         tags:
             - { name: service, alias: consistencia_service } 
