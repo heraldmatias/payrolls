@@ -410,14 +410,16 @@ class DefaultController extends Controller {
     public function personalAsociaAction(Request $request) {
         $service = $this->get('consistencia_service');
         $nombres = array();
-        $persona = NULL;
+        $persona = NULL;        
         if ($request->query->has('personal')) {
             $nombres = $request->query->get('personal');
         }
         if ($request->query->has('persona')) {
             $persona = $request->query->get('persona');
         }
-        $result = $service->asociarPersonal($nombres, $persona);
+        $source = intval($request->query->get('tipo'));
+        
+        $result = $service->asociarPersonal($nombres, $persona, $source);
         $data = array(
             'success' => $result,
             'data' => $result,
