@@ -3,7 +3,7 @@
 namespace Inei\Bundle\ConsistenciaBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-
+use Doctrine\Common\Persistence\ManagerRegistry;
 /**
  * Description of ConsistenciaService
  *
@@ -12,9 +12,11 @@ use Doctrine\ORM\EntityManager;
 class ConsistenciaService {
 
     private $em;
+    private $mr;
 
-    public function __construct(EntityManager $em) {
+    public function __construct(EntityManager $em, ManagerRegistry $mr) {
         $this->em = $em;
+        $this->mr = $mr;
     }
 
     public function getPersonalDigitado() {
@@ -79,38 +81,85 @@ class ConsistenciaService {
                 ->findPersonalSiga2($nombre);
     }
     
-    public function asociarPersonal($nombres, $persona){
+    public function asociarPersonal($nombres, $persona, $source){
         //INTENTAR INSERTAR EN PERSONAL ENCONTRADO
-        $obj = $this->em->getRepository('IneiConsistenciaBundle:PersonalEncontrado')
-                ->find($persona);
-        $sqli = 'INSERT INTO personal_encontrado
-            SELECT mp.codi_empl_per, mp.ape_pat_per, mp.ape_mat_per, 
-            mp.nom_emp_per, mp.nomb_cort_per, mp.libr_elec_per 
-            FROM maestro_personal mp WHERE mp.codi_empl_per=:persona';
-        $nombres = "('".implode("','", $nombres)."')";
-        $sql = 'UPDATE personal_digitado 
-            SET codi_empl_per_persona = :persona
-            WHERE nomb_cort_per IN '.$nombres;
-        try {
-            $this->em->beginTransaction();
-            if(null === $obj){
-                $this->em->getConnection()->executeUpdate($sqli,
-                    array(
-                        'persona' => $persona
-                    ));
+//        print_r($nombres);
+//        print_r($persona);
+//        echo '<br><br>';
+//        echo $source;
+//        
+//        exit;
+        if($source===1){
+            $obj = $this->em->getRepository('IneiConsistenciaBundle:PersonalEncontrado')
+                    ->find($persona);
+            $sqli = 'INSERT INTO personal_encontrado
+                SELECT mp.codi_empl_per, mp.ape_pat_per, mp.ape_mat_per, 
+                mp.nom_emp_per, mp.nomb_cort_per, mp.libr_elec_per 
+                FROM maestro_personal mp WHERE mp.codi_empl_per=:persona';
+            $nombres = "('".implode("','", $nombres)."')";
+            $sql = 'UPDATE personal_digitado 
+                SET codi_empl_per_persona = :persona
+                WHERE nomb_cort_per IN '.$nombres;
+            try {
+                $this->em->beginTransaction();
+                if(null === $obj){
+                    $this->em->getConnection()->executeUpdate($sqli,
+                        array(
+                            'persona' => $persona
+                        ));
+                }
+                $this->em->getConnection()->executeUpdate($sql,
+                        array(
+                            'persona' => $persona
+                        ));
+                $result = true;
+                $this->em->commit();
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->em->rollback();
+                $result = false;
             }
-            $this->em->getConnection()->executeUpdate($sql,
-                    array(
-                        'persona' => $persona
-                    ));
-            $result = true;
-            $this->em->commit();
-        } catch (Doctrine\DBAL\DBALException $e) {
-            $this->em->rollback();
-            $result = false;
+        }else if($source===2){
+            $cn = $this->mr->getManager('siga')->getConnection();
+            
+            $st = $cn->prepare("SELECT APEPAT, APEMAT, NOMBRE, DES_NOMBRE, DNI
+                FROM PER_RENIEC WHERE DNI = :dni AND rownum=1");
+            $st->bindValue(':dni', $persona);
+            $st->execute();
+            $obj = $st->fetch(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+            unset($cn);
+            unset($st);
+            $sqli = 'SELECT fn_asocia_per_reniec(:apepat, :apemat, :nombre, :desnombre, :dni) AS codigo';
+            
+            $nombres = "('".implode("','", $nombres)."')";
+            $sql = 'UPDATE personal_digitado 
+                SET codi_empl_per_persona = :persona
+                WHERE nomb_cort_per IN '.$nombres;
+            try {
+                $this->em->beginTransaction();
+                
+                $stpr = $this->em->getConnection()->prepare($sqli);
+                $stpr->bindValue(':apepat', $obj['APEPAT']);
+                $stpr->bindValue(':apemat', $obj['APEMAT']);
+                $stpr->bindValue(':nombre', $obj['NOMBRE']);
+                $stpr->bindValue(':desnombre', $obj['DES_NOMBRE']);
+                $stpr->bindValue(':dni', $obj['DNI']);                
+                $stpr->execute();
+                $data = $stpr->fetch(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+                
+                $persona = $data['codigo'];                
+                /*actualizar*/
+                $this->em->getConnection()->executeUpdate($sql,
+                        array(
+                            'persona' => $persona
+                        ));
+                $result = true;
+                $this->em->commit();
+            } catch (Doctrine\DBAL\DBALException $e) {
+                $this->em->rollback();                
+                $result = false;
+            }
         }
         return $result;
-        
     }
     
     public function registraPersona($form){
