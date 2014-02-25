@@ -178,58 +178,7 @@
             $('#persona_nueva').show();
         });
         
-        function registra_persona(){
-            var codigo = $('#formregistro_codigo'),
-                ape_paterno = $('#formregistro_ape_paterno'),
-                ape_materno = $('#formregistro_ape_materno'),
-                nombres = $('#formregistro_nombres'),
-                dni = $('#formregistro_dni');
-            if(codigo.val()===''){
-                alert('Ingrese el codigo');
-                codigo.focus();
-                return false;
-            }else if(ape_paterno.val()===''){
-                alert('Ingrese el Apellido Paterno');
-                ape_paterno.focus();
-                return false;
-            }else if(ape_materno.val()===''){
-                alert('Ingrese el Apellido Materno');
-                ape_materno.focus();
-                return false;
-            }
-            else if(nombres.val()===''){
-                alert('Ingrese los Nombres');
-                nombres.focus();
-                return false;
-            }
-            var data = {
-                form: {
-                    codigo: codigo.val(),
-                    ape_paterno: ape_paterno.val(),
-                    ape_materno: ape_materno.val(),
-                    nombres: nombres.val(),
-                    dni: dni.val()
-                }
-            };
-            var oOptions = {
-                url: '{{ path('_personal_registra_ajax') }}',
-                dataType: 'json',
-                async: true,
-                data: data,
-                beforeSend: function() {
-                    
-                }
-            };
-            var posting = $.ajax(oOptions),
-                    rpta=codigo.val();
-            posting.done(function(data, textStatus, jqXHR) {
-            })
-            .fail(function(data, textStatus, jqXHR) {
-                rpta = false;
-            });
-            return rpta;
-        }
-        
+                
         function load_personal(){
             var data = $('#id_frm_personal').serialize(),
                     personas = $('.personal:checked');
@@ -243,27 +192,30 @@
         }
         
         function asocia_personal(){
-            var rpta = true, nuevo = $('#opt_nueva').is(':checked');
+            var rpta = true, nuevo = $('#opt_nueva').is(':checked'),
+                    tipo = (nuevo === true)?2:1;
             
-            if(!nuevo){
+            if(nuevo){
+                if(!$('#id_personal_reniec').val()){
+                    alert('Debe seleccionar una persona');
+                    return false;
+                }
+            }else{
                 if(!$('#id_personal_siga').val()){
                     alert('Debe seleccionar una persona');
                     return false;
                 }
             }
+            
             if(confirm('¿DESEA ASOCIAR LOS NOMBRES SELECCIONADOS AL PERSONAL SELECCIONADO?')){
                 var data = $('#id_frm_personal').serialize(),
                     personas = $('.personal:checked');
-                if(nuevo){
-                    var reg = registra_persona();
-                    if(!reg){
-                        return false;
-                    }
-                    data += '&persona=' + reg;
+                if(nuevo){                    
+                    data += '&persona=' + $('#id_personal_reniec').val();
                 }else{
                     data += '&persona=' + $('#id_personal_siga').val();
                 }
-                
+                data += '&tipo=' + tipo;
                 var oOptions = {
                     url: '{{ path('_personal_asocia_ajax') }}',
                     dataType: 'json',
