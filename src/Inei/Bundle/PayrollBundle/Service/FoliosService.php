@@ -134,7 +134,11 @@ class FoliosService {
                 $stmt->bindValue('mes', NULL);
             }            
             if(array_key_exists('rango', $data)){
-                $stmt->bindValue('rango', $data['rango']);
+                if(is_numeric($data['rango'])){
+                    $stmt->bindValue('rango', $data['rango']);
+                }else{
+                    $stmt->bindValue('rango', NULL);
+                }
             }else{
                 $stmt->bindValue('rango', NULL);
             }

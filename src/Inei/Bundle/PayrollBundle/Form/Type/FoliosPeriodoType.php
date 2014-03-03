@@ -31,7 +31,8 @@ class FoliosPeriodoType extends AbstractType {
                     'query_builder' => function(EntityRepository $er) {
                         return $er->createQueryBuilder('u')
                             ->orderBy('u.codiTomo', 'ASC');
-                    }
+                    },
+                    'empty_value' => '---SELECCIONE---',
                 ))
                 ->add('descFolio', null, array(
                     'attr' => array(

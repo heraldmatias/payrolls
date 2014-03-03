@@ -218,10 +218,10 @@
                 setDateRange(finicio, ffin, ano.val(), mes.val())
                 setQuincena(rango);
             }else if(tipo === '3'){
+                mes.attr('disabled', true);
+                rango.attr('disabled', true);            
                 ffin.attr('disabled', false);
                 finicio.attr('disabled', false);
-                mes.attr('disabled', true);
-                rango.attr('disabled', true);
                 mes.unbind('change');
                 ano.bind('change', function(){
                     setDateRange(finicio, ffin, ano.val(), mes.val());
@@ -278,8 +278,8 @@
         finicio.datepicker('setEndDate', endDate);
         ffin.datepicker('setStartDate', startDate);
         ffin.datepicker('setEndDate', endDate);
-        finicio.datepicker('update', startDate);
-        ffin.datepicker('update', startDate);
+        /*finicio.datepicker('update', startDate);
+        ffin.datepicker('update', startDate);*/
     }
     
     function setQuincena(rango){
@@ -341,11 +341,19 @@
                 periodo.attr('disabled', false);
                 descripcion.attr('disabled', false);
                 tipo.val(data['tipo_folio']);
-                tipo.trigger('change');
                 ano.val( data['ano_folio']?data['ano_folio']:data['ano_tomo']);
                 mes.val( data['mes_folio']?data['mes_folio']:data['per_folio']);
-                ffin.val(data['fec_final']);
-                finicio.val(data['fec_inicio']);
+                tipo.trigger('change');
+                if(data['fec_final']){
+                    ffin.datepicker('update', data['fec_final']);
+                }else{
+                    ffin.val('');
+                }
+                if(data['fec_inicio']){
+                    finicio.datepicker('update', data['fec_inicio']);
+                }else{
+                    finicio.val('');
+                }
                 periodo.val(data['per_folio']);
                 descripcion.val(data['desc_folio']);
                 rango.val(data['rango_folio']);
