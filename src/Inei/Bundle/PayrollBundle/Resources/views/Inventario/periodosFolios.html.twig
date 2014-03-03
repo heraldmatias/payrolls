@@ -37,6 +37,15 @@
             </div>
             <div class="row-fluid">
                 <div class="span1">
+                    {{ form_label(form.periodoFolio) }}
+                </div>
+                <div class="span5">
+                    {{ form_errors(form.periodoFolio) }}
+                    {{ form_widget(form.periodoFolio) }}
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
                     {{ form_label(form.tipoFolio) }}
                 </div>
                 <div class="span2">
@@ -81,15 +90,6 @@
                 <div class="span2">
                     {{ form_errors(form.fecFinal) }}
                     {{ form_widget(form.fecFinal) }}
-                </div>
-            </div>          
-            <div class="row-fluid">
-                <div class="span1">
-                    {{ form_label(form.periodoFolio) }}
-                </div>
-                <div class="span5">
-                    {{ form_errors(form.periodoFolio) }}
-                    {{ form_widget(form.periodoFolio) }}
                 </div>
             </div>
             <div class="row-fluid">
