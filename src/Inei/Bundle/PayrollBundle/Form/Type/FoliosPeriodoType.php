@@ -30,6 +30,7 @@ class FoliosPeriodoType extends AbstractType {
                     'class' => 'IneiPayrollBundle:Tomos',
                     'query_builder' => function(EntityRepository $er) {
                         return $er->createQueryBuilder('u')
+                                ->andWhere('u.codiTomo <= 88')
                             ->orderBy('u.codiTomo', 'ASC');
                     },
                     'empty_value' => '---SELECCIONE---',
