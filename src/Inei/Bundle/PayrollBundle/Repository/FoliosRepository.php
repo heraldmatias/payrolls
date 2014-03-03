@@ -143,6 +143,20 @@ class FoliosRepository extends EntityRepository {
         }
         return $data;
     }
+    
+    public function findByNum($tomo, $folio) {
+        /*folios*/
+        $sql = "SELECT f.per_folio, f.tipo_folio, f.desc_folio, f.mes_folio, 
+            f.rango_folio, f.fec_inicio, f.fec_final, f.ano_folio, t.ano_tomo 
+            FROM folios f INNER JOIN tomos t ON f.codi_tomo = t.codi_tomo
+            WHERE f.codi_tomo = :tomo AND f.num_folio=:folio LIMIT 1;";
+        $st = $this->getEntityManager()->getConnection()->prepare($sql);
+        $st->bindValue(1, $tomo);
+        $st->bindValue(2, $folio);
+        $st->execute();
+        $data = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+        return $data;
+    }
 
     public function findResumenFolios(array $filtro = null) {
         $where1 = array();

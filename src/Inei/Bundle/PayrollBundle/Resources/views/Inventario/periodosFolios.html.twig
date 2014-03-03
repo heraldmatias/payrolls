@@ -1,0 +1,392 @@
+{% extends 'IneiAuthBundle:Secured:index.html.twig' %}
+{% block csspage %}
+<link href="{{ asset('bundles/inei/datepicker/css/datepicker.css') }}" rel="stylesheet" />
+{% endblock %}
+{% block form %}
+<div class="span10">
+    <div class="row-fluid">
+    {{ form_start(form) }}
+    <div class="modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Registrar Folio</h3>
+        </div>
+        <div class="modal-body"> 
+                    {% for flashMessage in app.session.flashbag.get('folio') %}
+            <div class="alert alert-{% if 'error' in flashMessage %}error{% else %}success{% endif %}">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ flashMessage }}
+            </div>
+        {% endfor %}
+        {{ form_errors(form) }}
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.tomo) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tomo) }}
+                    {{ form_widget(form.tomo) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.folio) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tomo) }}
+                    {{ form_widget(form.folio) }}
+                </div>    
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.tipoFolio) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.tipoFolio) }}
+                    {{ form_widget(form.tipoFolio) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.rango) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.rango) }}
+                    {{ form_widget(form.rango) }}
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.anoFolio) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.anoFolio) }}
+                    {{ form_widget(form.anoFolio) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.mesFolio) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.mesFolio) }}
+                    {{ form_widget(form.mesFolio) }}
+                </div>                
+            </div>
+             <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.fecInicio) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.fecInicio) }}
+                    {{ form_widget(form.fecInicio) }}
+                </div>
+                <div class="span1">
+                    {{ form_label(form.fecFinal) }}
+                </div>
+                <div class="span2">
+                    {{ form_errors(form.fecFinal) }}
+                    {{ form_widget(form.fecFinal) }}
+                </div>
+            </div>          
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.periodoFolio) }}
+                </div>
+                <div class="span5">
+                    {{ form_errors(form.periodoFolio) }}
+                    {{ form_widget(form.periodoFolio) }}
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span1">
+                    {{ form_label(form.descFolio) }}
+                </div>
+                <div class="span5">
+                    {{ form_errors(form.descFolio) }}
+                    {{ form_widget(form.descFolio) }}
+                </div>
+            </div>
+        </div>
+            <div class="modal-footer">
+                <input type="hidden" id="folioupdate" name="folioupdate"/>
+                {{ form_widget(form.save) }}
+                <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
+            </div>            
+        </div>
+        {{ form_end(form) }}
+        </div>
+</div>
+{% endblock %}
+{% block js %}
+<script src="{{ asset('bundles/inei/datepicker/js/bootstrap-datepicker.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bundles/inei/datepicker/js/locales/bootstrap-datepicker.es.js') }}" charset="UTF-8"></script>
+
+<script type="text/javascript">
+        
+    jQuery(document).ready(function(){
+        var ffin = $('#periodo_folios_fecFinal'),
+            finicio = $('#periodo_folios_fecInicio'),
+            rango = $('#periodo_folios_rango'),
+            mes = $('#periodo_folios_mesFolio'),
+            ano = $('#periodo_folios_anoFolio'),
+            tipo = $('#periodo_folios_tipoFolio'),
+            folio = $('#periodo_folios_folio');
+        
+        finicio.datepicker({
+            language: "es",
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        }).on('hide', function(e){
+            e.preventDefault();
+        });
+        
+        ffin.datepicker({
+            language: "es",
+            autoclose: true,
+            format: "yyyy-mm-dd"
+        }).on('hide', function(e){
+            e.preventDefault();
+        });
+        
+        $('#periodo_folios_tomo').on('change', function(e){
+            e.preventDefault();
+            loadFolios(parseInt($(this).val()));
+        });
+        
+        rango.on('change', function(e){
+            var valor = $(this).val();
+            if(valor === ''){
+                ffin.attr('disabled', false);
+                finicio.attr('disabled', false);
+                setDateRange(finicio, ffin, ano.val(), mes.val())
+            }else{
+                ffin.val('');finicio.val('');
+                ffin.attr('disabled', true);
+                finicio.attr('disabled', true);
+            }
+        });
+        
+        folio.on('change', function(e){
+            var ffin = $('#periodo_folios_fecFinal'),
+            finicio = $('#periodo_folios_fecInicio'),
+            rango = $('#periodo_folios_rango'),
+            mes = $('#periodo_folios_mesFolio'),
+            tipo = $('#periodo_folios_tipoFolio'),
+            ano = $('#periodo_folios_anoFolio'),
+            descripcion = $('#periodo_folios_descFolio'),
+            periodo = $('#periodo_folios_periodoFolio');
+            var tomo=$('#periodo_folios_tomo').val(), folio=$(this).val();
+            if(folio !== ''){
+                loadFolio(tomo, folio);
+            }else{
+                ffin.val('');
+                finicio.val('');
+                rango.val('');
+                mes.val('');
+                tipo.val('');
+                ano.val('');
+                descripcion.val('');
+                periodo.val('');
+                ffin.attr('disabled', true);
+                finicio.attr('disabled', true);
+                rango.attr('disabled', true);
+                mes.attr('disabled', true);
+                tipo.attr('disabled', true);
+                ano.attr('disabled', true);
+                descripcion.attr('disabled', true);
+                periodo.attr('disabled', true);
+            }
+        });
+        
+        tipo.on('change', function(e){
+            e.preventDefault();
+            var tipo = $(this).val();
+            mes.unbind('change');
+            ano.unbind('change');
+            if(tipo === '1'){
+                rango.empty();
+                ffin.attr('disabled', true);
+                finicio.attr('disabled', true);
+                rango.attr('disabled', true);
+                mes.attr('disabled', false);
+            }else if(tipo === '2'){
+                ffin.attr('disabled', false);
+                finicio.attr('disabled', false);
+                mes.attr('disabled', false);
+                rango.attr('disabled', false);
+                mes.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                ano.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                setDateRange(finicio, ffin, ano.val(), mes.val())
+                setQuincena(rango);
+            }else if(tipo === '3'){
+                ffin.attr('disabled', false);
+                finicio.attr('disabled', false);
+                mes.attr('disabled', true);
+                rango.attr('disabled', true);
+                mes.unbind('change');
+                ano.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                setDateRange(finicio, ffin, ano.val());
+            }else if(tipo === '4'){
+                ffin.attr('disabled', false);
+                finicio.attr('disabled', false);
+                mes.attr('disabled', false);
+                rango.attr('disabled', true);
+                mes.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                ano.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                setDateRange(finicio, ffin, ano.val(), mes.val())
+            }else if(tipo === '5'){
+                ffin.attr('disabled', false);
+                finicio.attr('disabled', false);
+                mes.attr('disabled', false);
+                rango.attr('disabled', false);
+                mes.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                ano.bind('change', function(){
+                    setDateRange(finicio, ffin, ano.val(), mes.val());
+                });
+                setDateRange(finicio, ffin, ano.val(), mes.val())
+                setSemana(rango);
+            }else if(tipo === '6'){
+                ffin.attr('disabled', true);
+                finicio.attr('disabled', true);
+                mes.attr('disabled', true);
+                rango.attr('disabled', true);
+                mes.unbind('change');
+                ano.unbind('change');
+            }
+        });
+    });       
+    
+    function setDateRange(finicio, ffin, ano, mes){
+        var startDate = null, endDate=null;
+        if(ano && mes){
+            startDate = new Date(ano, parseInt(mes)-1, 1);
+            endDate = new Date(ano, parseInt(mes), 1);
+            endDate.setDate(endDate.getDate()-1)
+        }else if(ano){
+            startDate = new Date(ano, 0, 1);
+            endDate = new Date(ano, 11, 31);
+        }
+        
+        finicio.datepicker('setStartDate', startDate);
+        finicio.datepicker('setEndDate', endDate);
+        ffin.datepicker('setStartDate', startDate);
+        ffin.datepicker('setEndDate', endDate);
+        finicio.datepicker('update', startDate);
+        ffin.datepicker('update', startDate);
+    }
+    
+    function setQuincena(rango){
+        rango.empty();
+        rango.append($('<option value="">---SELECCIONE---</option>'));
+        rango.append($('<option value="1">PRIMERA QUINCENA</option>'));
+        rango.append($('<option value="2">SEGUNDA QUINCENA</option>'));
+    }
+    
+    function setSemana(rango){
+        rango.empty();
+        rango.append($('<option value="">---SELECCIONE---</option>'));
+        rango.append($('<option value="1">PRIMERA SEMANA</option>'));
+        rango.append($('<option value="2">SEGUNDA SEMANA</option>'));
+        rango.append($('<option value="3">TERCERA SEMANA</option>'));
+        rango.append($('<option value="4">CUARTA SEMANA</option>'));
+    }    
+    
+    function loadFolios(tomo) {        
+        var $folios = $('#periodo_folios_folio');
+        $folios.empty();
+        $folios.append($('<option value="">---SELECCIONE---</option>'));
+        $.get('{{ path('_inventario_folio_ajax') }}', {"tomo": tomo}, function(json){
+            $.each(json, function(k, v){
+                $folios.append($('<option value='+k+'>'+v+'</option>'));
+            });
+        });
+    }
+    
+    function loadFolio(tomo, folio) {
+        var ffin = $('#periodo_folios_fecFinal'),
+            finicio = $('#periodo_folios_fecInicio'),
+            rango = $('#periodo_folios_rango'),
+            mes = $('#periodo_folios_mesFolio'),
+            tipo = $('#periodo_folios_tipoFolio'),
+            ano = $('#periodo_folios_anoFolio'),
+            descripcion = $('#periodo_folios_descFolio'),
+            periodo = $('#periodo_folios_periodoFolio');
+    
+        var data = {
+            tomo: tomo,
+            folio: folio
+        };
+        var oOptions = {  
+            type: "POST",  
+            url: '{{ path('_inventario_tomo_folio_ajax') }}',
+            data: data,
+            dataType: 'json',
+            async: true,
+            beforeSend : function(data, textStatus, jqXHR) {
+            }
+        };
+        var posting = $.ajax(oOptions);
+        posting.done(function(data, textStatus, jqXHR) {
+            if(data.length>0){
+                var data = data[0];
+                ano.attr('disabled', false);
+                tipo.attr('disabled', false);
+                periodo.attr('disabled', false);
+                descripcion.attr('disabled', false);
+                tipo.val(data['tipo_folio']);
+                tipo.trigger('change');
+                ano.val( data['ano_folio']?data['ano_folio']:data['ano_tomo']);
+                mes.val( data['mes_folio']?data['mes_folio']:data['per_folio']);
+                ffin.val(data['fec_final']);
+                finicio.val(data['fec_inicio']);
+                periodo.val(data['per_folio']);
+                descripcion.val(data['desc_folio']);
+                rango.val(data['rango_folio']);
+                rango.trigger('change');
+                
+            }
+        })
+        .fail(function(data, textStatus, jqXHR) {
+        })
+    }
+
+    $('form').on('submit', function(e){
+        e.preventDefault();
+        var tomo=$('#periodo_folios_tomo').val(),
+        folio=$('#periodo_folios_folio').val();
+        if(tomo !== '' && folio !== ''){
+            if(confirm('¿Esta seguro que desea guardar este registro?')){
+                var data = $(this).serialize();
+                var oOptions = {  
+                    type: "POST",  
+                    url: '{{ path('_inventario_tomo_folio_save_ajax') }}',
+                    data: data,
+                    dataType: 'json',
+                    async: true,
+                    beforeSend : function(data, textStatus, jqXHR) {
+                    }
+                };
+                var posting = $.ajax(oOptions);
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data['success']){
+                        alert('El registro se actualizo con éxito');
+                    }else{
+                        alert('Ha ocurrido un error al actualizar el folio');
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    alert('Ha ocurrido un error inesperado')
+                })
+            }
+        }
+    });
+        
+    </script>
+{% endblock %}    

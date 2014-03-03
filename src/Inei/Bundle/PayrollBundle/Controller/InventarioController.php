@@ -412,5 +412,52 @@ class InventarioController extends Controller {
         $objWriter->save('php://output');
         exit;
     }
+    
+    /**
+     * @Route("/folios/periodos/", name="_inventario_folio_periodo")
+     * @Template("")
+     */
+    public function periodosFoliosAction(Request $request) {
+        if (!$this->get('usuario_service')->hasPermission('folio', 'edit')) {
+            throw $this->createNotFoundException();
+        }
+        $form = $this->createForm('periodo_folios', null, array('em' => $this->getDoctrine()->getManager()));
+        $form->handleRequest($request);
+        return array(
+            'form' => $form->createView()
+        );
+    }
+    
+    /**
+     * @Route("/folios/tomo/ajax/", name="_inventario_tomo_folio_ajax")
+     * @Template("")
+     */
+    public function folioAjaxAction(Request $request) {
+        $tomo = $request->request->get('tomo');
+        $folio = $request->request->get('folio');
+        $data = $this->getDoctrine()->getRepository('IneiPayrollBundle:Folios')
+                ->findByNum($tomo, $folio);
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/folios/tomo/save/ajax/", name="_inventario_tomo_folio_save_ajax")
+     * @Template("")
+     */
+    public function folioSaveAjaxAction(Request $request) {
+        $form = $request->request->get('periodo_folios');
+        $service = $this->get('folios_service');
+        $success = $service->updatePeriodoFolio($form);
+        $data = array(
+            'success' => $success,
+            'error' => !$success,
+            'data' => ''
+        );
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'text/html');
+        return $response;
+    }
 
 }

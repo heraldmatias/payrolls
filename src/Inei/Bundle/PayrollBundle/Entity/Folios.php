@@ -108,6 +108,53 @@ class Folios {
      * @ORM\Column(name="FEC_MOD", type="datetime", nullable=true)
      */
     private $fec_mod;
+    
+    /**
+     * @var string
+     * 
+     * @ORM\Column(name="DESC_FOLIO", type="text", nullable=true)
+     */
+    private $descFolio;
+    
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="MES_FOLIO", type="integer", nullable=true)
+     */
+    private $mesFolio;
+    
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="ANO_FOLIO", type="integer", nullable=true)
+     */
+    private $anoFolio;
+    
+    /**
+     * @var integer
+     * 
+     * @ORM\Column(name="TIPO_FOLIO", type="integer", nullable=true)
+     */
+    private $tipoFolio;
+    
+    /**
+     * @var integer
+     * @ORM\Column(name="RANGO_FOLIO", type="integer", nullable=true)
+     */
+    private $rango;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_INICIO", type="date", nullable=true)
+     */
+    private $fecInicio;
+    
+    /**
+     * @var datetime
+     * @ORM\Column(name="FEC_FINAL", type="date", nullable=true)
+     */
+    private $fecFinal;
+    
     private static $PERIODOS = array(
         '01' => 'ENERO',
         '02' => 'FEBRERO',
@@ -483,4 +530,165 @@ class Folios {
         return $this->modificador;
     }
 
+
+    /**
+     * Set descFolio
+     *
+     * @param string $descFolio
+     * @return Folios
+     */
+    public function setDescFolio($descFolio)
+    {
+        $this->descFolio = $descFolio;
+
+        return $this;
+    }
+
+    /**
+     * Get descFolio
+     *
+     * @return string 
+     */
+    public function getDescFolio()
+    {
+        return $this->descFolio;
+    }
+
+    /**
+     * Set mesFolio
+     *
+     * @param integer $mesFolio
+     * @return Folios
+     */
+    public function setMesFolio($mesFolio)
+    {
+        $this->mesFolio = $mesFolio;
+
+        return $this;
+    }
+
+    /**
+     * Get mesFolio
+     *
+     * @return integer 
+     */
+    public function getMesFolio()
+    {
+        return $this->mesFolio;
+    }
+
+    /**
+     * Set rango
+     *
+     * @param integer $rango
+     * @return Folios
+     */
+    public function setRango($rango)
+    {
+        $this->rango = $rango;
+
+        return $this;
+    }
+
+    /**
+     * Get rango
+     *
+     * @return integer 
+     */
+    public function getRango()
+    {
+        return $this->rango;
+    }
+
+    /**
+     * Set fecInicio
+     *
+     * @param \Date $fecInicio
+     * @return Folios
+     */
+    public function setFecInicio($fecInicio)
+    {
+        $this->fecInicio = $fecInicio;
+
+        return $this;
+    }
+
+    /**
+     * Get fecInicio
+     *
+     * @return \Date
+     */
+    public function getFecInicio()
+    {
+        return $this->fecInicio;
+    }
+
+    /**
+     * Set fecFinal
+     *
+     * @param \Date $fecFinal
+     * @return Folios
+     */
+    public function setFecFinal($fecFinal)
+    {
+        $this->fecFinal = $fecFinal;
+
+        return $this;
+    }
+
+    /**
+     * Get fecFinal
+     *
+     * @return \Date
+     */
+    public function getFecFinal()
+    {
+        return $this->fecFinal;
+    }
+
+    /**
+     * Set anoFolio
+     *
+     * @param integer $anoFolio
+     * @return Folios
+     */
+    public function setAnoFolio($anoFolio)
+    {
+        $this->anoFolio = $anoFolio;
+
+        return $this;
+    }
+
+    /**
+     * Get anoFolio
+     *
+     * @return integer 
+     */
+    public function getAnoFolio()
+    {
+        return $this->anoFolio;
+    }
+
+    /**
+     * Set tipoFolio
+     *
+     * @param integer $tipoFolio
+     * @return Folios
+     */
+    public function setTipoFolio($tipoFolio)
+    {
+        $this->tipoFolio = $tipoFolio;
+
+        return $this;
+    }
+
+    /**
+     * Get tipoFolio
+     *
+     * @return integer 
+     */
+    public function getTipoFolio()
+    {
+        return $this->tipoFolio;
+    }
 }

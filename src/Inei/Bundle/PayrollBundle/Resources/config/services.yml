@@ -77,6 +77,11 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: form.type, alias: folios }
+    inei_payroll.form.type.periodo_folios:
+        class: Inei\Bundle\PayrollBundle\Form\Type\FoliosPeriodoType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: periodo_folios }
     inei_payroll.form.type.conceptofolios:
         class: Inei\Bundle\PayrollBundle\Form\Type\ConceptoFoliosType
         tags:

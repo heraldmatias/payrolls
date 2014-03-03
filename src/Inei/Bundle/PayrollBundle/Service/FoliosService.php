@@ -114,6 +114,49 @@ class FoliosService {
         }
     }
     
+    public function updatePeriodoFolio($data) {
+        $conn = $this->em->getConnection();
+        try {
+            $conn->beginTransaction();            
+            $sql = "UPDATE folios SET tipo_folio=:tipo, desc_folio=:descripcion, 
+                mes_folio=:mes, rango_folio=:rango, fec_inicio=:finicio, per_folio = :periodo,
+                fec_final=:ffinal, ano_folio=:ano WHERE codi_tomo=:tomo AND num_folio=:folio";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue('tipo', $data['tipoFolio']);
+            $stmt->bindValue('descripcion', $data['descFolio']);
+            $stmt->bindValue('periodo', $data['periodoFolio']);
+            $stmt->bindValue('ano', $data['anoFolio']);
+            $stmt->bindValue('tomo', $data['tomo']);
+            $stmt->bindValue('folio', $data['folio']);
+            if(array_key_exists('mesFolio', $data)){
+                $stmt->bindValue('mes', $data['mesFolio']);
+            }else{
+                $stmt->bindValue('mes', NULL);
+            }            
+            if(array_key_exists('rango', $data)){
+                $stmt->bindValue('rango', $data['rango']);
+            }else{
+                $stmt->bindValue('rango', NULL);
+            }
+            if(array_key_exists('fecInicio', $data)){
+                $stmt->bindValue('finicio', $data['fecInicio']);
+            }else{
+                $stmt->bindValue('finicio', NULL);
+            }
+            if(array_key_exists('fecFinal', $data)){
+                $stmt->bindValue('ffinal', $data['fecFinal']);
+            }else{
+                $stmt->bindValue('ffinal', NULL);
+            }
+            $stmt->execute();
+            $conn->commit();
+            return true;
+        } catch (Doctrine\DBAL\DBALException $e) {
+            $conn->rollBack();
+            return false;
+        }
+    }
+    
     public function siguienteFolioDigitable($tomo, $folio){
         $_folio = $this->em->getRepository('IneiPayrollBundle:Folios')
                 ->findSiguienteFolioDigitable($tomo, $folio);
