@@ -418,7 +418,7 @@ class InventarioController extends Controller {
      * @Template("")
      */
     public function periodosFoliosAction(Request $request) {
-        if (!$this->get('usuario_service')->hasPermission('folio', 'edit')) {
+        if (!$this->get('usuario_service')->hasPermission('periodo_folio', 'query')) {
             throw $this->createNotFoundException();
         }
         $form = $this->createForm('periodo_folios', null, array('em' => $this->getDoctrine()->getManager()));
