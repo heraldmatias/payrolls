@@ -38,7 +38,7 @@ class FoliosPeriodoType extends AbstractType {
                         'style' => 'width: 100%',
                         'disabled' => true,
                     ),
-                    'label' => 'Descripción'
+                    'label' => 'Observación'
                 ))
                 ->add('mesFolio', 'choice', array(
                     'attr' => array(
