@@ -150,7 +150,7 @@
         
         rango.on('change', function(e){
             var valor = $(this).val();
-            if(tipo.val()!== '6' & tipo.val()!== '1'){
+            if(tipo.val() !== '' & tipo.val()!== '6' & tipo.val()!== '1'){
                 if(valor === null | valor === ''){
                     ffin.attr('disabled', false);
                     finicio.attr('disabled', false);
