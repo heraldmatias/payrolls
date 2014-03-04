@@ -150,7 +150,7 @@
         
         rango.on('change', function(e){
             var valor = $(this).val();
-            if(valor === null | valor === ''){
+            if((valor === null | valor === '') & tipo.val()!== '6'){
                 ffin.attr('disabled', false);
                 finicio.attr('disabled', false);
                 setDateRange(finicio, ffin, ano.val(), mes.val())
