@@ -150,10 +150,16 @@
         
         rango.on('change', function(e){
             var valor = $(this).val();
-            if((valor === null | valor === '') & tipo.val()!== '6'){
-                ffin.attr('disabled', false);
-                finicio.attr('disabled', false);
-                setDateRange(finicio, ffin, ano.val(), mes.val())
+            if(tipo.val()!== '6' & tipo.val()!== '1'){
+                if(valor === null | valor === ''){
+                    ffin.attr('disabled', false);
+                    finicio.attr('disabled', false);
+                    setDateRange(finicio, ffin, ano.val(), mes.val())
+                }else{
+                    ffin.val('');finicio.val('');
+                    ffin.attr('disabled', true);
+                    finicio.attr('disabled', true);
+                }
             }else{
                 ffin.val('');finicio.val('');
                 ffin.attr('disabled', true);
