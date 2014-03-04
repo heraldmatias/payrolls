@@ -253,12 +253,12 @@
                 setDateRange(finicio, ffin, ano.val(), mes.val())
                 setSemana(rango);
             }else if(tipo === '6'){
+                mes.unbind('change');
+                ano.unbind('change');
+                rango.attr('disabled', true);
                 ffin.attr('disabled', true);
                 finicio.attr('disabled', true);
                 mes.attr('disabled', true);
-                rango.attr('disabled', true);
-                mes.unbind('change');
-                ano.unbind('change');
             }
         });
     });       
