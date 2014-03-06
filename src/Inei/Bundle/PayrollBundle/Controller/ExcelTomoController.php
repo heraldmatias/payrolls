@@ -169,15 +169,31 @@ class ExcelTomoController extends Controller {
         }
         return implode(',', $data);
     }
-    
+    /* CONCEPTO NUEVO                       00B0F0
+     * CONCEPTO MODIFICADO                  FFFF00
+     * CONCEPTO SIN CAMBIOS O ELIMINADO     000000
+     */
     function getUniqueArrayConceptos($sheet, $colc, $filaf) {
         $data = array();
+        $tipo = -1;
         while (true) {
+            $color = $sheet->getStyleByColumnAndRow($colc, $filaf)->getFill()->getStartColor()->getRGB();
+            switch ($color) {
+                case '000000':
+                    $tipo = 1;/*CONCEPTO SIN CAMBIOS O ELIMINADO     000000*/
+                    break;
+                case '00B0F0':
+                    $tipo = 2;/*CONCEPTO NUEVO                       00B0F0*/
+                    break;
+                case 'FFFF00':
+                    $tipo = 3;/*CONCEPTO MODIFICADO                  FFFF00*/
+                    break;
+            }
             $conc = $sheet->getCellByColumnAndRow($colc, $filaf)->getValue();
             if (null === $conc | '' === trim($conc))
                 break;
             $_conc = str_replace(' ', '', strtoupper($conc));
-            $data[] = $_conc;
+            $data[] = array($tipo, $_conc);
             $colc++;
         }
         return $data;
@@ -252,6 +268,7 @@ codi_folio, codi_conc_tco) values ';
             $stmt->bindValue(5, NULL);            
             $stmt->bindValue(6, $userid);
             $stmt->execute();
+        /*PROCESO QUE LEE LOS FOLIOS Y CONCEPTOS DESDE LA FILA 4 PARA INSERTAR O ACTUALIZAR EN LA BD*/
             while ($nfolio <= $folios) {
                 $registros = $sheet->getCellByColumnAndRow(2, $filaf)->getValue();
                 $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
@@ -282,7 +299,7 @@ codi_folio, codi_conc_tco) values ';
                 }else{
                     /**
                      * Si el folio existe entonces se deben reemplazar los conceptos 
-                     * en el mismo orden que se van enconctrando en el inventario
+                     * en el mismo orden que se van encontrando en el inventario
                      * la diferencia entre los que hay actualmente y los nuevos debe
                      * eliminarse
                     **/
@@ -291,31 +308,47 @@ codi_folio, codi_conc_tco) values ';
                             ->findCustomByNum($nfolio, $object->getTomo());
                     $conceptosdb = $_data['conceptos'];
                     $codifolio = $_data['folio'];
-                    $toupdate = array_filter(array_map(create_function('$cdb, $c', 'return $cdb[0]===$c?null:array(0=>$c,1=>$cdb);'), $conceptosdb, $conceptos),
-                        create_function('$item', 'return is_array($item);'));
-                    if($toupdate){
-                        $supd = $conn->prepare($updateConceptos);
-                        $sdel = $conn->prepare($deleteConceptos);
-                        foreach ($toupdate as $key => $value) {
-                            if($value[0] === NULL){
-                                /*ELIMINAR CONCEPTOS*/
-                                if(is_array($value[1])){
-                                    $sdel->bindValue(1, $value[1][1]);
+                    $dbCounter = 0;
+                    $supd = $conn->prepare($updateConceptos);
+                    $sdel = $conn->prepare($deleteConceptos);
+                    $i = count($conceptos);
+                    $k = count($conceptosdb);
+                    foreach ($conceptos as $order => $concepto) {
+                        if($concepto[0] === 1){
+                            if($dbCounter<$k){
+                                if($concepto[1] !== $conceptosdb[$dbCounter][0]){
+                                    $sdel->bindValue(1, $conceptosdb[$dbCounter][1]);
                                     $sdel->execute();
+                                }else{
+                                    $supd->bindValue(1, ($order+1));
+                                    $supd->bindValue(2, $concepto[1]);
+                                    $supd->bindValue(3, $conceptosdb[$dbCounter][1]);
+                                    $supd->execute();
                                 }
-                            }elseif(is_array($value[1])){
-                                /*ACTUALIZAR CONCEPTO*/
-                                $supd->bindValue(1, ($key+1));
-                                $supd->bindValue(2, $value[0]);
-                                $supd->bindValue(3, $value[1][1]);
+                                unset($conceptosdb[$dbCounter]);
+                                $dbCounter++;
+                            }
+                        }else if($concepto[0] === 2){
+                            $conn->prepare($insertConceptos . sprintf("(%s, %s, '%s')", ($order+1), $codifolio, $concepto[1]))->execute();
+                        }else if($concepto[0] === 3){
+                            if($dbCounter<$k){
+                                $supd->bindValue(1, ($order+1));
+                                $supd->bindValue(2, $concepto[1]);
+                                $supd->bindValue(3, $conceptosdb[$dbCounter][1]);
                                 $supd->execute();
-                            }else{
-                                /*INSERTAR CONCEPTO*/
-                                $conn->prepare($insertConceptos . sprintf("(%s, %s, '%s')", ($key+1), $codifolio, $value[0]))->execute();
+                                unset($conceptosdb[$dbCounter]);
+                                $dbCounter++;
                             }
                         }
-                        unset($supd);
-                        unset($sdel);
+                    }
+                    
+                    if($k>$i){
+                        /*borrar los que han sido quitados del excel*/
+                        for ($index = $i; $index < $k; $index++) {
+                            $concepto = $conceptosdb[$index];
+                            $sdel->bindValue(1, $concepto[1]);
+                            $sdel->execute();
+                        }
                     }
                 }
                 $filaf++;
