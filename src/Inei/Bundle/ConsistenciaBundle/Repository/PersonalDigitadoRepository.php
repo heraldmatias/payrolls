@@ -33,7 +33,7 @@ ORDER BY l.empleado;';
     public function findPersonalNoEncontrado(array $criteria) {
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalDigitado 
             pd LEFT JOIN pd.persona pe ";
-        $where = array('pd.persona IS NULL');
+        $where = array('pd.persona IS NULL','pd.existe = true');
         if (array_key_exists('soundex', $criteria))
             $where[] = "pd.soundex = soundex('" . $criteria['soundex']."')";
         if (array_key_exists('nombres', $criteria))

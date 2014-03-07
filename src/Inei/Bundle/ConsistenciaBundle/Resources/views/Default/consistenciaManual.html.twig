@@ -70,6 +70,7 @@
         </form>
         <a href="{{ path('_consistencia_procesar') }}" id="id_anterior" class="btn btn-primary">Anterior </a>
         <div style="float: right" id="busca_personal">
+            <input type="button" value="Marcar como no encontrado" id="id_btnnoencontrado" class="btn btn-danger">
             <input type="button" value="Buscar Personas" id="id_btnbuscar" class="btn btn-primary">
         </div>
         <h4>Listado de Personal</h4>
@@ -150,6 +151,10 @@
     <script type="text/javascript">
         $('#id_btnbuscar').on('click', function(e){
             load_personal();
+        });
+        
+        $('#id_btnnoencontrado').on('click', function(e){
+            setPersonalNoEncontrado();
         });
         
         $('#chk_todos').on('change', function(e){
@@ -241,6 +246,38 @@
                 });
             }
             return rpta;
+        }
+        
+        function setPersonalNoEncontrado(){
+            var personas = $('.personal:checked'),
+                    data = $('#id_frm_personal').serialize();
+            if(personas.length===0){
+                alert('Debe seleccionar al menos un nombre de personal');
+                return false;
+            }
+            if(confirm('¿DESEA MARCAR LOS NOMBRES SELECCIONADOS COMO "NO ENCONTRADOS"?')){
+                var oOptions = {
+                    url: '{{ path('_consistencia_personal_no_ajax') }}',
+                    dataType: 'json',
+                    async: true,
+                    data: data,
+                    beforeSend: function() {
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data['success']){
+                        alert('Personal marcado como no encontrado con éxito');
+                        $.each(personas, function(k,v){
+                            $(this).parent().parent().remove();
+                        });
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    alert('Ocurrio un error al ejecutar la tarea');
+                });
+            }
         }
         
         $(document).on('ready', function(e){

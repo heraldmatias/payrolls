@@ -490,5 +490,17 @@ class DefaultController extends Controller {
         echo $service->printCSV($data);
         exit;
     }
+    
+    /**
+     * @Route("/consistencia/personal-digitado/noencontrado/ajax", name="_consistencia_personal_no_ajax")
+     */
+    public function personalNoEncontradoAjaxAction(Request $request) {
+        $service = $this->get('consistencia_service');
+        $nombres = $request->query->get('personal');
+        $result = $service->asignarPersonalNoEncontrado($nombres);
+        $response = new Response(json_encode($result));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
 
 }

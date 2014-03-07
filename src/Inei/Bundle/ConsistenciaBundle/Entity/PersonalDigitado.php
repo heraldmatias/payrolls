@@ -48,9 +48,15 @@ class PersonalDigitado
      * @ORM\JoinColumn(name="CODI_EMPL_PER_PERSONA", referencedColumnName="CODI_EMPL_PER", nullable=true)
      */
     private $persona;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="FL_EXISTE", type="boolean", options={"default" = true})
+     */
+    private $existe;
 
     /**
-     * Set codiEmplPer
      *
      * @param string $codiEmplPer
      * @return PersonalDigitado
@@ -149,5 +155,28 @@ class PersonalDigitado
     public function getSoundex()
     {
         return $this->soundex;
+    }
+
+    /**
+     * Set existe
+     *
+     * @param boolean $existe
+     * @return PersonalDigitado
+     */
+    public function setExiste($existe)
+    {
+        $this->existe = $existe;
+
+        return $this;
+    }
+
+    /**
+     * Get existe
+     *
+     * @return boolean 
+     */
+    public function getExiste()
+    {
+        return $this->existe;
     }
 }

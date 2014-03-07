@@ -375,4 +375,16 @@ WHERE fo.existe=True;');
         );
         return $data;
     }
+    
+    public function asignarPersonalNoEncontrado($nombres){
+        $nombres = "('".implode("','", $nombres)."')";
+        $st = $this->em->getConnection()->prepare('Update personal_digitado SET fl_existe = false WHERE nomb_cort_per IN '.$nombres);
+        $st->execute();
+        $data = array(
+            'success' => true,
+            'data' => true,
+            'error'=> Null
+        );
+        return $data;
+    }
 }
