@@ -96,10 +96,14 @@ class ConsistenciaService {
                 SELECT mp.codi_empl_per, mp.ape_pat_per, mp.ape_mat_per, 
                 mp.nom_emp_per, mp.nomb_cort_per, mp.libr_elec_per 
                 FROM maestro_personal mp WHERE mp.codi_empl_per=:persona';
-            $nombres = "('".implode("','", $nombres)."')";
-            $sql = 'UPDATE personal_digitado 
+            $_nombres = array();
+            foreach ($nombres as $nombre) {
+                $_nombres[] = preg_replace("/(\W+)/", " ", $nombre);
+            }
+            $nombres = "('".implode("','", $_nombres)."')";
+            $sql = "UPDATE personal_digitado 
                 SET codi_empl_per_persona = :persona
-                WHERE nomb_cort_per IN '.$nombres;
+                WHERE regexp_replace(nomb_cort_per,'\W+', ' ','g) IN ".$nombres;
             try {
                 $this->em->beginTransaction();
                 if(null === $obj){
@@ -129,11 +133,14 @@ class ConsistenciaService {
             unset($cn);
             unset($st);
             $sqli = 'SELECT fn_asocia_per_reniec(:apepat, :apemat, :nombre, :desnombre, :dni) AS codigo';
-            
-            $nombres = "('".implode("','", $nombres)."')";
-            $sql = 'UPDATE personal_digitado 
+            $_nombres = array();
+            foreach ($nombres as $nombre) {
+                $_nombres[] = preg_replace("/(\W+)/", " ", $nombre);
+            }
+            $nombres = "('".implode("','", $_nombres)."')";
+            $sql = "UPDATE personal_digitado 
                 SET codi_empl_per_persona = :persona
-                WHERE nomb_cort_per IN '.$nombres;
+                WHERE regexp_replace(nomb_cort_per,'\W+', ' ','g') IN ".$nombres;
             try {
                 $this->em->beginTransaction();
                 

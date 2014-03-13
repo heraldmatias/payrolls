@@ -35,9 +35,9 @@ ORDER BY l.empleado;';
             pd LEFT JOIN pd.persona pe ";
         $where = array('pd.persona IS NULL','pd.existe = true');
         if (array_key_exists('soundex', $criteria))
-            $where[] = "pd.soundex = soundex('" . $criteria['soundex']."')";
+            $where[] = "pd.soundex = soundex('" . addslashes($criteria['soundex'])."')";
         if (array_key_exists('nombres', $criteria))
-            $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
+            $where[] = "pd.nombCortPer LIKE '%" . str_replace("'","''",$criteria['nombres'])."%'";
         if (array_key_exists('codigo', $criteria))
             $where[] = "pd.codiEmplPer ='" . $criteria['codigo'] . "'";
         
@@ -51,9 +51,9 @@ ORDER BY l.empleado;';
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalEncontrado pd ";
         $where = array();
         if (array_key_exists('soundex', $criteria))
-            $where[] = "soundex(pd.nombCortPer) = soundex('" . $criteria['soundex']."')";
+            $where[] = "soundex(pd.nombCortPer) = soundex('" . addslashes($criteria['soundex'])."')";
         if (array_key_exists('nombres', $criteria))
-            $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
+            $where[] = "pd.nombCortPer LIKE '%" . str_replace("'","''",$criteria['nombres'])."%'";
         if (array_key_exists('codigo', $criteria))
             $where[] = "pd.codiEmplPer ='" . $criteria['codigo'] . "'";
         
@@ -67,9 +67,9 @@ ORDER BY l.empleado;';
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalDigitado pd ";
         $where = array();
         if (array_key_exists('soundex', $criteria))
-            $where[] = "pd.soundex = soundex('" . $criteria['soundex']."')";
+            $where[] = "pd.soundex = soundex('" . addslashes($criteria['soundex'])."')";
         if (array_key_exists('nombres', $criteria))
-            $where[] = "pd.nombCortPer LIKE '%" . $criteria['nombres']."%'";
+            $where[] = "pd.nombCortPer LIKE '%" . addslashes($criteria['nombres'])."%'";
         if (array_key_exists('codigo', $criteria))
             $where[] = "pd.codiEmplPer ='" . $criteria['codigo'] . "'";
         
