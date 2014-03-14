@@ -253,12 +253,11 @@ concat(t.nom_emp_per, ' ', t.ape_pat_per, ' ', t.ape_mat_per);";
     public function findPersonalSiga2($nombre){
         $filtro = "regexp_replace(nomb_cort_per,'\W+', ' ','g') LIKE '".preg_replace("/(')/", " ", $nombre)."%'";
         
-//        print_r($filtro);exit;
-        
+       
         $sql = "SELECT codi_empl_per as \"VALUE\", 
             concat(codi_empl_per, ' - ',nomb_cort_per) as \"LABEL\"
             FROM maestro_personal Where ".$filtro.' ORDER BY nomb_cort_per LIMIT 5';
-        echo $sql;
+        
         $con = $this->getEntityManager()->getConnection();
         $stmt1 = $con->prepare($sql);
         $stmt1->execute();
