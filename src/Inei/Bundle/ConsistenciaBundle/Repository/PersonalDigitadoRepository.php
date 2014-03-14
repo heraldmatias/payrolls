@@ -251,7 +251,7 @@ concat(t.nom_emp_per, ' ', t.ape_pat_per, ' ', t.ape_mat_per);";
     }
     
     public function findPersonalSiga2($nombre){
-        $filtro = "regexp_replace(nomb_cort_per,'\W+', ' ','g') LIKE '".preg_replace("/(')/", " ", $nombre)."%'";
+        $filtro = "regexp_replace(nomb_cort_per,'\W+', '','g') LIKE '".preg_replace("('|´|,|\.| )", "", $nombre)."%'";
         
        
         $sql = "SELECT codi_empl_per as \"VALUE\", 

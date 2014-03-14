@@ -98,13 +98,12 @@ class ConsistenciaService {
                 FROM maestro_personal mp WHERE mp.codi_empl_per=:persona';
             $_nombres = array();
             foreach ($nombres as $nombre) {
-                $_nombre = preg_replace("/(')/", " ", $nombre);
-                $_nombres[] = preg_replace("/(´)/", " ", $_nombre);
+                $_nombres[] = preg_replace("('|´|,|\.| )", "", $nombre);
             }
             $nombres = "('".implode("','", $_nombres)."')";
             $sql = "UPDATE personal_digitado 
                 SET codi_empl_per_persona = :persona
-                WHERE regexp_replace(nomb_cort_per,'\W+', ' ','g') IN ".$nombres;
+                WHERE regexp_replace(nomb_cort_per,'\W+', '','g') IN ".$nombres;
             try {
                 $this->em->beginTransaction();
                 if(null === $obj){
@@ -136,13 +135,12 @@ class ConsistenciaService {
             $sqli = 'SELECT fn_asocia_per_reniec(:apepat, :apemat, :nombre, :desnombre, :dni) AS codigo';
             $_nombres = array();
             foreach ($nombres as $nombre) {
-                $_nombre = preg_replace("/(')/", " ", $nombre);
-                $_nombres[] = preg_replace("/(´)/", " ", $_nombre);
+                $_nombres[] = preg_replace("('|´|,|\.| )", "", $nombre);
             }
             $nombres = "('".implode("','", $_nombres)."')";
             $sql = "UPDATE personal_digitado 
                 SET codi_empl_per_persona = :persona
-                WHERE regexp_replace(nomb_cort_per,'\W+', ' ','g') IN ".$nombres;
+                WHERE regexp_replace(nomb_cort_per,'\W+', '','g') IN ".$nombres;
             try {
                 $this->em->beginTransaction();
                 
