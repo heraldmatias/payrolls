@@ -386,7 +386,7 @@ WHERE fo.existe=True;');
     public function asignarPersonalNoEncontrado($nombres){
         $_nombres = array();
         foreach ($nombres as $nombre) {
-            $_nombres[] = preg_replace("('|´|,|\.| )", "", $nombre);
+            $_nombres[] = preg_replace("('|´|,|\.| |\|)", "", $nombre);
         }
         $nombres = "('".implode("','", $_nombres)."')";
         $st = $this->em->getConnection()->prepare("Update personal_digitado SET fl_existe = false WHERE regexp_replace(nomb_cort_per,'\W+', '','g') IN ".$nombres);
