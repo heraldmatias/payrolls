@@ -292,6 +292,9 @@ class DefaultController extends Controller {
      * @Template("")
      */
     public function consistenciaManualAction(Request $request) {
+        if (!$this->get('usuario_service')->hasPermission('buscar_personal', 'query')) {
+            throw $this->createNotFoundException();
+        }
         $service = $this->get('consistencia_service');
         $criteria = array();
         $tipo = 1;
