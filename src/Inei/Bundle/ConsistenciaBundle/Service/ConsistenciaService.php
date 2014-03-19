@@ -42,9 +42,9 @@ class ConsistenciaService {
                         ->findPersonalEncontrado($criteria);
     }
 
-    public function findPersonalNoEncontrado($criteria) {
+    public function findPersonalNoEncontrado($criteria, $buscado=true) {
         return $this->em->getRepository('IneiConsistenciaBundle:PersonalDigitado')
-                        ->findPersonalNoEncontrado($criteria);
+                        ->findPersonalNoEncontrado($criteria, $buscado);
     }
     
     public function debeSincronizar() {

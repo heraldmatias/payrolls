@@ -26,12 +26,15 @@
                     <div class="span3">
                         <select name="tipo_busqueda" id="id_tipo_busqueda">
                             <option value="1" {% if form['tipo_busqueda'] == '1' %} selected {% endif %}>
-                                Personal No Encontrado en Siga
+                                Personal No Encontrado
                             </option>
                             <option value="2" {% if form['tipo_busqueda'] == '2' %} selected {% endif %}>
-                                Personal Encontrado en Siga
+                                Personal No Encontrado en Siga
                             </option>
                             <option value="3" {% if form['tipo_busqueda'] == '3' %} selected {% endif %}>
+                                Personal Encontrado en Siga
+                            </option>
+                            <option value="4" {% if form['tipo_busqueda'] == '4' %} selected {% endif %}>
                                 Todo el Personal en Planillas
                             </option>
                         </select>

@@ -30,10 +30,10 @@ ORDER BY l.empleado;';
         return $this->getCountPersonal();
     }
 
-    public function findPersonalNoEncontrado(array $criteria) {
+    public function findPersonalNoEncontrado(array $criteria, $buscado=true) {
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalDigitado 
             pd LEFT JOIN pd.persona pe ";
-        $where = array('pd.persona IS NULL','pd.existe = true');
+        $where = array('pd.persona IS NULL',($buscado===true?'pd.existe = true':'pd.existe = false'));
         if (array_key_exists('soundex', $criteria))
             $where[] = "pd.soundex = soundex('" . addslashes($criteria['soundex'])."')";
         if (array_key_exists('nombres', $criteria))

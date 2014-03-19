@@ -314,16 +314,19 @@ class DefaultController extends Controller {
         }
         switch ($tipo) {
             case 1:
-                $query = $service->findPersonalNoEncontrado($criteria);
+                $query = $service->findPersonalNoEncontrado($criteria, false);
                 break;
             case 2:
-                $query = $service->findPersonalEncontrado($criteria);
+                $query = $service->findPersonalNoEncontrado($criteria);
                 break;
             case 3:
-                $query = $service->findPersonal($criteria);
+                $query = $service->findPersonalEncontrado($criteria);
                 break;
+            case 4:
+                $query = $service->findPersonal($criteria);
+                break;            
             default :
-                $query = $service->findPersonalNoEncontrado($criteria);
+                $query = $service->findPersonalNoEncontrado($criteria, false);
         }
         $form['tipo_busqueda'] = $tipo;
         //$familias = $service->findFamiliasNombres();
