@@ -5,7 +5,7 @@ while (true)
 do
   i=$(($i+1))
   echo 'Procesando tomo #' $i >> /tmp/log_messages
-  psql -w -U postgres -d planillas -c "copy (select * from get_planilla_tomo(6, $i) WHERE isnumeric(valo_calc_phi) = true) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/planillas.csv
+  psql -w -U postgres -d inei_planilla -c "copy (select * from get_planilla_tomo(6, $i) WHERE isnumeric(valo_calc_phi) = true) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/planillas.csv
   if [ $i -gt 420 ]
   then
      break
