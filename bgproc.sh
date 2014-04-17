@@ -25,7 +25,7 @@ echo 'Procesando tipos de planillas' >> /tmp/log_messages
 psql -w -U postgres -d inei_planilla -c "COPY (SELECT tipo_plan_tpl, desc_tipo_tpl, tarj_inic_tpl, tarj_fina_tpl, cant_peri_tpl, codi_oper_ope, abrev_tipo_tpl FROM tplanilla) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/tplanilla.csv
 i=$(($i+1))
 echo 'Procesando tipos conceptos por folio' >> /tmp/log_messages
-psql -w -U postgres -d inei_planilla -c "COPY (SELECT cf.id, cf.orden_conc_folio, cf.codi_folio, cf.codi_conc_tco FROM conceptos_folios cf join conceptos c ON cf.codi_conc_tco = c.codi_conc_tco WHERE c.tipo_conc_tco NOT IN ('0', '4')) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/conceptosfolios.csv
+psql -w -U postgres -d inei_planilla -c "COPY (SELECT cf.id, cf.orden_conc_folio, cf.codi_folio, cf.codi_conc_tco FROM conceptos_folios cf join conceptos c ON cf.codi_conc_tco = c.codi_conc_tco join folios f on cf.codi_folio = f.codi_folio WHERE c.tipo_conc_tco NOT IN ('0', '4') AND f.tipo_plan_tpl IS NOT NULL) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/conceptosfolios.csv
 i=$(($i+1))
 echo 'Procesando personal' >> /tmp/log_messages
 psql -w -U postgres -d inei_planilla -c "COPY (SELECT codi_empl_per, ape_pat_per, ape_mat_per, nom_emp_per, nomb_cort_per, libr_elec_per FROM personal_encontrado) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/personal.csv
