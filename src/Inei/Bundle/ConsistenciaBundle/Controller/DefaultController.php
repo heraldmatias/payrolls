@@ -566,15 +566,16 @@ class DefaultController extends Controller {
                         $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
                         /* BUSCAR SI HAY DIFERENCIA ENTRES LOS FOLIOS */
                         if (!$folio) {
+                            $filaf++;
+                            $nfolio++;
                             continue;
                         }
                         $stmt = $conn->prepare($insertFolio);
                         $stmt->bindValue(1, $tplanilla ? trim(str_replace(' ', '', strtoupper($tplanilla))) : NULL);
                         $stmt->bindValue(2, $tomo);
-                        $stmt->bindValue(3, $nfolio);
+                        $stmt->bindValue(3, $folio);
                         $stmt->execute();
-                        $filaf++;
-                        $nfolio++;
+                        
                     }
                     unset($objPHPExcel);
                     $data['success'] = true;
