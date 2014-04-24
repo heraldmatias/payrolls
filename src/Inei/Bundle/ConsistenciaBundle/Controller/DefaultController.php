@@ -49,7 +49,7 @@ class DefaultController extends Controller {
                 #'pagination' => $pagination            
         );
     }
-    
+
     /**
      * 
      * @param type $name
@@ -69,7 +69,7 @@ class DefaultController extends Controller {
         $result = $service->getTomosFoliosRepetidos();
         return $result;
     }
-    
+
     /**
      * @Route("/consistencia/inconsistentes/ajax", name="_consistencia_tomos_inconsistentes_ajax")
      * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
@@ -79,46 +79,46 @@ class DefaultController extends Controller {
         $result = $service->getTomosFoliosInconsistentes();
         return $result;
     }
-    
+
     /**
      * @Route("/consistencia/info-tomo/ajax", name="_consistencia_tomos_info_ajax")
      * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
      */
     public function buscarInfoTomoAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $result = $service->getTomosInconsistentesInfo($tomo);
         return $result;
     }
-    
+
     /**
      * @Route("/consistencia/tomo-inconsistentes/ajax", name="_consistencia_tomos_inconsistentes_list_ajax")
      * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
      */
     public function buscarTomosInconsistentesAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $result = $service->getTomosInconsistentes();
         return $result;
     }
-    
+
     /**
      * @Route("/consistencia/info-folio/ajax", name="_consistencia_folios_info_ajax")
      * @Template("IneiConsistenciaBundle:Default:tabla.html.twig")
      */
     public function buscarInfoFolioAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('folio');
         $result = $service->getTomosFoliosRepetidosInfo($tomo, $folio);
         return $result;
     }
-    
+
     /**
      * @Route("/consistencia/plus-folio/ajax", name="_consistencia_folios_plus_ajax")
      */
     public function plusFoliosAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('folio');
         $result = $service->avanzarFolios($tomo, $folio);
@@ -126,12 +126,12 @@ class DefaultController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/consistencia/minus-folio/ajax", name="_consistencia_folios_minus_ajax")
      */
     public function minusFoliosAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('folio');
         $result = $service->avanzarFolios($tomo, $folio);
@@ -139,24 +139,24 @@ class DefaultController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/consistencia/delete-folio/ajax", name="_consistencia_folios_delete_ajax")
      */
     public function deleteFoliosAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $codigo = $request->request->get('codigo');
         $result = $service->borrarFolio($codigo);
         $response = new Response(json_encode($result));
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/consistencia/plus-tomo/ajax", name="_consistencia_tomos_plus_ajax")
      */
     public function plusTomoAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('registrados');
         $result = $service->aumentarFoliosTomo($tomo, $folio);
@@ -164,12 +164,12 @@ class DefaultController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/consistencia/minus-tomo/ajax", name="_consistencia_tomos_minus_ajax")
      */
     public function minusTomoAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $tomo = $request->request->get('tomo');
         $folio = $request->request->get('registrados');
         $result = $service->disminuirFoliosTomo($tomo, $folio);
@@ -177,12 +177,12 @@ class DefaultController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * @Route("/consistencia/change-folio/ajax", name="_consistencia_folios_change_ajax")
      */
     public function changeFoliosAjaxAction(Request $request) {
-        $service = $this->get('consistencia_service');        
+        $service = $this->get('consistencia_service');
         $codigo = $request->request->get('codigo');
         $nuevo = $request->request->get('nuevo');
         $result = $service->cambiarFolio($codigo, $nuevo);
@@ -190,7 +190,7 @@ class DefaultController extends Controller {
         $response->headers->set('content-type', 'application/json');
         return $response;
     }
-    
+
     /**
      * 
      * @param type $name
@@ -247,7 +247,7 @@ class DefaultController extends Controller {
             if ($gestor) {
                 while (false !== ($entrada = readdir($gestor))) {
                     if ($entrada !== '.' & $entrada !== null & $entrada !== '..')
-                        $file = $target_path. $entrada;
+                        $file = $target_path . $entrada;
                 }
                 closedir($gestor);
             }
@@ -261,15 +261,15 @@ class DefaultController extends Controller {
                 while (true) {
                     $periodo = $sheet->getCellByColumnAndRow(0, $fila)->getValue();
                     $nperiodo = $sheet->getCellByColumnAndRow(1, $fila)->getValue();
-                    
+
                     if ($periodo === '' | $periodo === null) {
                         break;
                     }
                     if ($nperiodo !== '' | $nperiodo !== null) {
-                        if(is_numeric($nperiodo)){
+                        if (is_numeric($nperiodo)) {
                             $nperiodo = strlen($nperiodo) === 1 ?
-                                str_pad($nperiodo, 2, '0', STR_PAD_LEFT):$nperiodo;
-                             $sql .= $service->actualizaPeriodoSQL($nperiodo, $periodo);
+                                    str_pad($nperiodo, 2, '0', STR_PAD_LEFT) : $nperiodo;
+                            $sql .= $service->actualizaPeriodoSQL($nperiodo, $periodo);
                         }
                     }
                     $fila++;
@@ -327,7 +327,7 @@ class DefaultController extends Controller {
                 break;
             case 4:
                 $query = $service->findPersonal($criteria);
-                break;            
+                break;
             default :
                 $query = $service->findPersonalNoEncontrado($criteria, false);
         }
@@ -390,13 +390,13 @@ class DefaultController extends Controller {
         if ($request->query->has('personal')) {
             $nombres = $request->query->get('personal');
         }
-        if($tipo === '1'){
+        if ($tipo === '1') {
             $result = $service->findPersonalSiga($nombres);
-        }else{
+        } else {
             $cn = $this->get('doctrine')->getManager('siga')->getConnection();
             $st = $cn->prepare("SELECT DNI as value, DNI || ' - ' || DES_NOMBRE as label 
                 FROM PER_RENIEC WHERE DES_NOMBRE LIKE :nombre AND rownum<=5");
-            $st->bindValue(':nombre', $nombres.'%');
+            $st->bindValue(':nombre', $nombres . '%');
             $st->execute();
             $result = $st->fetchAll(\Doctrine\ORM\Query::HYDRATE_ARRAY);
         }
@@ -416,7 +416,7 @@ class DefaultController extends Controller {
     public function personalAsociaAction(Request $request) {
         $service = $this->get('consistencia_service');
         $nombres = array();
-        $persona = NULL;        
+        $persona = NULL;
         if ($request->query->has('personal')) {
             $nombres = $request->query->get('personal');
         }
@@ -424,7 +424,7 @@ class DefaultController extends Controller {
             $persona = $request->query->get('persona');
         }
         $source = intval($request->query->get('tipo'));
-        
+
         $result = $service->asociarPersonal($nombres, $persona, $source);
         $data = array(
             'success' => $result,
@@ -496,7 +496,7 @@ class DefaultController extends Controller {
         echo $service->printCSV($data);
         exit;
     }
-    
+
     /**
      * @Route("/consistencia/personal-digitado/noencontrado/ajax", name="_consistencia_personal_no_ajax")
      */
@@ -507,6 +507,120 @@ class DefaultController extends Controller {
         $response = new Response(json_encode($result));
         $response->headers->set('content-type', 'application/json');
         return $response;
+    }
+
+    /**
+     * @Route("/tipoplanilla/", name="_consistencia_tipoplanilla_process")
+     * @Template("")
+     */
+    public function processAction(Request $request) {
+
+        $data = array('success' => false, 'error' => NULL, 'data' => NULL);
+        $conn = $this->get('database_connection');
+        /*         * 0 BASED INDEX
+         * C F
+         * 0, 1 => TITULO
+         * 0, 6 => CABECERA
+         * 0, 7 => EMPIEZA LOS DATOS
+         *
+         * FILA 4 => DATOS DEL TOMO
+         * 1, 4 => PERIODO DEL TOMO
+         * 4, 4 => ANO DEL TOMO
+         * 6, 4 => CODIGO DEL TOMO
+         * 8, 4 => FOLIOS DEL TOMO
+         *
+         * FILA 7 => EMPIEZAN LOS VALORES
+         * COL 0 => FOLIO
+         * COL 1 => PERIODO
+         * COL 2 => REGISTRO
+         * COL 3 => TIPO
+         * COL 4 => EMPIEZAN LOS CAMPOS
+         */
+        /*         * ****VARIABLES PARA OBTENER LAS CELDAS CON LOS DATOS DEL ARCHIVO EXCEL***************** */
+        $filat = 4; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS TOMOS* */
+        $filaf = 7; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
+        $colc = 4; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
+        /*         * *************************SE GUARDA EL TOMO********************* */
+        $insertFolio = 'UPDATE folios SET tipo_plan_tpl = :atipo_plan_tpl 
+            WHERE codi_tomo = :acodi_tomo AND num_folio = :anum_folio;';
+
+        try {
+            $directorio = opendir("../web/upload/tplanilla/"); //ruta actual
+            while ($archivo = readdir($directorio)) { //obtenemos un archivo y luego otro sucesivamente
+                $file = "../web/upload/tplanilla/" . $archivo;
+
+                if (!is_dir($file)) {
+                    $objPHPExcel = PHPExcel_IOFactory::load($file);
+                    $sheet = $objPHPExcel->getSheet(0);
+                    $tomo = $sheet->getCellByColumnAndRow(4, $filat)->getValue();
+                    $errors = $this->validateTomoExcel($sheet, $filaf, $filat);
+                    if (count($errors) > 0) {
+                        $msgerror = implode('<br>', $errors);
+                        throw new \Exception($msgerror);
+                    }
+                    $conn->beginTransaction();
+                    $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
+                    $nfolio = 1;
+                    while ($nfolio <= $folios) {
+                        $folio = $sheet->getCellByColumnAndRow(0, $filaf)->getValue();
+                        $tplanilla = $sheet->getCellByColumnAndRow(3, $filaf)->getValue();
+                        /* BUSCAR SI HAY DIFERENCIA ENTRES LOS FOLIOS */
+                        if (!$folio) {
+                            continue;
+                        }
+                        $stmt = $conn->prepare($insertFolio);
+                        $stmt->bindValue(1, $tplanilla ? trim(str_replace(' ', '', strtoupper($tplanilla))) : NULL);
+                        $stmt->bindValue(2, $tomo);
+                        $stmt->bindValue(3, $nfolio);
+                        $stmt->execute();
+                        $filaf++;
+                        $nfolio++;
+                    }
+                    unset($objPHPExcel);
+                    $data['success'] = true;
+                    $data['data'] = 'Almacenado con exito '.$archivo;
+                    $conn->commit();
+                    break;
+                }
+                
+            }
+        } catch (DBALException $e) {
+            $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>" . $e->getMessage();
+            $conn->rollback();
+        } catch (\Exception $e) {
+            $data['error'] = "Por favor corrija la(s) siguiente(s) fila(s) <br>" . $e->getMessage();
+        }
+        $conn->close();
+        closedir($directorio);
+
+        $response = new Response(json_encode($data));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
+    }
+
+    private function validateTomoExcel($sheet, $filaf, $filat) {
+        $folios = $sheet->getCellByColumnAndRow(6, $filat)->getValue();
+        $nfolio = 1;
+        $errors = array();
+        $_planillas = $this->getDoctrine()->getManager()->createQuery(
+                        'SELECT c.tipoPlanTpl FROM IneiPayrollBundle:Tplanilla c'
+                )->getArrayResult();
+        $planillas = array_map(
+                create_function('$item', 'return strtolower($item["tipoPlanTpl"]);'), $_planillas);
+        for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
+            $tplanilla = trim(strtolower($sheet->
+                                    getCellByColumnAndRow(3, $filaf)->getValue()));
+            if(!$tplanilla){
+                continue;
+            }
+            /* VALIDA SI EXISTE LA PLANILLA */
+            if (!in_array($tplanilla, $planillas)) {
+                $errors[] = sprintf('Fila: %s, Campo: Columna %s', $filaf, 'D');
+            }
+            /* VALIDA QUE EL PERIDO SEA CORRECTO */
+            $filaf++;
+        }
+        return $errors;
     }
 
 }
