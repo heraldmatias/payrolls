@@ -575,7 +575,8 @@ class DefaultController extends Controller {
                         $stmt->bindValue(2, $tomo);
                         $stmt->bindValue(3, $folio);
                         $stmt->execute();
-                        
+                        $filaf++;
+                        $nfolio++;
                     }
                     unset($objPHPExcel);
                     $data['success'] = true;
