@@ -71,7 +71,7 @@ class FoliosPeriodoType extends AbstractType {
                         'disabled' => true,
                     ),
                     'empty_value' => '---SELECCIONE---',
-                    'choices' => array_combine(range(1960, 1990),range(1960, 1990)),
+                    'choices' => array_combine(range(1960, 2001),range(1960, 2001)),
                     'label' => 'Año'
                 ))
                 ->add('fecInicio', 'text', array(
