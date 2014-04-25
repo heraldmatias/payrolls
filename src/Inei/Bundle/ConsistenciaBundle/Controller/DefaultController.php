@@ -580,11 +580,10 @@ class DefaultController extends Controller {
                     }
                     unset($objPHPExcel);
                     $data['success'] = true;
-                    $data['data'] = 'Almacenado con exito '.$archivo;
+                    $data['data'] = 'Almacenado con exito ' . $archivo;
                     $conn->commit();
                     break;
                 }
-                
             }
         } catch (DBALException $e) {
             $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>" . $e->getMessage();
@@ -612,7 +611,7 @@ class DefaultController extends Controller {
         for ($nfolio = 1; $nfolio <= $folios; $nfolio++) {
             $tplanilla = trim(strtolower($sheet->
                                     getCellByColumnAndRow(3, $filaf)->getValue()));
-            if(!$tplanilla){
+            if (!$tplanilla) {
                 continue;
             }
             /* VALIDA SI EXISTE LA PLANILLA */
@@ -623,6 +622,82 @@ class DefaultController extends Controller {
             $filaf++;
         }
         return $errors;
+    }
+
+    /**
+     * @Route("/conceptos/procesar/", name="_consistencia_conceptos_process")
+     * @Template("")
+     */
+    public function conceptosAction(Request $request) {
+
+        $data = array('success' => false, 'error' => NULL, 'data' => NULL);
+        $conn = $this->get('database_connection');
+
+        $filaf = 2; /* EN ESTA FILA EMPIEZAN LOS DATOS DE LOS FOLIOS* */
+        $colc = 7; /* EN ESTA COLUMNA EMPIEZAN LOS CONCEPTOS DE LOS FOLIOS* */
+        /*         * *************************SE GUARDA EL TOMO********************* */
+        $updateConcepto = 'UPDATE conceptos_folios 
+            SET codi_conc_tco = :acodi_conc_tco 
+            WHERE orden_conc_folio = :aorden_conc_folio 
+            AND codi_folio = (SELECT codi_folio FROM folios WHERE codi_tomo = :acodi_tomo AND num_folio = :anum_folio)
+            AND codi_conc_tco = :aacodi_conc_tco;';
+
+        try {
+            $file = '../web/upload/conceptos.xlsx';
+            $objPHPExcel = PHPExcel_IOFactory::load($file);
+            $sheet = $objPHPExcel->getSheet(0);
+            $conn->beginTransaction();
+            $filas = 208;
+            $stmt = $conn->prepare($updateConcepto);
+            while ($filaf <= $filas) {
+                $tomo = $sheet->getCellByColumnAndRow(7, $filaf)->getValue();
+                $folios = explode(',', $sheet->getCellByColumnAndRow(8, $filaf)->getValue());
+                
+                /*buscar concpetos pueden ser mas de uno en la misma linea*/
+                /*
+                 * 9 .- posicion conceptos antiguos
+                 * 10 .- conceptos antiguos
+                 * 11 .- conceptos nuevos
+                 */
+                $conceptosAntiguos = explode(',', $sheet->getCellByColumnAndRow(10, $filaf)->getValue());
+                $conceptosNuevos = explode(',', $sheet->getCellByColumnAndRow(11, $filaf)->getValue());
+                $ordenConceptos = explode(',', $sheet->getCellByColumnAndRow(9, $filaf)->getValue());
+                
+                if (count($conceptosAntiguos) != count($conceptosNuevos) & count($ordenConceptos) != count($conceptosAntiguos)){
+                    throw new \Exception('Error');
+                }
+                
+                foreach ($folios as $folio) {
+                    foreach ($conceptosAntiguos as $index => $concepto) {
+                        $stmt->bindValue(1, strtoupper(trim($conceptosNuevos[$index])));
+                        $stmt->bindValue(2, intval(trim($ordenConceptos[$index])));
+                        $stmt->bindValue(3, trim($tomo));
+                        $stmt->bindValue(4, intval(trim($folio)));
+                        $stmt->bindValue(5, strtoupper(trim($concepto)));
+//                        echo trim($conceptosNuevos[$index]);
+//                        echo intval(trim($ordenConceptos[$index]));
+//                        echo trim($tomo);
+//                        echo intval(trim($folio));
+//                        echo trim($concepto).'<br/>';
+                        $stmt->execute();
+                    }
+                }
+                $filaf++;
+            }
+            unset($objPHPExcel);
+            $data['success'] = true;
+            $data['data'] = 'Almacenado con exito';
+            $conn->commit();
+        } catch (DBALException $e) {
+            $data['error'] = "Ocurrio un error al grabar a la Base de Datos <br> El sistema devolvio el siguiente mensaje <br>" . $e->getMessage();
+            $conn->rollback();
+        } catch (\Exception $e) {
+            $data['error'] = "Por favor corrija la(s) siguiente(s) fila(s) <br>" . $e->getMessage();
+        }
+        $conn->close();
+        $response = new Response(json_encode($data));
+        $response->headers->set('content-type', 'application/json');
+        return $response;
     }
 
 }
