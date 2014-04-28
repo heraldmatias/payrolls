@@ -75,6 +75,7 @@
         <div style="float: right" id="busca_personal">
             <input type="button" value="Marcar como no encontrado" id="id_btnnoencontrado" class="btn btn-danger">
             <input type="button" value="Buscar Personas" id="id_btnbuscar" class="btn btn-primary">
+            <input type="button" value="Registrar Persona" id="id_btnregistrar" class="btn btn-primary">
         </div>
         <h4>Listado de Personal</h4>
         <form name="frm_personal" id="id_frm_personal">
@@ -105,7 +106,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div id="dialog" title="Basic dialog">
+            <div id="dialog" title="Buscar Persona" class="dialog">
                 <div class="row-fluid">
                     <div class="span3"><label>Buscar en Siga</label></div>
                     <div class="span1"><input type="radio" value="1" id="opt_siga" name="optbusqueda[]" checked></div>
@@ -120,6 +121,22 @@
                     <div class="span3"><label>Buscar Personal en Reniec</label></div>
                     <div class="span9"><input type="text" name="persona_reniec" id="id_personal_reniec" class="personal">&nbsp;&nbsp;</div>
                 </div>
+            </div>
+            
+            <div id="registrar" title="Registrar Persona" class="dialog">
+                <div class="row-fluid">
+                    <div class="span3"><label>Apellido Paterno</label></div>
+                    <div class="span9"><input type="text" name="apepat" id="id_apepat" >&nbsp;&nbsp;</div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span3"><label>Apellido Materno</label></div>
+                    <div class="span9"><input type="text" name="apemat" id="id_apemat" >&nbsp;&nbsp;</div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span3"><label>Nombres</label></div>
+                    <div class="span9"><input type="text" name="nombres" id="id_nombre" >&nbsp;&nbsp;</div>
+                </div>
+                <input type="hidden" name="dni" id="dni" value=""/>
             </div>
             
         </form>
@@ -156,6 +173,10 @@
             load_personal();
         });
         
+        $('#id_btnregistrar').on('click', function(e){
+            create_personal();
+        });
+        
         $('#id_btnnoencontrado').on('click', function(e){
             setPersonalNoEncontrado();
         });
@@ -185,7 +206,6 @@
             $('#persona_siga').hide();        
             $('#persona_nueva').show();
         });
-        
                 
         function load_personal(){
             var data = $('#id_frm_personal').serialize(),
@@ -195,6 +215,18 @@
                 return false;
             }else{
                 $('#dialog').dialog("open");
+                return true;
+            }
+        }
+        
+        function create_personal(){
+            var data = $('#id_frm_personal').serialize(),
+                    personas = $('.personal:checked');
+            if(personas.length===0){
+                alert('Debe seleccionar al menos una persona');
+                return false;
+            }else{
+                $('#registrar').dialog("open");
                 return true;
             }
         }
@@ -226,6 +258,50 @@
                 data += '&tipo=' + tipo;
                 var oOptions = {
                     url: '{{ path('_personal_asocia_ajax') }}',
+                    dataType: 'json',
+                    async: true,
+                    data: data,
+                    beforeSend: function() {
+
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data['success']){
+                        alert('Personal Asociado con éxito');
+                        $.each(personas, function(k,v){
+                            $(this).parent().parent().remove();
+                        });
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    alert('Ocurrio un error al asociar');
+                    rpta = false;
+                });
+            }
+            return rpta;
+        }
+        
+        function registra_personal(){
+            var rpta = true;
+            if($.trim($('#id_apepat').val()) === ''){
+                alert('Debe escribir el apellido paterno');
+                return false;
+            }else if($.trim($('#id_apemat').val())=== ''){
+                alert('Debe escribir el apellido materno');
+                return false;
+            }if($.trim($('#id_nombre').val())===''){
+                alert('Debe escribir el nombre');
+                return false;
+            }            
+            
+            if(confirm('¿DESEA ASOCIAR LOS NOMBRES SELECCIONADOS AL PERSONAL REGISTRADO?')){
+                var data = $('#id_frm_personal').serialize()+'&'+$('#registrar :input').serialize(),
+                    personas = $('.personal:checked');
+                
+                var oOptions = {
+                    url: '{{ path('_personal_registra_ajax') }}',
                     dataType: 'json',
                     async: true,
                     data: data,
@@ -288,7 +364,7 @@
                 autoOpen: false,
                 title: 'Buscar Personas',
                 width: '600',
-                height: '400',
+                height: '300',
                 show: {
                     effect: "blind",
                     duration: 1000
@@ -300,6 +376,31 @@
                  buttons: {
                     "Asociar": function() {
                         if(asocia_personal()){
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    "Cancelar": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+            
+            $( "#registrar" ).dialog({
+                autoOpen: false,
+                title: 'Crear Persona',
+                width: '600',
+                height: '300',
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                },
+                 buttons: {
+                    "Registrar": function() {
+                        if(registra_personal()){
                             $( this ).dialog( "close" );
                         }
                     },

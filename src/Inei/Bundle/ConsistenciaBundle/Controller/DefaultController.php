@@ -435,21 +435,29 @@ class DefaultController extends Controller {
         $response->headers->set('Content-type', 'application/json');
         return $response;
     }
-
+    
     /**
      * @Route("/consistencia/personal-registra/ajax/", name="_personal_registra_ajax")
      */
-    public function registraPersonalAction(Request $request) {
+    public function personalRegistraAction(Request $request) {
         $service = $this->get('consistencia_service');
-        $result = false;
-        if ($request->query->has('form')) {
-            $form = $request->query->get('form');
-            $result = $service->registraPersona($form);
+        $nombres = array();
+        $persona = NULL;
+        if ($request->query->has('personal')) {
+            $nombres = $request->query->get('personal');
         }
+        $form = array(
+            'apepat' => trim(strtoupper($request->query->get('apepat'))),
+            'apemat' => trim(strtoupper($request->query->get('apemat'))),
+            'nombres' => trim(strtoupper($request->query->get('nombres'))),
+            'dni' => $request->query->get('dni'),
+        );
+
+        $result = $service->registraPersona($form, $nombres);
         $data = array(
             'success' => $result,
             'data' => $result,
-            'error' => $result ? '' : 'Ocurrio un error al registrar la persona'
+            'error' => ''
         );
         $response = new Response(json_encode($data));
         $response->headers->set('Content-type', 'application/json');
