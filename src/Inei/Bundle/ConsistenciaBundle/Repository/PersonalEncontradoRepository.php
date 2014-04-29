@@ -12,4 +12,22 @@ use Doctrine\ORM\EntityRepository;
  */
 class PersonalEncontradoRepository extends EntityRepository
 {
+    public function findPersonalDniDuplicado(array $criteria)
+    {
+        $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalEncontrado pd";
+        $where = array();
+        $where[] = "pd.librElecPer IN (SELECT pdd.librElecPer from IneiConsistenciaBundle:PersonalEncontrado pdd "
+                . "WHERE pdd.librElecPer != '' GROUP BY pdd.librElecPer HAVING COUNT(pdd.librElecPer)>1 )";
+        if (array_key_exists('soundex', $criteria))
+            $where[] = "pd.soundex = soundex('" . addslashes($criteria['soundex'])."')";
+        if (array_key_exists('nombres', $criteria))
+            $where[] = "pd.nombCortPer LIKE '%" . str_replace("'","''",$criteria['nombres'])."%'";
+        if (array_key_exists('codigo', $criteria))
+            $where[] = "pd.librElecPer ='" . $criteria['codigo'] . "'";
+        
+        $DQL .= count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '';
+        $DQL .= ' ORDER BY pd.nombCortPer, pd.librElecPer';
+        $qb = $this->getEntityManager()->createQuery($DQL);        
+        return $qb;
+    }
 }

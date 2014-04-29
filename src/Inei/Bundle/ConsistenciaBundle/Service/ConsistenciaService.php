@@ -48,6 +48,11 @@ class ConsistenciaService {
                         ->findPersonalNoEncontrado($criteria, $buscado);
     }
 
+    public function findPersonalDniDuplicado($criteria) {
+        return $this->em->getRepository('IneiConsistenciaBundle:PersonalEncontrado')
+                        ->findPersonalDniDuplicado($criteria);
+    }
+
     public function debeSincronizar() {
         $qb = $this->em->getRepository('IneiConsistenciaBundle:PersonalDigitado')
                 ->findPersonal();
@@ -163,6 +168,34 @@ class ConsistenciaService {
                 $this->em->rollback();
                 $result = false;
             }
+        }
+        return $result;
+    }
+
+    public function asociarPersonalEncontrado($nombres, $persona) {
+        $_nombres = array();
+        foreach ($nombres as $nombre) {
+            $_nombres[] = preg_replace("('|´|,|\.| )", "", $nombre);
+        }
+        $nombres = "('" . implode("','", $_nombres) . "')";
+        $sqlupd = "UPDATE personal_digitado SET codi_empl_per_persona = :persona
+                WHERE codi_empl_per_persona IN 
+                (SELECT codi_empl_per FROM personal_encontrado WHERE regexp_replace(nomb_cort_per,'\W+', '','g') IN $nombres)";
+        
+        $sqldel = "DELETE FROM personal_encontrado WHERE regexp_replace(nomb_cort_per,'\W+', '','g') IN $nombres AND codi_empl_per != :persona";
+        try {
+            $this->em->beginTransaction();
+            $this->em->getConnection()->executeUpdate($sqlupd, array(
+                'persona' => $persona
+            ));
+            $this->em->getConnection()->executeUpdate($sqldel, array(
+                'persona' => $persona
+            ));
+            $result = true;
+            $this->em->commit();
+        } catch (Doctrine\DBAL\DBALException $e) {
+            $this->em->rollback();
+            $result = false;
         }
         return $result;
     }

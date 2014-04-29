@@ -37,6 +37,9 @@
                             <option value="4" {% if form['tipo_busqueda'] == '4' %} selected {% endif %}>
                                 Todo el Personal en Planillas
                             </option>
+                            <option value="5" {% if form['tipo_busqueda'] == '5' %} selected {% endif %}>
+                                Personal con dni duplicado
+                            </option>
                         </select>
                     </div>
                     <div class="span2">
@@ -75,7 +78,12 @@
         <div style="float: right" id="busca_personal">
             <input type="button" value="Marcar como no encontrado" id="id_btnnoencontrado" class="btn btn-danger">
             <input type="button" value="Buscar Personas" id="id_btnbuscar" class="btn btn-primary">
+            {% if form['tipo_busqueda'] == '1' %}
             <input type="button" value="Registrar Persona" id="id_btnregistrar" class="btn btn-primary">
+            {% endif %}
+            {% if form['tipo_busqueda'] == '5' %}
+            <input type="button" value="Asociar Persona" id="id_btnasociar" class="btn btn-primary">
+            {% endif %}
         </div>
         <h4>Listado de Personal</h4>
         <form name="frm_personal" id="id_frm_personal">
@@ -86,6 +94,7 @@
                         <th>Marcar Todos &nbsp; <input type="checkbox" id="chk_todos" ></th>
                         <th>Codigo Empleado</th>
                         <th>Nombre Corto</th>
+                        <th>DNI</th>
                         <th>Personal Relacionado</th>
                     </tr>
                 </thead>
@@ -98,6 +107,7 @@
                         </td>
                         <td>{{ item.codiEmplPer }}</td>
                         <td>{{ item.nombCortPer }}</td>
+                        {% if item.librElecPer is defined %}<td>{{ item.librElecPer }}</td>{% endif %}
                         {% if item.persona is defined %}<td>{{ item.persona }}</td>
                         {% else %}
                         <td> {{ item.codiEmplPer }} </td>
@@ -106,6 +116,13 @@
                 {% endfor %}
                 </tbody>
             </table>
+            <div id="asociar" title="Asociar Persona" class="dialog">
+                <div class="row-fluid" id="persona_encontrada">
+                    <div class="span3"><label>Escriba el codigo del empleado</label></div>
+                    <div class="span9"><input type="text" name="persona_encontrada" id="id_personaencontrada" class="personal">&nbsp;&nbsp;</div>
+                </div>
+            </div>
+            
             <div id="dialog" title="Buscar Persona" class="dialog">
                 <div class="row-fluid">
                     <div class="span3"><label>Buscar en Siga</label></div>
@@ -177,6 +194,10 @@
             create_personal();
         });
         
+        $('#id_btnasociar').on('click', function(e){
+            join_personal();
+        });
+        
         $('#id_btnnoencontrado').on('click', function(e){
             setPersonalNoEncontrado();
         });
@@ -231,6 +252,18 @@
             }
         }
         
+        function join_personal(){
+            var data = $('#id_frm_personal').serialize(),
+                    personas = $('.personal:checked');
+            if(personas.length===0){
+                alert('Debe seleccionar al menos una persona');
+                return false;
+            }else{
+                $('#asociar').dialog("open");
+                return true;
+            }
+        }
+        
         function asocia_personal(){
             var rpta = true, nuevo = $('#opt_nueva').is(':checked'),
                     tipo = (nuevo === true)?2:1;
@@ -258,6 +291,44 @@
                 data += '&tipo=' + tipo;
                 var oOptions = {
                     url: '{{ path('_personal_asocia_ajax') }}',
+                    dataType: 'json',
+                    async: true,
+                    data: data,
+                    beforeSend: function() {
+
+                    }
+                };
+                var posting = $.ajax(oOptions);
+
+                posting.done(function(data, textStatus, jqXHR) {
+                    if(data['success']){
+                        alert('Personal Asociado con éxito');
+                        $.each(personas, function(k,v){
+                            $(this).parent().parent().remove();
+                        });
+                    }
+                })
+                .fail(function(data, textStatus, jqXHR) {
+                    alert('Ocurrio un error al asociar');
+                    rpta = false;
+                });
+            }
+            return rpta;
+        }
+        
+        function asocia_personal_encontrado(){
+            var rpta = true;
+            if(confirm('¿DESEA ASOCIAR LOS NOMBRES SELECCIONADOS AL PERSONAL SELECCIONADO?')){
+                var data = $('#id_frm_personal').serialize(),
+                    personas = $('.personal:checked');
+            
+                if($.trim($('#id_personaencontrada').val()) === ''){
+                    alert('Debe escribir el codigo de la persona a asociar');
+                    return false;
+                }
+                data += '&persona=' + $('#id_personaencontrada').val();
+                var oOptions = {
+                    url: '{{ path('_personal_asocia_encontrado_ajax') }}',
                     dataType: 'json',
                     async: true,
                     data: data,
@@ -401,6 +472,31 @@
                  buttons: {
                     "Registrar": function() {
                         if(registra_personal()){
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    "Cancelar": function() {
+                        $( this ).dialog( "close" );
+                    }
+                }
+            });
+            
+            $( "#asociar" ).dialog({
+                autoOpen: false,
+                title: 'Asociar Persona',
+                width: '600',
+                height: '300',
+                show: {
+                    effect: "blind",
+                    duration: 1000
+                },
+                hide: {
+                    effect: "explode",
+                    duration: 1000
+                },
+                 buttons: {
+                    "Asociar": function() {
+                        if(asocia_personal_encontrado()){
                             $( this ).dialog( "close" );
                         }
                     },

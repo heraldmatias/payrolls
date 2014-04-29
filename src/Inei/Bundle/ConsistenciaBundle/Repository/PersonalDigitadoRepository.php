@@ -46,7 +46,7 @@ ORDER BY l.empleado;';
         $qb = $this->getEntityManager()->createQuery($DQL);        
         return $qb;
     }
-
+    
     public function findPersonalEncontrado($criteria = array()) {
         $DQL = "SELECT pd FROM IneiConsistenciaBundle:PersonalEncontrado pd ";
         $where = array();

@@ -328,6 +328,9 @@ class DefaultController extends Controller {
             case 4:
                 $query = $service->findPersonal($criteria);
                 break;
+            case 5:
+                $query = $service->findPersonalDniDuplicado($criteria);
+                break;
             default :
                 $query = $service->findPersonalNoEncontrado($criteria, false);
         }
@@ -426,6 +429,30 @@ class DefaultController extends Controller {
         $source = intval($request->query->get('tipo'));
 
         $result = $service->asociarPersonal($nombres, $persona, $source);
+        $data = array(
+            'success' => $result,
+            'data' => $result,
+            'error' => ''
+        );
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-type', 'application/json');
+        return $response;
+    }
+    
+    /**
+     * @Route("/consistencia/personal-asocia-encontrado/ajax/", name="_personal_asocia_encontrado_ajax")
+     */
+    public function personalAsociaEncontradoAction(Request $request) {
+        $service = $this->get('consistencia_service');
+        $nombres = array();
+        $persona = NULL;
+        if ($request->query->has('personal')) {
+            $nombres = $request->query->get('personal');
+        }
+        if ($request->query->has('persona')) {
+            $persona = $request->query->get('persona');
+        }
+        $result = $service->asociarPersonalEncontrado($nombres, $persona);
         $data = array(
             'success' => $result,
             'data' => $result,
