@@ -94,7 +94,7 @@
                         <th>Marcar Todos &nbsp; <input type="checkbox" id="chk_todos" ></th>
                         <th>Codigo Empleado</th>
                         <th>Nombre Corto</th>
-                        <th>DNI</th>
+                        {% if form['tipo_busqueda'] != '1' %}<th>DNI</th> {% endif %}
                         <th>Personal Relacionado</th>
                     </tr>
                 </thead>
