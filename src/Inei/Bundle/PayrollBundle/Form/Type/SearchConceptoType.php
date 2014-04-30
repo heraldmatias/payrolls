@@ -37,11 +37,23 @@ class SearchConceptoType extends AbstractType {
                     'required' => false,
                     'label' => 'Descripción'
                 ))
+                ->add('tipoConcTco', 'choice', array(
+                    'label' => 'Tipo Concepto',
+                    'choices' => array(
+                        0 => 'Tiempo', 1 => 'Ingresos', 2 => 'Egresos', 3 => 'Aportaciones', 4 => 'Otros'
+                    ),
+                    'empty_value' => '---Ninguno---',
+                    'required' => false,
+                    'attr' => array(
+                        'style' => 'width: 95%'
+                    )
+
+                ))
                 ->add('search', 'submit', array(
                     'label' => 'Buscar',
                     'attr' => array('class' => 'btn btn-primary'),));
     }
-    
+
     public function getName() {
         return 'search_concepto';
     }

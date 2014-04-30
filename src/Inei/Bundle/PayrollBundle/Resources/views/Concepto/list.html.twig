@@ -14,17 +14,20 @@
         {% endfor %}
                 {{ form_start(form) }}
             <div class="row-fluid">
-            <div class="span7">
+            <div class="span9">
             <fieldset>
                 <legend>Opciones de Busqueda</legend>
                 <div class="row-fluid">
                     <div class="span1">{{ form_label(form.codiConcTco) }}</div><div class="span2"> {{ form_widget(form.codiConcTco) }} </div>
                     <div class="span2">{{ form_label(form.descConcTco) }}</div><div class="span4"> {{ form_widget(form.descConcTco) }} </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span1">{{ form_label(form.tipoConcTco) }}</div><div class="span2"> {{ form_widget(form.tipoConcTco) }} </div>
                 <div class="span2">{{ form_widget(form.search) }} </div>
                 <div class="span1"> <input type="button" class="btn btn-primary" value="A Excel" id="reporte"/> </div>
                 </div>
             </fieldset>
-                
+
             </div></div>{{ form_end(form) }}
             <table class="table table-hover table-bordered">
                 <thead>
@@ -55,7 +58,7 @@
                         <td>{{ item.modificador }}</td>
                         <td>{% if item.fecMod %}{{ item.fecMod|date('d-M-Y H:m:s') }}{% endif %}</td>
                         <td><!--- LINK A LAS PLANILLAS--->
-                            {% if perm %}<a href="{{ path('_concepto_edit', {'pk': item.codiConcTco}) }}" 
+                            {% if perm %}<a href="{{ path('_concepto_edit', {'pk': item.codiConcTco}) }}"
                                title="Editar Folio"><i class="icon-edit"></i> </a>{% endif %}
                         </td>
                     </tr>
@@ -66,7 +69,7 @@
                 {{ knp_pagination_render(pagination) }}
                 </div>
             </div>
-            <div class="modal-footer">            
+            <div class="modal-footer">
                 <a href="{{ path('_admin') }}" class="btn">Cerrar</a>
             </div>
         </div>
