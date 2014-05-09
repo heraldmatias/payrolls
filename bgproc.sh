@@ -17,7 +17,7 @@ echo 'Procesando conceptos' >> /tmp/log_messages
 psql -w -U postgres -d inei_planilla -c "COPY (SELECT codi_conc_tco, codi_oper_ope, codi_cicl_cic, desc_conc_tco, desc_cort_tco, tipo_conc_tco, tipo_calc_tco, secu_calc_tco, flag_asoc_tco, flag_recu_tco, rnta_qnta_tco, cts_cts_tco, codi_conc_onc, codi_enti_ent, cnta_debe_tco, cnta_habe_tco, clas_conc_tco, flag_pago_tco, sede_conc_tco  FROM conceptos WHERE tipo_conc_tco NOT IN ('0', '4')) TO STDOUT WITH CSV DELIMITER '|' QUOTE '\"'" >> /tmp/conceptos.csv
 i=$(($i+1))
 echo 'Procesando folios' >> /tmp/log_messages
-psql -w -U postgres -d inei_planilla -c "COPY (SELECT codi_folio, num_folio, per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, tipo_folio, desc_folio,mes_folio,ano_folio,rango_folio, fec_inicio, fec_final FROM folios) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/folios.csv
+psql -w -U postgres -d inei_planilla -c "COPY (SELECT codi_folio, num_folio, per_folio, reg_folio, subt_plan_stp, codi_tomo, tipo_plan_tpl, tipo_folio, regexp_replace(desc_folio, E'[\\n\\r]+', ' ', 'g' ),mes_folio,ano_folio,rango_folio, fec_inicio, fec_final FROM folios) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/folios.csv
 i=$(($i+1))
 echo 'Procesando tomos' >> /tmp/log_messages
 psql -w -U postgres -d inei_planilla -c "COPY (SELECT codi_tomo, per_tomo, ano_tomo, folios_tomo, desc_tomo  FROM tomos) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/tomos.csv
