@@ -6,6 +6,7 @@ do
   i=$(($i+1))
   echo 'Procesando tomo #' $i >> /tmp/log_messages
   psql -w -U postgres -d inei_planilla -c "copy (select * from get_planilla_tomo(6, $i)) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/planillas.csv
+  psql -w -U postgres -d inei_planilla -c "copy (select * from get_personal_planilla_datos($i)) to STDOUT WITH CSV DELIMITER '|' QUOTE '\"';" >> /tmp/personal_datos.csv
   if [ $i -gt 420 ]
   then
      break
